@@ -6,6 +6,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
@@ -16,6 +17,7 @@ import amalgam.common.block.BlockStoneCrucible;
 import amalgam.common.item.ItemAmalgamBlob;
 import amalgam.common.item.ItemStoneTongs;
 import amalgam.common.item.ItemStoneTongsFull;
+import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
 import amalgam.common.tile.TileStoneCrucible;
 import cpw.mods.fml.common.Mod;
@@ -69,14 +71,22 @@ public class Amalgam{
     
     @EventHandler
     public void init(FMLInitializationEvent event){
-		PropertyManager.registerItemProperties(new ItemStack(Items.iron_ingot), ToolMaterial.IRON, BASEAMOUNT*8);
-		PropertyManager.registerItemProperties(new ItemStack(Items.gold_ingot), ToolMaterial.GOLD, BASEAMOUNT*8);
-		PropertyManager.registerItemProperties(new ItemStack(Items.diamond), ToolMaterial.EMERALD, BASEAMOUNT*8);
-		PropertyManager.registerItemProperties(new ItemStack(Blocks.iron_block), ToolMaterial.IRON, BASEAMOUNT*72);
-		PropertyManager.registerItemProperties(new ItemStack(Blocks.gold_block), ToolMaterial.GOLD, BASEAMOUNT*72);
-		PropertyManager.registerItemProperties(new ItemStack(Blocks.diamond_block), ToolMaterial.EMERALD, BASEAMOUNT*72);
+    	// TODO use OreDictionary
+    	PropertyList ironProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.IRON);
+    	PropertyList goldProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.GOLD);
+    	PropertyList diamondProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.EMERALD);
+    	
+		PropertyManager.registerItemProperties(new ItemStack(Items.iron_ingot), ironProp, BASEAMOUNT*8);
+		PropertyManager.registerItemProperties(new ItemStack(Items.gold_ingot), goldProp, BASEAMOUNT*8);
+		PropertyManager.registerItemProperties(new ItemStack(Items.diamond), diamondProp, BASEAMOUNT*8);
+		PropertyManager.registerItemProperties(new ItemStack(Blocks.iron_block), ironProp, BASEAMOUNT*72);
+		PropertyManager.registerItemProperties(new ItemStack(Blocks.gold_block), goldProp, BASEAMOUNT*72);
+		PropertyManager.registerItemProperties(new ItemStack(Blocks.diamond_block), diamondProp, BASEAMOUNT*72);
+		PropertyManager.registerItemProperties(new ItemStack(Items.gold_nugget), goldProp, BASEAMOUNT);
 		
-		PropertyManager.registerItemProperties(new ItemStack(amalgamBlob));
+		PropertyManager.registerItemProperties(new ItemStack(amalgamBlob), null, 0);
+		
+		MinecraftForge.EVENT_BUS.register(new TestEventHandler());
     }
     
     @EventHandler

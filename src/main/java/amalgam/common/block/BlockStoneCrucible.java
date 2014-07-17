@@ -80,34 +80,13 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider{
 			player.addChatMessage(new ChatComponentText("Item is amalgable"));
 			TileStoneCrucible te = (TileStoneCrucible)world.getTileEntity(x, y, z);
 			int amount = PropertyManager.getVolume(stack);
-			// if amount is -1 then we get the amount from nbt
-			if(amount == -1 && stack.getItem() instanceof ItemAmalgamContainer){
-				// get the amount from nbt
-				ItemAmalgamContainer item = (ItemAmalgamContainer)stack.getItem();
-				AmalgamStack amalgamInItem = item.getFluid(stack);
-				if(amalgamInItem != null){
-					amount = item.getFluid(stack).amount;
-				}else{
-					Amalgam.log.error("Trying to drain from nbt, but no amalgam in the item");
-					amount = 0;
-					return false;
-				}
-			}
 			
 			if(amount > 0 && amount < te.getEmptySpace()){ // make sure we have space before we add it to the crucible
 				PropertyList amalgProperties = PropertyManager.getProperties(stack);
 				AmalgamStack amalg = new AmalgamStack(amount, amalgProperties); 
 				
 				if(amalgProperties == null){
-					Amalgam.log.error("Trying to get property list from nbt data");
-					if(stack.getItem() instanceof ItemAmalgamContainer){
-						ItemAmalgamContainer item = (ItemAmalgamContainer)stack.getItem();
-						amalg = (AmalgamStack)item.drain(stack, amount, false); // we don't actual drain from the stack
-					}
-					else{ // amalgProperties is null and the item isn't an instance of ItemAmalgamContainer
-						Amalgam.log.error("Item is not an amalgam container");
-						return false;
-					}
+					Amalgam.log.error("No properties!!!!!");
 				}
 				
 				// fill the crucible

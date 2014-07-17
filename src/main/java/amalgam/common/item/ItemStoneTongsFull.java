@@ -33,8 +33,9 @@ public class ItemStoneTongsFull extends ItemAmalgamContainer{
 	@Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player){
 		ItemStack droppedBlob = new ItemStack(Amalgam.amalgamBlob, 1);
-		ItemAmalgamContainer blob = (ItemAmalgamContainer)Amalgam.amalgamBlob;
-		blob.fill(droppedBlob, this.drain(stack, CAPACITY, true), true);
+		
+		((ItemAmalgamBlob) Amalgam.amalgamBlob).setProperties(droppedBlob, this.getFluid(stack).getProperties());
+		((ItemAmalgamBlob) Amalgam.amalgamBlob).setVolume(droppedBlob, this.getFluid(stack).amount);
 		
 		if (!world.isRemote){
         	player.entityDropItem(droppedBlob, 1);

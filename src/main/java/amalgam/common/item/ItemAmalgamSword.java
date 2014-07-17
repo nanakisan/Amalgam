@@ -3,24 +3,26 @@ package amalgam.common.item;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
 import net.minecraft.util.DamageSource;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
 
-public class ItemAmalgamSword extends ItemSword{
+public class ItemAmalgamSword extends Item{
 
 	public ItemAmalgamSword() {
-		super(ToolMaterial.EMERALD);
-
-		// TODO Auto-generated constructor stub
+		super();
+		// TODO figure out how to use NBT tags to determine durability, sword damage, enchantability etc
+		
 	}
 	
 	@Override
     public boolean hitEntity(ItemStack stack, EntityLivingBase entityBeingHit, EntityLivingBase entityDoingHitting){
         // get the property list from the stack
 		
+		// I am pretty sure this should work!!!!
 		EntityPlayer player = (EntityPlayer)entityDoingHitting;
 		float damage = ItemAmalgamSword.getWeaponDamageFromStack(stack);
 		DamageSource damageSource = DamageSource.causePlayerDamage(player);
@@ -72,3 +74,5 @@ public class ItemAmalgamSword extends ItemSword{
 	}
 
 }
+
+// ItemSword

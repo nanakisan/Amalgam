@@ -1,5 +1,5 @@
 package amalgam.common.casting;
 
-public class ICastingRecipe {
+public interface ICastingRecipe {
 
 }

@@ -28,3 +28,9 @@ bin/assets/amalgam/textures/items/amalgamBlob.png
 bin/assets/amalgam/textures/blocks/stoneCrucible.png
 
 bin/assets/amalgam/lang/en_US.lang
+
+*.prefs
+
+.project
+
+.classpath

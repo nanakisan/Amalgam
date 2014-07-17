@@ -40,6 +40,10 @@ public class ItemAmalgamContainer extends Item implements IFluidContainerItem{
 	public int getCapacity(ItemStack container){
 		return capacity;
 	}
+	
+	public void setCapacity(int newCapacity){
+		capacity = newCapacity;
+	}
 
 	@Override
 	public int fill(ItemStack container, FluidStack resource, boolean doFill) {
@@ -105,7 +109,7 @@ public class ItemAmalgamContainer extends Item implements IFluidContainerItem{
 	}
 
 	@Override
-	public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain) {
+	public AmalgamStack drain(ItemStack container, int maxDrain, boolean doDrain) {
         if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Amalgam")){
             return null;
         }

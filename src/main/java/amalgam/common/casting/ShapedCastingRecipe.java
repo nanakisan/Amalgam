@@ -1,5 +1,5 @@
 package amalgam.common.casting;
 
-public class ShapedCastingRecipe {
+public class ShapedCastingRecipe implements ICastingRecipe{
 
 }
