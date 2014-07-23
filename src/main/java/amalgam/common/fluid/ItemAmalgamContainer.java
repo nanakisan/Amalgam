@@ -8,6 +8,8 @@ import net.minecraftforge.fluids.IFluidContainerItem;
 import amalgam.common.Amalgam;
 import amalgam.common.properties.PropertyList;
 
+// TODO probably get rid of ItemAmalgamContainer class and make it an interface instead
+
 public class ItemAmalgamContainer extends Item implements IFluidContainerItem{
 
 	protected int capacity;
@@ -41,9 +43,9 @@ public class ItemAmalgamContainer extends Item implements IFluidContainerItem{
 		return capacity;
 	}
 	
-	public void setCapacity(int newCapacity){
+	/*public void setCapacity(int newCapacity){
 		capacity = newCapacity;
-	}
+	}*/
 
 	@Override
 	public int fill(ItemStack container, FluidStack resource, boolean doFill) {

@@ -10,13 +10,14 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import amalgam.common.Amalgam;
 import amalgam.common.container.ContainerCastingTable;
 import amalgam.common.fluid.AmalgamTank;
 
 public class TileCastingTable extends TileEntity implements IInventory, ISidedInventory, IFluidHandler{
 
-	private ItemStack[] castingMatrix;
-	private ItemStack castResult;
+	public ItemStack[] castingMatrix = new ItemStack[9];
+	public ItemStack castResult;
 	
 	// keeps track of which slots are depressed for casting
 	private int castState[] = {0,0,0,0,0,0,0,0,0};
@@ -25,26 +26,29 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 	private AmalgamTank tank;
 	
 	public ContainerCastingTable container;
-	
+
 	/////////////////////
 	// ISidedInventory //
 	/////////////////////
 	
 	@Override
-	public int[] getAccessibleSlotsFromSide(int p_94128_1_){
-		// TODO Auto-generated method stub
-		return null;
+	public int[] getAccessibleSlotsFromSide(int side){
+		int slots[] = {0,1,2,3,4,5,6,7,8,9};
+		return slots;
 	}
 
 	@Override
 	public boolean canInsertItem(int slot, ItemStack stack, int meta){
-		// return true if the casting state for the slot is 0
+		// return true if the casting state for the slot is 0, can't insert item into the result slot
+		if(slot==9) return false;
 		return castState[slot]==0;
 	}
 
 	@Override
 	public boolean canExtractItem(int slot, ItemStack stack, int meta){
-		// TODO Auto-generated method stub
+		// return false unless the slot is the crafted item slot and the item is completely crafted
+		if(slot == 9) return true;
+		
 		return false;
 	}
 
@@ -54,46 +58,61 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 	
 	@Override
 	public int getSizeInventory(){
-		// TODO Auto-generated method stub
-		return 0;
+		// the 9 casting slots - the slots used for amalgam 
+		int unusableSlots = 0;
+		for(int i = 0; i < castState.length; i++ ){
+			if(castState[i] != 0) unusableSlots++;
+		}
+		return 9 - unusableSlots;
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int slot){
+		if(slot == 9) return castResult;
+		
 		if(castState[slot] == 1) return null;
 		
 		return castingMatrix[slot];
 	}
 
 	@Override
-	public ItemStack decrStackSize(int p_70298_1_, int p_70298_2_){
-		// TODO Auto-generated method stub
-		return null;
+	public ItemStack decrStackSize(int slot, int decNum){
+		if(slot == 9){
+			ItemStack stack = castResult;
+			return stack.splitStack(decNum);
+		}
+		
+		if(castState[slot] != 0) return null;
+		
+		ItemStack stack = castingMatrix[slot];
+		return stack.splitStack(decNum);
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int p_70304_1_){
-		// TODO Auto-generated method stub
+	public ItemStack getStackInSlotOnClosing(int slot){
+		// Does nothing because we keep the items in the slots on closing
 		return null;
 	}
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
-		if(castState[slot]==1) return;
-		
-		castingMatrix[slot] = stack;
+		if(slot == 9){
+			castResult = stack;
+		}
+		else{
+			if(castState[slot] != 0) return;
+			castingMatrix[slot] = stack;
+		}
 	}
 
 	@Override
 	public String getInventoryName(){
-		// TODO Auto-generated method stub
-		return null;
+		return "Casting Table";
 	}
 
 	@Override
 	public boolean hasCustomInventoryName(){
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
@@ -103,25 +122,25 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer p_70300_1_){
-		// TODO Auto-generated method stub
-		return false;
+		// TODO look at other implementations
+		return true;
 	}
 
 	@Override
 	public void openInventory(){
-		// TODO Auto-generated method stub
+		// TODO Probably need to do something here to open the gui
 		
 	}
 
 	@Override
 	public void closeInventory(){
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int p_94041_1_, ItemStack p_94041_2_){
-		// TODO Auto-generated method stub
+	public boolean isItemValidForSlot(int slot, ItemStack stack){
+		if(slot == 9) return false;
+		if(castState[slot] == 0) return true;
 		return false;
 	}
 
@@ -131,38 +150,48 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 	
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill){
-		// TODO Auto-generated method stub
-		return 0;
+		return tank.fill(resource, doFill);
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain){
-		// TODO Auto-generated method stub
-		return null;
+		if(resource == null){
+			return null;
+		}
+		return tank.drain(resource.amount, doDrain);
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain){
-		// TODO Auto-generated method stub
-		return null;
+		return tank.drain(maxDrain, doDrain);
 	}
 
 	@Override
 	public boolean canFill(ForgeDirection from, Fluid fluid){
-		// TODO Auto-generated method stub
+		if(fluid.getID() == Amalgam.fluidAmalgam.getID()){
+			return true;
+		}
 		return false;
 	}
 
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid){
-		// TODO Auto-generated method stub
+		if(fluid.getID() == Amalgam.fluidAmalgam.getID()){
+			return true;
+		}
 		return false;
 	}
 
 	@Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection from){
-		// TODO Auto-generated method stub
-		return null;
+		return new FluidTankInfo[]{tank.getInfo()};
 	}
 
+	public void updateAmalgamTankCapacity(){
+		// loop through the casting slots
+		for(int i=0; i<9; i++){
+			this.container.getSlot(i);
+			// TODO figure out the best way to update the tank size when the castingState changes for slots
+		}
+	}
 }

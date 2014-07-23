@@ -119,6 +119,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider{
         world.removeTileEntity(x, y, z);
     }
 
+	@Override
     public boolean onBlockEventReceived(World world, int x, int y, int z, int p_149749_5_, int p_149749_6_){
         super.onBlockEventReceived(world, x, y, z, p_149749_5_, p_149749_6_);
         TileEntity tileentity = world.getTileEntity(x, y, z);

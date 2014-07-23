@@ -104,7 +104,8 @@ public class AmalgamTank implements IFluidTank {
 	    }
 
 	    int drained = maxDrain;
-	    if (fluid.amount < drained){
+	    // we drain all the fluid if we get the amount -1 (this is used in casting table, there is probably a better way to do this)
+	    if (fluid.amount < drained || drained == -1){
 	    	drained = fluid.amount;
 	    }
 

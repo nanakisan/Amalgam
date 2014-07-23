@@ -65,7 +65,7 @@ public class AmalgamStack extends FluidStack {
 	public static AmalgamStack loadAmalgamStackFromNBT(NBTTagCompound nbtComp){
 		int amount = nbtComp.getInteger("Amount");
 		PropertyList pList = new PropertyList();
-		// SStoring propertyList info in the base class 'FluidStack's tag variable. This variable is saved to the "Tag" tag in NBT
+		// Storing propertyList info in the base class 'FluidStack's tag variable. This variable is saved to the "Tag" tag in NBT
 		pList.readFromNBT(nbtComp.getCompoundTag("Tag"));
         AmalgamStack stack = new AmalgamStack(amount, pList);
 		return stack;

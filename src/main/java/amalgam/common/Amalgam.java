@@ -6,19 +6,20 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import amalgam.common.block.BlockCastingTable;
 import amalgam.common.block.BlockStoneCrucible;
 import amalgam.common.item.ItemAmalgamBlob;
 import amalgam.common.item.ItemStoneTongs;
 import amalgam.common.item.ItemStoneTongsFull;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
+import amalgam.common.tile.TileCastingTable;
 import amalgam.common.tile.TileStoneCrucible;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -27,7 +28,10 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+
+// TODO add creative tab
 
 @Mod(modid = Amalgam.MODID, version = Amalgam.VERSION)
 public class Amalgam{
@@ -37,8 +41,9 @@ public class Amalgam{
     public static final int BASEAMOUNT = 10;
     
     public static final Logger log = LogManager.getLogger("Amalgam");
+	public static final int CASTING_GUI_ID = 1;
     
-    @Instance("Amalgam")
+    @Instance("amalgam")
     public static Amalgam instance;
     
     @SidedProxy(clientSide="amalgam.client.ClientProxy", serverSide="amalgam.common.CommonProxy")
@@ -47,6 +52,7 @@ public class Amalgam{
     public static PropertyManager propertyManager = PropertyManager.getInstance();
 	public static Fluid fluidAmalgam;
 	public static Block stoneCrucible;
+	public static Block castingTable;
 	public static Item stoneTongs;
 	public static Item stoneTongsFull;
 	public static Item amalgamBlob;
@@ -57,7 +63,9 @@ public class Amalgam{
     	FluidRegistry.registerFluid(fluidAmalgam);
     	
     	stoneCrucible = new BlockStoneCrucible().setBlockName("stoneCrucible");
+    	castingTable = new BlockCastingTable().setBlockName("castingTable");
     	GameRegistry.registerBlock(stoneCrucible, "StoneCrucible");
+    	GameRegistry.registerBlock(castingTable, "CastingTable");
     	
     	stoneTongs = new ItemStoneTongs().setUnlocalizedName("stoneTongs");
     	stoneTongsFull = new ItemStoneTongsFull().setUnlocalizedName("stoneTongsFull");
@@ -67,10 +75,13 @@ public class Amalgam{
     	GameRegistry.registerItem(amalgamBlob, "amalgamBlob");
     	
     	GameRegistry.registerTileEntity(TileStoneCrucible.class, "stoneCrucible");
+    	GameRegistry.registerTileEntity(TileCastingTable.class, "castingTable");
     }
     
     @EventHandler
     public void init(FMLInitializationEvent event){
+    	NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy);
+    	
     	// TODO use OreDictionary
     	PropertyList ironProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.IRON);
     	PropertyList goldProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.GOLD);
@@ -86,12 +97,14 @@ public class Amalgam{
 		
 		PropertyManager.registerItemProperties(new ItemStack(amalgamBlob), null, 0);
 		
-		MinecraftForge.EVENT_BUS.register(new TestEventHandler());
+		//MinecraftForge.EVENT_BUS.register(new TestEventHandler());
+		
     }
     
     @EventHandler
     public void postInit(FMLPostInitializationEvent event){
-    	
+		
+
     }
 
 }
