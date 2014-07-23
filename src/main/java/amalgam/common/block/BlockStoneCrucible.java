@@ -13,8 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import amalgam.common.Amalgam;
 import amalgam.common.fluid.AmalgamStack;
-import amalgam.common.fluid.ItemAmalgamContainer;
-import amalgam.common.item.ItemStoneTongsFull;
+import amalgam.common.fluid.IAmalgamContainerItem;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
 import amalgam.common.tile.TileStoneCrucible;
@@ -42,43 +41,48 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider{
 		if(world.isRemote){
 			return true;
 		}
-		
-		ItemAmalgamContainer stf = (ItemAmalgamContainer)Amalgam.stoneTongsFull;
-		
+
 		ItemStack stack = player.inventory.getCurrentItem();
+		TileStoneCrucible te = (TileStoneCrucible)world.getTileEntity(x, y, z);
 		// here we decide what to do based on what item was used to activate the block
 		if(stack == null){// if there was no item we print info to the chat
-			TileStoneCrucible te = (TileStoneCrucible)world.getTileEntity(x, y, z);
 			player.addChatMessage(new ChatComponentText(te.toString()));
 			return true;
 		}
-		if(stack.getItem() == Amalgam.stoneTongs){ // if we used stone tongs we try to drain some amalgam from the crucible into the tongs
-			// get the tile entity and attempt to drain 
-			TileStoneCrucible te = (TileStoneCrucible)world.getTileEntity(x, y, z);
-			AmalgamStack fluidStack = (AmalgamStack)te.drain(ForgeDirection.UNKNOWN, ItemStoneTongsFull.CAPACITY, true); //drain fluid from the crucible
-			if(fluidStack != null){ // see if we drained anything
-				ItemStack newStack = new ItemStack(Amalgam.stoneTongsFull); // create a new full stone tongs item if we drained something
-				stf.fill(newStack, fluidStack, true); // fill the tongs with the drained amalgam
-				player.inventory.setInventorySlotContents(player.inventory.currentItem, newStack);// set the player's held item to the new tongs
-			}
-			
-		}else if(stack.getItem() == Amalgam.stoneTongsFull){
-			// only fill the tank if there is enough room
-			
-			AmalgamStack newStack = (AmalgamStack)stf.drain(stack, stf.getCapacity(stack), true);
-			TileStoneCrucible te = (TileStoneCrucible)world.getTileEntity(x, y, z);
-			int filled = te.fill(ForgeDirection.UNKNOWN, newStack, true);
-			if(filled < newStack.amount){
-				// if we don't completely empty the tongs reduce the amalgam stored in the tongs
-				newStack.amount-= filled;
-				stf.fill(stack, newStack, true);
+		if(stack.getItem() instanceof IAmalgamContainerItem){
+			IAmalgamContainerItem container = (IAmalgamContainerItem) stack.getItem();
+			// if we are sneaking or the tongs are empty we attempt to drain the crucible, otherwise we attempt to fill
+			if(player.isSneaking()){
+				// if we are sneaking try to drain just a little bit
+				int drainAmount = Math.min(container.getEmptySpace(stack), Amalgam.BASEAMOUNT);
+				AmalgamStack fluidStack = (AmalgamStack)te.drain(ForgeDirection.UNKNOWN, drainAmount, true); //drain fluid from the crucible
+				if(fluidStack != null){ // see if we drained anything
+					int result = container.fill(stack, fluidStack, true); // fill the tongs with the drained amalgam
+					fluidStack.amount -= result;
+					if(fluidStack.amount > 0){
+						te.fill(ForgeDirection.UNKNOWN, fluidStack, true);
+					}
+				}
+			}else if(container.getFluid(stack).amount == 0){
+				// if we are not sneaking try to drain as much as possible
+				AmalgamStack fluidStack = (AmalgamStack)te.drain(ForgeDirection.UNKNOWN, container.getEmptySpace(stack), true); //drain fluid from the crucible
+				if(fluidStack != null){ // see if we drained anything
+					int result = container.fill(stack, fluidStack, true); // fill the tongs with the drained amalgam
+					fluidStack.amount -= result;
+					if(fluidStack.amount > 0){
+						te.fill(ForgeDirection.UNKNOWN, fluidStack, true);
+					}
+				}
 			}else{
-				// if we completely empty the tongs switch to the empty tongs
-				player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(Amalgam.stoneTongs));
+				AmalgamStack newStack = (AmalgamStack)container.drain(stack, container.getCapacity(stack), true);
+				int filled = te.fill(ForgeDirection.UNKNOWN, newStack, true);
+				newStack.amount -= filled;
+				container.fill(stack, newStack, true);
 			}
-		}else if(PropertyManager.itemIsAmalgable(stack)){ // next we see if the item is amalgable, if it is we make it into a fluid and add it to the crucible if we have space
+	    	return true;
+		}
+		if(PropertyManager.itemIsAmalgable(stack)){ // next we see if the item is amalgable, if it is we make it into a fluid and add it to the crucible if we have space
 			player.addChatMessage(new ChatComponentText("Item is amalgable"));
-			TileStoneCrucible te = (TileStoneCrucible)world.getTileEntity(x, y, z);
 			int amount = PropertyManager.getVolume(stack);
 			
 			if(amount > 0 && amount < te.getEmptySpace()){ // make sure we have space before we add it to the crucible
@@ -101,7 +105,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider{
 				}
 				return true;
 			}else{
-				player.addChatMessage(new ChatComponentText("There is no space"));
+				player.addChatMessage(new ChatComponentText("The crucible is about to overflow, you shouldn't add more."));
 				return false;
 			}
 			
@@ -109,7 +113,6 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider{
 			player.addChatMessage(new ChatComponentText("Item is not amalgable"));
 			return false;
 		}
-		return false;
 	}
 	
 	@Override
@@ -122,6 +125,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider{
 	@Override
     public boolean onBlockEventReceived(World world, int x, int y, int z, int p_149749_5_, int p_149749_6_){
         super.onBlockEventReceived(world, x, y, z, p_149749_5_, p_149749_6_);
+        // TODO drop all amalgam inside the container
         TileEntity tileentity = world.getTileEntity(x, y, z);
         return tileentity != null ? tileentity.receiveClientEvent(p_149749_5_, p_149749_6_) : false;
     }

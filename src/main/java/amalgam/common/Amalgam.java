@@ -16,7 +16,6 @@ import amalgam.common.block.BlockCastingTable;
 import amalgam.common.block.BlockStoneCrucible;
 import amalgam.common.item.ItemAmalgamBlob;
 import amalgam.common.item.ItemStoneTongs;
-import amalgam.common.item.ItemStoneTongsFull;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
 import amalgam.common.tile.TileCastingTable;
@@ -54,7 +53,6 @@ public class Amalgam{
 	public static Block stoneCrucible;
 	public static Block castingTable;
 	public static Item stoneTongs;
-	public static Item stoneTongsFull;
 	public static Item amalgamBlob;
 	
     @EventHandler
@@ -68,10 +66,8 @@ public class Amalgam{
     	GameRegistry.registerBlock(castingTable, "CastingTable");
     	
     	stoneTongs = new ItemStoneTongs().setUnlocalizedName("stoneTongs");
-    	stoneTongsFull = new ItemStoneTongsFull().setUnlocalizedName("stoneTongsFull");
     	amalgamBlob = new ItemAmalgamBlob().setUnlocalizedName("amalgamBlob");
     	GameRegistry.registerItem(stoneTongs, "stoneTongs");
-    	GameRegistry.registerItem(stoneTongsFull, "stoneTongsFull");
     	GameRegistry.registerItem(amalgamBlob, "amalgamBlob");
     	
     	GameRegistry.registerTileEntity(TileStoneCrucible.class, "stoneCrucible");
