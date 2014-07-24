@@ -3,16 +3,19 @@ package amalgam.common.container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import amalgam.common.Amalgam;
 
-public class SlotCasting extends Slot {
+public class SlotCasting extends Slot{
 
-	private static int maxState = 1;
+	private static final int maxState = 1;
 	private int castState;
+	private boolean hasAmalgam;
 	
 	public SlotCasting(IInventory inv, int slotNum, int xPos, int yPos) {
 		super(inv, slotNum, xPos, yPos);
 		
 		castState = 0;
+		hasAmalgam = false;
 	}
 	
     public boolean isItemValid(ItemStack p_75214_1_){
@@ -20,14 +23,31 @@ public class SlotCasting extends Slot {
         return castState == 0;
     }
 
-    public void toggleCastState(){
+    public int toggleCastState(){
     	castState = castState + 1;
-    	if(castState > maxState) castState = 0;
+    	if(castState > maxState){
+    		castState = 0;
+    		hasAmalgam = false;
+    	}
+
+    	Amalgam.log.info("new cast state! " + castState);
     	
-    	// TODO change background image depending on the state?
+    	return castState;
     }
     
     public int castState(){
     	return this.castState;
     }
+    
+    public boolean hasAmalgam(){
+    	return this.hasAmalgam && (this.castState != 0);
+    }
+    
+    public void setHasAmalgam(boolean a){
+    	this.hasAmalgam = a;
+    }
+
+	public void setCastState(int castState) {
+		this.castState = castState;
+	}
 }

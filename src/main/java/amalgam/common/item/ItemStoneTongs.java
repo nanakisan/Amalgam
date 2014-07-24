@@ -18,7 +18,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemStoneTongs extends Item implements IAmalgamContainerItem{
 
-	public static int CAPACITY = Amalgam.BASEAMOUNT * 10;
+	// TODO figure out how to steadily and constantly drain amalgam while holding down the item use button instead of having to do it repeatedly
+	
+	public static int CAPACITY = Amalgam.INGOTAMOUNT;
 	IIcon fullIcon;
 	IIcon emptyIcon;
 	

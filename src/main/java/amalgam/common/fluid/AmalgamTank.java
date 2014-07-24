@@ -51,6 +51,12 @@ public class AmalgamTank implements IFluidTank {
 	public int getCapacity() {
 		return capacity;
 	}
+	
+	public AmalgamStack setCapacity(int newCapacity) {
+		this.capacity = newCapacity;
+		// FIXME return the amalgamStack that is the amalgam which no longer fits in the tank because its capacity has decreased!
+		return null;
+	}
 
 	@Override
 	public FluidTankInfo getInfo() {
@@ -126,7 +132,7 @@ public class AmalgamTank implements IFluidTank {
 		if(fluid == null){
 			return "Empty!";
 		}
-		return "Space Left: " + (this.getCapacity() - this.getFluidAmount()) + " Properties: " + fluid.getProperties().toString();
+		return "Capacity: " + this.getCapacity() + " Space Left: " + (this.getCapacity() - this.getFluidAmount()) + " Properties: " + fluid.getProperties().toString();
 	}
 
 }

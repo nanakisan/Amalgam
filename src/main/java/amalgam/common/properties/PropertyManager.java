@@ -18,6 +18,8 @@ public class PropertyManager {
 	
 	private static HashMap<Item, List<Object>> registry = new HashMap<Item, List<Object>>();
     
+	// TODO look into getting rid of Magnetism
+	
 	public static Property Maliablity; // used for weapon/armor strength 
 	public static Property Density; // used for durability
 	public static Property Luster; // used for enchantability
@@ -36,7 +38,7 @@ public class PropertyManager {
 	    Hardness = new Property("Hardness", 1, ComboType.QUADAVERAGE);
 	}
 	
-    // Pass null for AttributeList to use an Items NBT tags for attributes instead of preregistered values
+    // Pass null for AttributeList to use an Items NBT tags for attributes instead of pre-registered values
     // Volume is 8 for an ingot, 1 for a nugget, -1 to get from NBT
     public static void registerItemProperties(ItemStack stack, PropertyList list, int volume){
     	Item item = stack.getItem();

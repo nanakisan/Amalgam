@@ -11,21 +11,24 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import amalgam.common.Amalgam;
-import amalgam.common.container.ContainerCastingTable;
+import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.AmalgamTank;
 
 public class TileCastingTable extends TileEntity implements IInventory, ISidedInventory, IFluidHandler{
 
+	// TODO emit light when holding amalgam
+	// TODO render blobs of liquid amalgam on table when they are placed there
+	
+	// FIXME save container info between uses!!!
+	
 	public ItemStack[] castingMatrix = new ItemStack[9];
 	public ItemStack castResult;
-	
-	// keeps track of which slots are depressed for casting
+
 	private int castState[] = {0,0,0,0,0,0,0,0,0};
 	
 	// store the amalgam used in casting here
-	private AmalgamTank tank;
-	
-	public ContainerCastingTable container;
+	public AmalgamTank tank = new AmalgamTank(0);
+	// public ContainerCastingTable container;
 
 	/////////////////////
 	// ISidedInventory //
@@ -40,8 +43,8 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 	@Override
 	public boolean canInsertItem(int slot, ItemStack stack, int meta){
 		// return true if the casting state for the slot is 0, can't insert item into the result slot
-		if(slot==9) return false;
-		return castState[slot]==0;
+		if(slot>=9) return false;
+		return castState[slot] == 0;
 	}
 
 	@Override
@@ -60,7 +63,7 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 	public int getSizeInventory(){
 		// the 9 casting slots - the slots used for amalgam 
 		int unusableSlots = 0;
-		for(int i = 0; i < castState.length; i++ ){
+		for(int i = 0; i < 9; i++ ){
 			if(castState[i] != 0) unusableSlots++;
 		}
 		return 9 - unusableSlots;
@@ -139,7 +142,7 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack){
-		if(slot == 9) return false;
+		if(slot >= 9) return false;
 		if(castState[slot] == 0) return true;
 		return false;
 	}
@@ -148,6 +151,7 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 	// IFluidHandler //
 	///////////////////
 	
+	// FIXME we should probably synchronize after every fill and drain
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill){
 		return tank.fill(resource, doFill);
@@ -188,10 +192,34 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 	}
 
 	public void updateAmalgamTankCapacity(){
+		Amalgam.log.info("updating tank capacity");
 		// loop through the casting slots
+		int newCapacity = 0;
+		
 		for(int i=0; i<9; i++){
-			this.container.getSlot(i);
-			// TODO figure out the best way to update the tank size when the castingState changes for slots
+			newCapacity += castState[i] * Amalgam.INGOTAMOUNT;
 		}
+		
+		Amalgam.log.info("setting capacity to " + newCapacity);
+		AmalgamStack extraAmalgam = tank.setCapacity(newCapacity);
+		Amalgam.log.info("new capacity " + tank.getCapacity());
+		Amalgam.log.info("new fluid amont " + tank.getFluidAmount());
+		if(extraAmalgam != null){
+			// FIXME create a new solid amalgam blob and add it to the player's inventory (preferably his hand if there is nothing there)
+		}
+		
+		// FIXME we need to synchronize tile entities at this point. I think this only ever gets called server side so we never see the effects client side
+	}
+	
+	public boolean tankIsFull(){
+		return tank.getFluidAmount() == tank.getCapacity();
+	}
+
+	public int castState(int i) {
+		return castState[i];
+	}
+
+	public void setCastState(int index, int value) {
+		this.castState[index] = value;
 	}
 }

@@ -13,10 +13,10 @@ public class ContainerCastingTable extends Container{
 
 	// TODO look at craftingTable or furnace implementations to figure out how to add slots and a gui
 	
-	// TODO need to use packets to sync the inventory of the casting table between the client and server.
+	// FIXME need to use packets to sync the inventory of the casting table between the client and server.
 	
 	// this tile entity associated with this container has the crafting inventories (craftMatrix and craftResult in ContianerWorkbench)
-	private TileCastingTable castingTable;
+	public TileCastingTable castingTable;
 	private InventoryPlayer playerInv;
 	
 	public ContainerCastingTable(InventoryPlayer inv, TileCastingTable te){
@@ -24,15 +24,19 @@ public class ContainerCastingTable extends Container{
 		this.playerInv = inv;
 		
 		// we use 9 as the slotIndex below because that is the index in 
-		this.addSlotToContainer(new SlotCastingResult(this.playerInv.player, this.castingTable, 9, 124, 35));
+		
 		int l;
 		int i1;
 
 		for (l = 0; l < 3; ++l){
 			for (i1 = 0; i1 < 3; ++i1){
-				this.addSlotToContainer(new SlotCasting(this.castingTable, i1 + l * 3, 30 + i1 * 18, 17 + l * 18));
+				SlotCasting s = new SlotCasting(this.castingTable, i1 + l * 3, 30 + i1 * 18, 17 + l * 18);
+				s.setCastState(te.castState(i1+l*3));
+				this.addSlotToContainer(s);
 	        }
 	    }
+		
+		this.addSlotToContainer(new SlotCastingResult(this.playerInv.player, this.castingTable, 9, 124, 35));
 
 		for (l = 0; l < 3; ++l){
 			for (i1 = 0; i1 < 9; ++i1){
@@ -45,6 +49,22 @@ public class ContainerCastingTable extends Container{
 		}
 
 		this.onCraftMatrixChanged(this.castingTable);
+	}
+	
+
+	public void updateTank() {
+		TileCastingTable te = this.castingTable;
+		te.updateAmalgamTankCapacity();	
+		int amount = te.tank.getFluidAmount();
+		for(int i =0; i <9; i++){
+			SlotCasting s = (SlotCasting)this.getSlot(i);
+			if(te.castState(i) == 1 && amount > 0){
+				s.setHasAmalgam(true);
+				amount -= Amalgam.INGOTAMOUNT;
+			}else{
+				s.setHasAmalgam(false);
+			}
+		}
 	}
 	
     /**
@@ -69,15 +89,12 @@ public class ContainerCastingTable extends Container{
         ItemStack itemstack = null;
         Slot slot = (Slot)this.inventorySlots.get(p_82846_2_);
 
-        if (slot != null && slot.getHasStack())
-        {
+        if (slot != null && slot.getHasStack()){
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
 
-            if (p_82846_2_ == 0)
-            {
-                if (!this.mergeItemStack(itemstack1, 10, 46, true))
-                {
+            if (p_82846_2_ == 0){
+                if (!this.mergeItemStack(itemstack1, 10, 46, true)){
                     return null;
                 }
 
@@ -121,5 +138,6 @@ public class ContainerCastingTable extends Container{
 
         return itemstack;
     }
+
 
 }

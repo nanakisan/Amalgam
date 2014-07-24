@@ -22,6 +22,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockStoneCrucible extends Block implements ITileEntityProvider{
 
+	// TODO make the stone crucible require a heat source, and possibly render like the cauldron
 	public BlockStoneCrucible() {
 		super(Material.rock);
 		this.setHardness(3.0F);
@@ -125,7 +126,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider{
 	@Override
     public boolean onBlockEventReceived(World world, int x, int y, int z, int p_149749_5_, int p_149749_6_){
         super.onBlockEventReceived(world, x, y, z, p_149749_5_, p_149749_6_);
-        // TODO drop all amalgam inside the container
+        // FIXME drop all amalgam inside the container when it is broken
         TileEntity tileentity = world.getTileEntity(x, y, z);
         return tileentity != null ? tileentity.receiveClientEvent(p_149749_5_, p_149749_6_) : false;
     }

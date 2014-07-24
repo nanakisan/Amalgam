@@ -14,7 +14,9 @@ public class ItemAmalgamSword extends Item{
 	public ItemAmalgamSword() {
 		super();
 		// TODO figure out how to use NBT tags to determine durability, sword damage, enchantability etc
-		
+		// I think my damage implementation will already work, just need to check once I can actually craft things with amalgam!
+		// Look at stone tongs for custom item durability display, just need to decrease an NBT durability counter on hits and break when it reaches 0.
+		// Not sure how to do enchantability of efficiency yet
 	}
 	
 	@Override

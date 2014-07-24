@@ -38,7 +38,7 @@ public class Amalgam{
     public static final String VERSION = "0.0.1";
     
     public static final int BASEAMOUNT = 10;
-    
+    public static final int INGOTAMOUNT = BASEAMOUNT * 8;
     public static final Logger log = LogManager.getLogger("Amalgam");
 	public static final int CASTING_GUI_ID = 1;
     
