@@ -195,7 +195,6 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 	// IFluidHandler //
 	///////////////////
 	
-	// FIXME we should probably synchronize after every fill and drain
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill){
 		int r = tank.fill(resource, doFill);
@@ -257,8 +256,6 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 		if(extraAmalgam != null){
 			// FIXME create a new solid amalgam blob and add it to the player's inventory (preferably his hand if there is nothing there)
 		}
-		
-		// FIXME we need to synchronize tile entities at this point. I think this only ever gets called server side so we never see the effects client side
 	}
 	
 	public boolean tankIsFull(){

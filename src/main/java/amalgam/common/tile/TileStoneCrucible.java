@@ -26,8 +26,6 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler{
         tank.writeToNBT(tag);
     }
     
-    // FIXME we should probably synchronize after every fill and drain
-    
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill){
 		int r = tank.fill(resource, doFill);

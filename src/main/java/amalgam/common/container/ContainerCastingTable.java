@@ -11,10 +11,6 @@ import amalgam.common.tile.TileCastingTable;
 
 public class ContainerCastingTable extends Container{
 
-	// TODO look at craftingTable or furnace implementations to figure out how to add slots and a gui
-	
-	// FIXME need to use packets to sync the inventory of the casting table between the client and server.
-	
 	// this tile entity associated with this container has the crafting inventories (craftMatrix and craftResult in ContianerWorkbench)
 	public TileCastingTable castingTable;
 	private InventoryPlayer playerInv;
