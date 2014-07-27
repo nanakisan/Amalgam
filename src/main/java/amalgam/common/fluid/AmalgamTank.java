@@ -23,6 +23,7 @@ public class AmalgamTank implements IFluidTank {
     	if (!nbt.hasKey("Empty")){
     		this.fluid = AmalgamStack.loadAmalgamStackFromNBT(nbt);
     	}
+    	this.capacity = nbt.getInteger("cap");
         return this;
     }
 
@@ -33,6 +34,7 @@ public class AmalgamTank implements IFluidTank {
         else{
             nbt.setString("Empty", "");
         }
+        nbt.setInteger("cap", this.capacity);
         return nbt;
     }
     
@@ -132,7 +134,11 @@ public class AmalgamTank implements IFluidTank {
 		if(fluid == null){
 			return "Empty!";
 		}
-		return "Capacity: " + this.getCapacity() + " Space Left: " + (this.getCapacity() - this.getFluidAmount()) + " Properties: " + fluid.getProperties().toString();
+		return "Capacity: " + this.getCapacity() + " Amount: " + this.getFluidAmount() + " Space Left: " + (this.getCapacity() - this.getFluidAmount()) + " Properties: " + fluid.getProperties().toString();
+	}
+
+	public void setFluid(AmalgamStack fluid2) {
+		this.fluid = fluid2;
 	}
 
 }

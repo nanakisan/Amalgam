@@ -3,7 +3,6 @@ package amalgam.common.container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import amalgam.common.Amalgam;
 
 public class SlotCasting extends Slot{
 
@@ -20,7 +19,7 @@ public class SlotCasting extends Slot{
 	
     public boolean isItemValid(ItemStack p_75214_1_){
     	// only return true if the cast state is zero
-        return castState == 0;
+    	return castState == 0;
     }
 
     public int toggleCastState(){
@@ -29,9 +28,6 @@ public class SlotCasting extends Slot{
     		castState = 0;
     		hasAmalgam = false;
     	}
-
-    	Amalgam.log.info("new cast state! " + castState);
-    	
     	return castState;
     }
     

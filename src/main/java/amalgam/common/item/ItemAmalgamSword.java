@@ -16,7 +16,11 @@ public class ItemAmalgamSword extends Item{
 		// TODO figure out how to use NBT tags to determine durability, sword damage, enchantability etc
 		// I think my damage implementation will already work, just need to check once I can actually craft things with amalgam!
 		// Look at stone tongs for custom item durability display, just need to decrease an NBT durability counter on hits and break when it reaches 0.
-		// Not sure how to do enchantability of efficiency yet
+		// For enchantability look in EnchantmentHelper, specifically at the calcItemStackEnchantability function, probably need to use reflection
+		
+		// As far as I can tell, getItemEnchantability is only ever called from EnchantmentHelper in its buildEnchantmentList and calcItemStackEnchantability functions.
+		// I am asking for a stack based function, not sure if this is something the forge people could do or if it is out of their hands.
+		// if I can't make the enchantability depend on nbt data I will have to make separate items for each level of enchantability (probably 5, 10, 15, 20, 25 and 30)
 	}
 	
 	@Override
@@ -43,7 +47,7 @@ public class ItemAmalgamSword extends Item{
 		PropertyList pList = new PropertyList();
 		pList.readFromNBT(stack.getTagCompound());
 		
-		return (float)(pList.getValue(PropertyManager.Hardness));
+		return (float)(pList.getValue(PropertyManager.Hardness) - 1.0);
 	}
 	
 	public static float getEnchantabilityFromStack(ItemStack stack){
@@ -57,14 +61,16 @@ public class ItemAmalgamSword extends Item{
 		PropertyList pList = new PropertyList();
 		pList.readFromNBT(stack.getTagCompound());
 		float density = pList.getValue(PropertyManager.Density);
-		return (float)(density * density);
+		float hardness = pList.getValue(PropertyManager.Hardness);
+		return (density * density) * hardness;
 	}
 	
 	public static float getEfficiencyFromStack(ItemStack stack){
 		PropertyList pList = new PropertyList();
 		pList.readFromNBT(stack.getTagCompound());
 		
-		return (float)(pList.getValue(PropertyManager.Magnetism));
+		//return (float)(pList.getValue(PropertyManager.Magnetism));
+		return 1;
 	}
 	
 	public boolean canHarvestBlock(ItemStack stack, int meta, Block block, EntityPlayer player){
@@ -73,7 +79,6 @@ public class ItemAmalgamSword extends Item{
 		}
 		return false;
 	}
-
 }
 
 // ItemSword

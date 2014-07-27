@@ -30,7 +30,8 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler{
     
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill){
-		return tank.fill(resource, doFill);
+		int r = tank.fill(resource, doFill);
+		return r;
 	}
 
 	@Override
@@ -38,12 +39,14 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler{
 		if(resource == null){
 			return null;
 		}
-		return tank.drain(resource.amount, doDrain);
+		FluidStack r = tank.drain(resource.amount, doDrain);
+		return r;
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain){
-		return tank.drain(maxDrain, doDrain);
+		FluidStack r = tank.drain(maxDrain, doDrain);
+		return r;
 	}
 
 	@Override
@@ -65,6 +68,7 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler{
 	}
 
 	public int getEmptySpace(){
+		//Amalgam.log.info("Calculating empty space... capacity: " + tank.getCapacity() + " fluid amount: " + tank.getFluidAmount());
 		return tank.getCapacity() - tank.getFluidAmount();
 	}
 	

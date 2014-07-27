@@ -16,6 +16,7 @@ import amalgam.common.block.BlockCastingTable;
 import amalgam.common.block.BlockStoneCrucible;
 import amalgam.common.item.ItemAmalgamBlob;
 import amalgam.common.item.ItemStoneTongs;
+import amalgam.common.network.PacketHandler;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
 import amalgam.common.tile.TileCastingTable;
@@ -55,8 +56,11 @@ public class Amalgam{
 	public static Item stoneTongs;
 	public static Item amalgamBlob;
 	
+	
     @EventHandler
     public void preInit(FMLPreInitializationEvent event){
+    	PacketHandler.init();
+    	
     	fluidAmalgam = new Fluid("Amalgam");
     	FluidRegistry.registerFluid(fluidAmalgam);
     	

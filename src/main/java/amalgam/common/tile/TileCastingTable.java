@@ -4,6 +4,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -13,23 +18,62 @@ import net.minecraftforge.fluids.IFluidHandler;
 import amalgam.common.Amalgam;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.AmalgamTank;
+import amalgam.common.network.PacketHandler;
+import amalgam.common.network.PacketSyncCastingTank;
 
 public class TileCastingTable extends TileEntity implements IInventory, ISidedInventory, IFluidHandler{
 
 	// TODO emit light when holding amalgam
 	// TODO render blobs of liquid amalgam on table when they are placed there
-	
-	// FIXME save container info between uses!!!
-	
+
 	public ItemStack[] castingMatrix = new ItemStack[9];
 	public ItemStack castResult;
 
-	private int castState[] = {0,0,0,0,0,0,0,0,0};
+	public int castState[] = {0,0,0,0,0,0,0,0,0};
 	
 	// store the amalgam used in casting here
 	public AmalgamTank tank = new AmalgamTank(0);
-	// public ContainerCastingTable container;
 
+	@Override
+	public void readFromNBT(NBTTagCompound tag){
+		super.readFromNBT(tag);
+		NBTTagList nbttaglist = tag.getTagList("castingMatrix", 10);
+        this.castingMatrix = new ItemStack[9];
+
+        for (int i = 0; i < nbttaglist.tagCount(); ++i){
+            NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
+            byte b0 = nbttagcompound1.getByte("Slot");
+
+            if (b0 >= 0 && b0 < this.castingMatrix.length){
+                this.castingMatrix[b0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+            }
+        }
+
+        this.castResult = ItemStack.loadItemStackFromNBT(tag.getCompoundTag("castResult"));
+        this.castState = tag.getIntArray("castState");
+        tank.readFromNBT(tag);
+	}
+	
+	@Override
+	public void writeToNBT(NBTTagCompound tag){
+		super.writeToNBT(tag);
+		tank.writeToNBT(tag);
+		tag.setIntArray("castState", this.castState);
+		
+        NBTTagList nbttaglist = new NBTTagList();
+
+        for (int i = 0; i < this.castingMatrix.length; ++i){
+            if (this.castingMatrix[i] != null){
+                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+                nbttagcompound1.setByte("Slot", (byte)i);
+                this.castingMatrix[i].writeToNBT(nbttagcompound1);
+                nbttaglist.appendTag(nbttagcompound1);
+            }
+        }
+
+        tag.setTag("castingMatrix", nbttaglist);
+	}
+	
 	/////////////////////
 	// ISidedInventory //
 	/////////////////////
@@ -61,6 +105,7 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 	
 	@Override
 	public int getSizeInventory(){
+		
 		// the 9 casting slots - the slots used for amalgam 
 		int unusableSlots = 0;
 		for(int i = 0; i < 9; i++ ){
@@ -110,7 +155,7 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 
 	@Override
 	public String getInventoryName(){
-		return "Casting Table";
+		return "container.castingtable";
 	}
 
 	@Override
@@ -132,7 +177,6 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 	@Override
 	public void openInventory(){
 		// TODO Probably need to do something here to open the gui
-		
 	}
 
 	@Override
@@ -154,7 +198,10 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 	// FIXME we should probably synchronize after every fill and drain
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill){
-		return tank.fill(resource, doFill);
+		int r = tank.fill(resource, doFill);
+		PacketHandler.INSTANCE.sendToAll(new PacketSyncCastingTank(this.xCoord, this.yCoord, this.zCoord, this.tank.getFluidAmount()));
+		
+		return r;
 	}
 
 	@Override
@@ -162,12 +209,18 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 		if(resource == null){
 			return null;
 		}
-		return tank.drain(resource.amount, doDrain);
+		FluidStack r = tank.drain(resource.amount, doDrain);
+		PacketHandler.INSTANCE.sendToAll(new PacketSyncCastingTank(this.xCoord, this.yCoord, this.zCoord, this.tank.getFluidAmount()));
+		
+		return r;
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain){
-		return tank.drain(maxDrain, doDrain);
+		FluidStack r =tank.drain(maxDrain, doDrain);
+		PacketHandler.INSTANCE.sendToAll(new PacketSyncCastingTank(this.xCoord, this.yCoord, this.zCoord, this.tank.getFluidAmount()));
+		
+		return r;
 	}
 
 	@Override
@@ -192,18 +245,15 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 	}
 
 	public void updateAmalgamTankCapacity(){
-		Amalgam.log.info("updating tank capacity");
 		// loop through the casting slots
 		int newCapacity = 0;
 		
 		for(int i=0; i<9; i++){
 			newCapacity += castState[i] * Amalgam.INGOTAMOUNT;
 		}
-		
-		Amalgam.log.info("setting capacity to " + newCapacity);
+
 		AmalgamStack extraAmalgam = tank.setCapacity(newCapacity);
-		Amalgam.log.info("new capacity " + tank.getCapacity());
-		Amalgam.log.info("new fluid amont " + tank.getFluidAmount());
+		
 		if(extraAmalgam != null){
 			// FIXME create a new solid amalgam blob and add it to the player's inventory (preferably his hand if there is nothing there)
 		}
@@ -221,5 +271,25 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 
 	public void setCastState(int index, int value) {
 		this.castState[index] = value;
+		this.updateAmalgamTankCapacity();
 	}
+	
+	// use this for syncing the cast state between server and client when we load the tile entity
+	// these functions should probably be used for all custom NBT data
+	@Override
+    public Packet getDescriptionPacket(){
+		NBTTagCompound tag = new NBTTagCompound();
+		tag.setIntArray("castState", this.castState);
+		tank.writeToNBT(tag);
+		return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, this.blockMetadata, tag);
+        //return null;
+    }
+	
+	@Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt){
+		Amalgam.log.info("TileCastingTable onDataPacket net:" + net.channel().toString());
+		NBTTagCompound tag = pkt.func_148857_g();
+		this.castState = tag.getIntArray("castState");
+		this.tank.readFromNBT(tag);
+    }
 }

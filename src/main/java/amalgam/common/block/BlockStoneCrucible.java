@@ -85,7 +85,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider{
 		if(PropertyManager.itemIsAmalgable(stack)){ // next we see if the item is amalgable, if it is we make it into a fluid and add it to the crucible if we have space
 			player.addChatMessage(new ChatComponentText("Item is amalgable"));
 			int amount = PropertyManager.getVolume(stack);
-			
+			Amalgam.log.info("amount for amalgable item: " + amount);
 			if(amount > 0 && amount < te.getEmptySpace()){ // make sure we have space before we add it to the crucible
 				PropertyList amalgProperties = PropertyManager.getProperties(stack);
 				AmalgamStack amalg = new AmalgamStack(amount, amalgProperties); 

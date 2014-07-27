@@ -49,14 +49,15 @@ public class ContainerCastingTable extends Container{
 		}
 
 		this.onCraftMatrixChanged(this.castingTable);
+		this.updateAmalgamDistribution();
 	}
 	
-
-	public void updateTank() {
+	public void updateAmalgamDistribution(){
+		Amalgam.log.info("updating amlgam distribution");
 		TileCastingTable te = this.castingTable;
-		te.updateAmalgamTankCapacity();	
 		int amount = te.tank.getFluidAmount();
-		for(int i =0; i <9; i++){
+		Amalgam.log.info("amount: " + amount);
+		for(int i = 0; i < 9; i++){
 			SlotCasting s = (SlotCasting)this.getSlot(i);
 			if(te.castState(i) == 1 && amount > 0){
 				s.setHasAmalgam(true);
@@ -71,11 +72,13 @@ public class ContainerCastingTable extends Container{
      * Callback for when the crafting matrix is changed.
      */
     public void onCraftMatrixChanged(IInventory castingTable){
-        //this.castingTable.castResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.castingTable, this.castingTable.getWorldObj()));
+        super.onCraftMatrixChanged(castingTable);
+    	//this.castingTable.castResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.castingTable, this.castingTable.getWorldObj()));
     }
     
 	@Override
 	public boolean canInteractWith(EntityPlayer player) {
+		// TODO look into this
 		return castingTable.getWorldObj().getBlock(castingTable.xCoord, castingTable.yCoord, castingTable.zCoord) != Amalgam.castingTable ? false : player.getDistanceSq((double)castingTable.xCoord + 0.5D, (double)castingTable.yCoord + 0.5D, (double)castingTable.zCoord + 0.5D) <= 64.0D;
 		//return true;
 	}
@@ -138,6 +141,4 @@ public class ContainerCastingTable extends Container{
 
         return itemstack;
     }
-
-
 }

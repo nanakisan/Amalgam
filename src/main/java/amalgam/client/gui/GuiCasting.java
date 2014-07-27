@@ -9,6 +9,8 @@ import org.lwjgl.opengl.GL11;
 
 import amalgam.common.container.ContainerCastingTable;
 import amalgam.common.container.SlotCasting;
+import amalgam.common.network.PacketHandler;
+import amalgam.common.network.PacketSyncCastingSlot;
 import amalgam.common.tile.TileCastingTable;
 
 public class GuiCasting extends GuiContainer{
@@ -39,8 +41,14 @@ public class GuiCasting extends GuiContainer{
         		// parameters 1 and 2 are where we draw
         		// parameters 3 and 4 determine where on the image we draw from
         		// parameters 5 and 6 determine how much we are drawing
-        		if(s.hasAmalgam()) this.drawTexturedModalRect(k+30+18*colNum, l+17+18*rowNum, 10, 10, 16, 16);
-        		else this.drawTexturedModalRect(k+30+18*colNum, l+17+18*rowNum, 20, 20, 16, 16);
+        		if(s.hasAmalgam()){
+        			//Amalgam.log.info("slot " + i + " has amalgam");
+        			this.drawTexturedModalRect(k+30+18*colNum, l+17+18*rowNum, 10, 10, 16, 16);
+        		}
+        		else{
+        			//Amalgam.log.info("slot " + i + " doesn't have amalgam");
+        			this.drawTexturedModalRect(k+30+18*colNum, l+17+18*rowNum, 20, 20, 16, 16);
+        		}
         	}
         }
 	}
@@ -51,11 +59,13 @@ public class GuiCasting extends GuiContainer{
         if(slot instanceof SlotCasting){
         	if(!slot.getHasStack() && this.mc.thePlayer.inventory.getItemStack() == null){
         		int newState = ((SlotCasting) slot).toggleCastState();
-        		
-                ContainerCastingTable table = (ContainerCastingTable)this.inventorySlots;
-                TileCastingTable te = table.castingTable;
-                te.setCastState(slot.slotNumber, newState);
-                table.updateTank();
+        		ContainerCastingTable table = (ContainerCastingTable)this.inventorySlots;
+        		TileCastingTable te = table.castingTable;
+        		// set the client's state
+        		te.setCastState(slot.slotNumber, newState);
+        		// tell the server the new state
+        		PacketHandler.INSTANCE.sendToServer(new PacketSyncCastingSlot(te.xCoord, te.yCoord, te.zCoord, slot.slotNumber, newState));
+        		table.updateAmalgamDistribution();
         	}
         }
         super.mouseClicked(x, y, keyNum);

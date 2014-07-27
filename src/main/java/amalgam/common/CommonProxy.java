@@ -11,10 +11,7 @@ public class CommonProxy implements IGuiHandler{
 
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		Amalgam.log.error("in getting the serverGuiElement");
-		
 		if(ID == Amalgam.CASTING_GUI_ID){
-			Amalgam.log.error("in getting the serverGuiElement: good id");
 			TileEntity te = world.getTileEntity(x, y, z);
 			return new ContainerCastingTable(player.inventory, (TileCastingTable)te);
 		}
@@ -23,8 +20,10 @@ public class CommonProxy implements IGuiHandler{
 	
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		Amalgam.log.error("in getting the clientGuiElement");
 		return null;
 	}
 
+	public World getClientWorld() {
+		return null;
+	}
 }

@@ -23,7 +23,6 @@ public class PropertyManager {
 	public static Property Maliablity; // used for weapon/armor strength 
 	public static Property Density; // used for durability
 	public static Property Luster; // used for enchantability
-	public static Property Magnetism; // used for mining speed
 	public static Property Hardness; // used for mining level
 	
 	public static final PropertyManager getInstance(){
@@ -34,7 +33,6 @@ public class PropertyManager {
 		Maliablity = new Property("Maliability", 4, ComboType.QUADAVERAGE);
 	    Density = new Property("Density", 6, ComboType.QUADAVERAGE);
 	    Luster = new Property("Luster", 10, ComboType.QUADAVERAGE);
-	    Magnetism = new Property("Magnetism", 6, ComboType.QUADAVERAGE);
 	    Hardness = new Property("Hardness", 1, ComboType.QUADAVERAGE);
 	}
 	
@@ -56,9 +54,9 @@ public class PropertyManager {
     	PropertyList list = new PropertyList();
     	
     	list.add(Density, (float)Math.sqrt(mat.getMaxUses()/(mat.getHarvestLevel()+1)));
-    	list.add(Hardness, mat.getHarvestLevel());
+    	list.add(Hardness, mat.getHarvestLevel()+1);
     	list.add(Luster, mat.getEnchantability());
-    	list.add(Magnetism, mat.getEfficiencyOnProperMaterial());
+    	// mat.getEfficiencyOnProperMaterial();
     	list.add(Maliablity, mat.getDamageVsEntity()*2 + 2);
     	
     	return list;
@@ -68,9 +66,8 @@ public class PropertyManager {
     	PropertyList list = new PropertyList();
 
     	list.add(Density, mat.getDurability(1)/11);
-    	list.add(Hardness, mat.getDamageReductionAmount(1)/2 - 1);
+    	list.add(Hardness, mat.getDamageReductionAmount(1)/2);
     	list.add(Luster, mat.getEnchantability());
-    	list.add(Magnetism, mat.getEnchantability()/2);
     	list.add(Maliablity, mat.getDamageReductionAmount(1));
     	
     	return list;
