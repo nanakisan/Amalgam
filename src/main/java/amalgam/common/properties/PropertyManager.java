@@ -17,8 +17,6 @@ public class PropertyManager {
 	private static final PropertyManager instance = new PropertyManager();
 	
 	private static HashMap<Item, List<Object>> registry = new HashMap<Item, List<Object>>();
-    
-	// TODO look into getting rid of Magnetism
 	
 	public static Property Maliablity; // used for weapon/armor strength 
 	public static Property Density; // used for durability

@@ -47,7 +47,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider{
 		TileStoneCrucible te = (TileStoneCrucible)world.getTileEntity(x, y, z);
 		// here we decide what to do based on what item was used to activate the block
 		if(stack == null){// if there was no item we print info to the chat
-			player.addChatMessage(new ChatComponentText(te.toString()));
+			// player.addChatMessage(new ChatComponentText(te.toString()));
 			return true;
 		}
 		if(stack.getItem() instanceof IAmalgamContainerItem){
@@ -85,7 +85,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider{
 		if(PropertyManager.itemIsAmalgable(stack)){ // next we see if the item is amalgable, if it is we make it into a fluid and add it to the crucible if we have space
 			player.addChatMessage(new ChatComponentText("Item is amalgable"));
 			int amount = PropertyManager.getVolume(stack);
-			Amalgam.log.info("amount for amalgable item: " + amount);
+			//Amalgam.log.info("amount for amalgable item: " + amount);
 			if(amount > 0 && amount < te.getEmptySpace()){ // make sure we have space before we add it to the crucible
 				PropertyList amalgProperties = PropertyManager.getProperties(stack);
 				AmalgamStack amalg = new AmalgamStack(amount, amalgProperties); 
@@ -119,6 +119,8 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider{
 	@Override
 	public void breakBlock(World world, int x, int y, int z, Block block, int p_149749_6_)
     {
+		TileStoneCrucible t = (TileStoneCrucible) world.getTileEntity(x, y, z);
+		if(t!=null) t.emptyTank();
         super.breakBlock(world, x, y, z, block, p_149749_6_);
         world.removeTileEntity(x, y, z);
     }
@@ -126,7 +128,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider{
 	@Override
     public boolean onBlockEventReceived(World world, int x, int y, int z, int p_149749_5_, int p_149749_6_){
         super.onBlockEventReceived(world, x, y, z, p_149749_5_, p_149749_6_);
-        // FIXME drop all amalgam inside the container when it is broken
+       
         TileEntity tileentity = world.getTileEntity(x, y, z);
         return tileentity != null ? tileentity.receiveClientEvent(p_149749_5_, p_149749_6_) : false;
     }

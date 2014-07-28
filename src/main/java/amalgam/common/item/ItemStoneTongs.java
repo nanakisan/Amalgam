@@ -41,12 +41,23 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem{
 	
 	@Override
 	public IIcon getIcon(ItemStack stack, int pass){
-		if(this.getFluid(stack).amount > 0) return fullIcon;
+		if(this.getFluidAmount(stack) > 0) return fullIcon;
 		return emptyIcon;
 	}
 	
+	public int getFluidAmount(ItemStack container){
+		if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Amalgam")){
+            return 0;
+        }
+		// read the Amalgam tag compound
+		NBTTagCompound containerNBT = container.stackTagCompound.getCompoundTag("Amalgam");
+		// get amount and PropertyList
+		return containerNBT.getInteger("Amount");	
+	}
+	
 	@Override
-	public AmalgamStack getFluid(ItemStack container) {
+	public AmalgamStack getFluid(ItemStack container){
+		// Amalgam.log.info("here");
 		if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Amalgam")){
             return new AmalgamStack(0, new PropertyList());
         }
@@ -186,7 +197,7 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem{
     }
 
 	public int getEmptySpace(ItemStack stack) {
-		return CAPACITY - this.getFluid(stack).amount;
+		return CAPACITY - this.getFluidAmount(stack);
 	}
 	
 	public boolean showDurabilityBar(ItemStack stack){
@@ -201,7 +212,7 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem{
 	*/
 	public double getDurabilityForDisplay(ItemStack stack){
 		
-		return 1.0 - (float)this.getFluid(stack).amount / (float)CAPACITY;
+		return 1.0 - (float)this.getFluidAmount(stack) / (float)CAPACITY;
 		//return (double)stack.getItemDamageForDisplay() / (double)stack.getMaxDamage();
 	}
 }

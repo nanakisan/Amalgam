@@ -1,5 +1,6 @@
 package amalgam.common.block;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -7,7 +8,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import amalgam.common.Amalgam;
@@ -36,7 +36,7 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
 		TileCastingTable te = (TileCastingTable)world.getTileEntity(x, y, z);
 		// here we decide what to do based on what item was used to activate the block
 		if(stack == null){// if there was no item we print info to the chat
-			player.addChatMessage(new ChatComponentText(te.tank.toString()));
+			// player.addChatMessage(new ChatComponentText(te.tank.toString()));
 			player.openGui(Amalgam.instance, Amalgam.CASTING_GUI_ID, world, x, y, z);
 			return false;
 		}
@@ -80,4 +80,13 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
 	public TileEntity createNewTileEntity(World world, int p_149915_2_) {
 		return new TileCastingTable();
 	}
+	
+	@Override
+	public void breakBlock(World world, int x, int y, int z, Block block, int p_149749_6_)
+    {
+        TileCastingTable t = (TileCastingTable) world.getTileEntity(x, y, z);
+        if(t!=null) t.emptyTank();
+        super.breakBlock(world, x, y, z, block, p_149749_6_);
+        world.removeTileEntity(x, y, z);
+    }
 }

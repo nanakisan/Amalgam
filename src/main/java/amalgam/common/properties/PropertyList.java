@@ -29,7 +29,10 @@ public class PropertyList{
 	}
 	
 	public float getValue(Property a){
-		return this.properties.get(a) == null ? a.defaultValue : ((Float)this.properties.get(a)).floatValue();
+		if(this.properties.get(a) == null || this.properties.get(a).isNaN()){
+			return a.defaultValue;
+		}
+		return ((Float)this.properties.get(a)).floatValue();
 	}
 	
 	public PropertyList add(Property a, float value){
@@ -45,6 +48,7 @@ public class PropertyList{
 	public void readFromNBT(NBTTagCompound nbtComp){
 		this.properties.clear();
 		NBTTagList list = nbtComp.getTagList("AmalgamProperties", 10);
+		//Amalgam.log.info(list.toString());
 		for(int i=0; i<list.tagCount(); i++){
 			NBTTagCompound attr = list.getCompoundTagAt(i);
 			if(attr.hasKey("name")){

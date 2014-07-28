@@ -19,6 +19,7 @@ public class AmalgamTank implements IFluidTank {
     	capacity = cap;
     }
     
+    
     public AmalgamTank readFromNBT(NBTTagCompound nbt){
     	if (!nbt.hasKey("Empty")){
     		this.fluid = AmalgamStack.loadAmalgamStackFromNBT(nbt);
@@ -40,7 +41,10 @@ public class AmalgamTank implements IFluidTank {
     
 	@Override
 	public FluidStack getFluid() {
-		return fluid;
+		if(this.fluid == null){
+			this.fluid = new AmalgamStack(0, null);
+		}
+		return this.fluid;
 	}
 
 	@Override
@@ -56,7 +60,11 @@ public class AmalgamTank implements IFluidTank {
 	
 	public AmalgamStack setCapacity(int newCapacity) {
 		this.capacity = newCapacity;
-		// FIXME return the amalgamStack that is the amalgam which no longer fits in the tank because its capacity has decreased!
+		if(this.capacity < this.getFluidAmount()){
+			int extra = this.fluid.amount - this.capacity;
+			this.fluid.amount = this.capacity;
+			return new AmalgamStack(extra, ((AmalgamStack)this.fluid).getProperties());
+		}
 		return null;
 	}
 
@@ -80,7 +88,6 @@ public class AmalgamTank implements IFluidTank {
 				if (tile != null){
 	                FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fluid, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord, this, fluid.amount));
 	            }
-				//Amalgam.log.info(fluid.getProperties().toString());
 				return fluid.amount;
 			}
 			
@@ -95,7 +102,6 @@ public class AmalgamTank implements IFluidTank {
 	        if (tile != null){
 	            FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fluid, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord, this, filled));
 	        }
-	      //Amalgam.log.info(fluid.getProperties().toString());
 	        return filled;
 		}else{
 			if(fluid == null){

@@ -70,4 +70,5 @@ public class AmalgamStack extends FluidStack {
         AmalgamStack stack = new AmalgamStack(amount, pList);
 		return stack;
 	}
+
 }

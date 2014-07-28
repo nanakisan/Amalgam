@@ -1,5 +1,7 @@
 package amalgam.common.tile;
 
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -8,7 +10,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import amalgam.common.Amalgam;
+import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.AmalgamTank;
+import amalgam.common.item.ItemAmalgamBlob;
+import amalgam.common.properties.PropertyList;
 
 public class TileStoneCrucible extends TileEntity implements IFluidHandler{
 
@@ -68,6 +73,26 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler{
 	public int getEmptySpace(){
 		//Amalgam.log.info("Calculating empty space... capacity: " + tank.getCapacity() + " fluid amount: " + tank.getFluidAmount());
 		return tank.getCapacity() - tank.getFluidAmount();
+	}
+	
+	public void emptyTank() {
+		if (!this.worldObj.isRemote){
+			int amount = tank.getFluidAmount();
+			PropertyList p = ((AmalgamStack) tank.getFluid()).getProperties();
+			while(amount > 0){
+				int dropAmount = Math.min(amount, Amalgam.INGOTAMOUNT);
+				amount -= dropAmount;
+				ItemStack droppedBlob = new ItemStack(Amalgam.amalgamBlob, 1);
+			
+				((ItemAmalgamBlob) Amalgam.amalgamBlob).setProperties(droppedBlob, p);
+				((ItemAmalgamBlob) Amalgam.amalgamBlob).setVolume(droppedBlob, dropAmount);
+			
+				Amalgam.log.info("attempting to spawn an amalgam blob entity");
+				EntityItem amalgEntity = new EntityItem(this.worldObj, xCoord, yCoord, zCoord, droppedBlob);
+				this.worldObj.spawnEntityInWorld(amalgEntity);
+			}
+        }
+		
 	}
 	
 	public String toString(){

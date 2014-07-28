@@ -49,10 +49,10 @@ public class ContainerCastingTable extends Container{
 	}
 	
 	public void updateAmalgamDistribution(){
-		Amalgam.log.info("updating amlgam distribution");
+		//Amalgam.log.info("updating amlgam distribution");
 		TileCastingTable te = this.castingTable;
 		int amount = te.tank.getFluidAmount();
-		Amalgam.log.info("amount: " + amount);
+		//Amalgam.log.info("amount: " + amount);
 		for(int i = 0; i < 9; i++){
 			SlotCasting s = (SlotCasting)this.getSlot(i);
 			if(te.castState(i) == 1 && amount > 0){
@@ -106,29 +106,21 @@ public class ContainerCastingTable extends Container{
                     return null;
                 }
             }
-            else if (p_82846_2_ >= 37 && p_82846_2_ < 46)
-            {
-                if (!this.mergeItemStack(itemstack1, 10, 37, false))
-                {
+            else if (p_82846_2_ >= 37 && p_82846_2_ < 46){
+                if (!this.mergeItemStack(itemstack1, 10, 37, false)){
                     return null;
                 }
-            }
-            else if (!this.mergeItemStack(itemstack1, 10, 46, false))
-            {
+            }else if (!this.mergeItemStack(itemstack1, 10, 46, false)){
                 return null;
             }
 
-            if (itemstack1.stackSize == 0)
-            {
+            if (itemstack1.stackSize == 0){
                 slot.putStack((ItemStack)null);
-            }
-            else
-            {
+            }else{
                 slot.onSlotChanged();
             }
 
-            if (itemstack1.stackSize == itemstack.stackSize)
-            {
+            if (itemstack1.stackSize == itemstack.stackSize){
                 return null;
             }
 

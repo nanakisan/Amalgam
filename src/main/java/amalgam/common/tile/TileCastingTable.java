@@ -1,5 +1,6 @@
 package amalgam.common.tile;
 
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -18,8 +19,10 @@ import net.minecraftforge.fluids.IFluidHandler;
 import amalgam.common.Amalgam;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.AmalgamTank;
+import amalgam.common.item.ItemAmalgamBlob;
 import amalgam.common.network.PacketHandler;
 import amalgam.common.network.PacketSyncCastingTank;
+import amalgam.common.properties.PropertyList;
 
 public class TileCastingTable extends TileEntity implements IInventory, ISidedInventory, IFluidHandler{
 
@@ -175,9 +178,7 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 	}
 
 	@Override
-	public void openInventory(){
-		// TODO Probably need to do something here to open the gui
-	}
+	public void openInventory(){}
 
 	@Override
 	public void closeInventory(){
@@ -198,7 +199,7 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill){
 		int r = tank.fill(resource, doFill);
-		PacketHandler.INSTANCE.sendToAll(new PacketSyncCastingTank(this.xCoord, this.yCoord, this.zCoord, this.tank.getFluidAmount()));
+		PacketHandler.INSTANCE.sendToAll(new PacketSyncCastingTank(this.xCoord, this.yCoord, this.zCoord, (AmalgamStack) this.tank.getFluid()));
 		
 		return r;
 	}
@@ -209,7 +210,7 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 			return null;
 		}
 		FluidStack r = tank.drain(resource.amount, doDrain);
-		PacketHandler.INSTANCE.sendToAll(new PacketSyncCastingTank(this.xCoord, this.yCoord, this.zCoord, this.tank.getFluidAmount()));
+		PacketHandler.INSTANCE.sendToAll(new PacketSyncCastingTank(this.xCoord, this.yCoord, this.zCoord, (AmalgamStack) this.tank.getFluid()));
 		
 		return r;
 	}
@@ -217,7 +218,7 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain){
 		FluidStack r =tank.drain(maxDrain, doDrain);
-		PacketHandler.INSTANCE.sendToAll(new PacketSyncCastingTank(this.xCoord, this.yCoord, this.zCoord, this.tank.getFluidAmount()));
+		PacketHandler.INSTANCE.sendToAll(new PacketSyncCastingTank(this.xCoord, this.yCoord, this.zCoord, (AmalgamStack) this.tank.getFluid()));
 		
 		return r;
 	}
@@ -254,7 +255,20 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 		AmalgamStack extraAmalgam = tank.setCapacity(newCapacity);
 		
 		if(extraAmalgam != null){
-			// FIXME create a new solid amalgam blob and add it to the player's inventory (preferably his hand if there is nothing there)
+			if(extraAmalgam.amount == 0) return;
+			// Amalgam.log.info("extra amlgam, need to spawn it");
+			
+			if (!this.worldObj.isRemote){
+				
+				ItemStack droppedBlob = new ItemStack(Amalgam.amalgamBlob, 1);
+				
+				((ItemAmalgamBlob) Amalgam.amalgamBlob).setProperties(droppedBlob, extraAmalgam.getProperties());
+				((ItemAmalgamBlob) Amalgam.amalgamBlob).setVolume(droppedBlob, extraAmalgam.amount);
+				
+				Amalgam.log.info("attempting to spawn an amalgam blob entity");
+				EntityItem amalgEntity = new EntityItem(this.worldObj, xCoord, yCoord, zCoord, droppedBlob);
+	        	this.worldObj.spawnEntityInWorld(amalgEntity);
+	        }
 		}
 	}
 	
@@ -284,9 +298,29 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
 	
 	@Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt){
-		Amalgam.log.info("TileCastingTable onDataPacket net:" + net.channel().toString());
+		// Amalgam.log.info("TileCastingTable onDataPacket net:" + net.channel().toString());
 		NBTTagCompound tag = pkt.func_148857_g();
 		this.castState = tag.getIntArray("castState");
 		this.tank.readFromNBT(tag);
     }
+
+	public void emptyTank() {
+		if (!this.worldObj.isRemote){
+			int amount = tank.getFluidAmount();
+			PropertyList p = ((AmalgamStack) tank.getFluid()).getProperties();
+			while(amount > 0){
+				int dropAmount = Math.min(amount, Amalgam.INGOTAMOUNT);
+				amount -= dropAmount;
+				ItemStack droppedBlob = new ItemStack(Amalgam.amalgamBlob, 1);
+			
+				((ItemAmalgamBlob) Amalgam.amalgamBlob).setProperties(droppedBlob, p);
+				((ItemAmalgamBlob) Amalgam.amalgamBlob).setVolume(droppedBlob, dropAmount);
+			
+				Amalgam.log.info("attempting to spawn an amalgam blob entity");
+				EntityItem amalgEntity = new EntityItem(this.worldObj, xCoord, yCoord, zCoord, droppedBlob);
+				this.worldObj.spawnEntityInWorld(amalgEntity);
+			}
+        }
+		
+	}
 }

@@ -43,7 +43,7 @@ public class ItemAmalgamBlob extends Item implements IAmalgableItem{
 	}
 	
 	@Override
-	public PropertyList getProperties(ItemStack stack) {
+	public PropertyList getProperties(ItemStack stack){
 		NBTTagCompound tag = stack.getTagCompound();
 		
 		PropertyList properties = new PropertyList();

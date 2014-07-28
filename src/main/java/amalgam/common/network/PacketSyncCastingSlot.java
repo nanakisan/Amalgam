@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.tileentity.TileEntity;
+import amalgam.common.Amalgam;
 import amalgam.common.container.ContainerCastingTable;
 import amalgam.common.container.SlotCasting;
 import amalgam.common.tile.TileCastingTable;
@@ -29,7 +30,7 @@ public class PacketSyncCastingSlot implements IMessage, IMessageHandler<PacketSy
 	
 	@Override
 	public IMessage onMessage(PacketSyncCastingSlot message, MessageContext ctx) {
-		//Amalgam.log.info("on message");
+		Amalgam.log.info("Syncing casting slot: on message");
 		TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.x, message.y, message.z);
 		Container c = ctx.getServerHandler().playerEntity.openContainer;
 		if(te != null && c != null){
