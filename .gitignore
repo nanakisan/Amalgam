@@ -34,3 +34,5 @@ bin/assets/amalgam/lang/en_US.lang
 .project
 
 .classpath
+
+.pmd

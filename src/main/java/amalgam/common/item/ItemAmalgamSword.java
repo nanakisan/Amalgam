@@ -5,80 +5,89 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import amalgam.common.Amalgam;
+import amalgam.common.casting.ICastItem;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
 
-public class ItemAmalgamSword extends Item{
+public class ItemAmalgamSword extends Item implements ICastItem {
 
-	public ItemAmalgamSword() {
-		super();
-		// TODO figure out how to use NBT tags to determine durability, sword damage, enchantability etc
-		// I think my damage implementation will already work, just need to check once I can actually craft things with amalgam!
-		// Look at stone tongs for custom item durability display, just need to decrease an NBT durability counter on hits and break when it reaches 0.
-		// For enchantability look in EnchantmentHelper, specifically at the calcItemStackEnchantability function, probably need to use reflection
-		
-		// As far as I can tell, getItemEnchantability is only ever called from EnchantmentHelper in its buildEnchantmentList and calcItemStackEnchantability functions.
-		// I am asking for a stack based function, not sure if this is something the forge people could do or if it is out of their hands.
-		// if I can't make the enchantability depend on nbt data I will have to make separate items for each level of enchantability (probably 5, 10, 15, 20, 25 and 30)
-	}
-	
-	@Override
-    public boolean hitEntity(ItemStack stack, EntityLivingBase entityBeingHit, EntityLivingBase entityDoingHitting){
+    public ItemAmalgamSword() {
+        super();
+        this.setCreativeTab(Amalgam.tab);
+    }
+
+    @Override
+    public boolean hitEntity(ItemStack stack, EntityLivingBase entityBeingHit, EntityLivingBase entityHitting) {
         // get the property list from the stack
-		
-		// I am pretty sure this should work!!!!
-		EntityPlayer player = (EntityPlayer)entityDoingHitting;
-		float damage = ItemAmalgamSword.getWeaponDamageFromStack(stack);
-		DamageSource damageSource = DamageSource.causePlayerDamage(player);
-		entityBeingHit.attackEntityFrom(damageSource, (int)damage);
+
+        // I am pretty sure this should work!!!!
+        EntityPlayer player = (EntityPlayer) entityHitting;
+        float damage = ItemAmalgamSword.getWeaponDamageFromStack(stack);
+        DamageSource damageSource = DamageSource.causePlayerDamage(player);
+        entityBeingHit.attackEntityFrom(damageSource, (int) damage);
 
         return true;
     }
 
-	public static float getWeaponDamageFromStack(ItemStack stack){
-		PropertyList pList = new PropertyList();
-		pList.readFromNBT(stack.getTagCompound());
-		
-		return (float)(pList.getValue(PropertyManager.Maliablity) + 4.0);
-	}
-	
-	public static float getHarvestLevelFromStack(ItemStack stack){
-		PropertyList pList = new PropertyList();
-		pList.readFromNBT(stack.getTagCompound());
-		
-		return (float)(pList.getValue(PropertyManager.Hardness) - 1.0);
-	}
-	
-	public static float getEnchantabilityFromStack(ItemStack stack){
-		PropertyList pList = new PropertyList();
-		pList.readFromNBT(stack.getTagCompound());
-		
-		return (float)(pList.getValue(PropertyManager.Luster));
-	}
-	
-	public static float getMaxDurabilityFromStack(ItemStack stack){
-		PropertyList pList = new PropertyList();
-		pList.readFromNBT(stack.getTagCompound());
-		float density = pList.getValue(PropertyManager.Density);
-		float hardness = pList.getValue(PropertyManager.Hardness);
-		return (density * density) * hardness;
-	}
-	
-	public static float getEfficiencyFromStack(ItemStack stack){
-		PropertyList pList = new PropertyList();
-		pList.readFromNBT(stack.getTagCompound());
-		
-		//return (float)(pList.getValue(PropertyManager.Magnetism));
-		return 1;
-	}
-	
-	public boolean canHarvestBlock(ItemStack stack, int meta, Block block, EntityPlayer player){
-		if(block.getHarvestLevel(meta) < ItemAmalgamSword.getHarvestLevelFromStack(stack)){
-			return true;
-		}
-		return false;
-	}
-}
+    public static int getWeaponDamageFromStack(ItemStack stack) {
+        // TODO return a default value if we can't find this entry in the nbt
+        return stack.getTagCompound().getInteger("Damage");
+    }
 
-// ItemSword
+    public static float getHarvestLevelFromStack(ItemStack stack) {
+        return stack.getTagCompound().getInteger("HarvestLevel");
+    }
+
+    public static float getMaxDurabilityFromStack(ItemStack stack) {
+        return stack.getTagCompound().getInteger("MaxDurability");
+    }
+
+    public boolean canHarvestBlock(ItemStack stack, int meta, Block block, EntityPlayer player) {
+        if (block.getHarvestLevel(meta) <= ItemAmalgamSword.getHarvestLevelFromStack(stack)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public ItemStack generateStackWithProperties(PropertyList pList, int stackSize) {
+        // here is where we take the properties of the amalgam and use them
+        // to create an itemStack with the proper item and NBT tags
+        float luster = pList.getValue(PropertyManager.LUSTER);
+        float density = pList.getValue(PropertyManager.DENSITY);
+        float hardness = pList.getValue(PropertyManager.HARDNESS);
+        float maliability = pList.getValue(PropertyManager.MALIABILITY);
+
+        // Since enchantability can't be determined through NBT tags we need to
+        // create separate items for different enchantability levels
+        if (luster < 5) {
+            // generate sword with enchantability of 5
+        } else if (luster < 10) {
+            // generate sword with enchantability of 10
+        } else if (luster < 15) {
+            // generate sword with enchantability of 15
+        } else if (luster < 20) {
+            // generate sword with enchantability of 20
+        } else if (luster < 25) {
+            // generate sword with enchantability of 25
+        } else {
+            // generate sword with enchantability of 30
+        }
+
+        ItemStack returnStack = new ItemStack(this, stackSize);
+
+        NBTTagCompound swordTag = new NBTTagCompound();
+
+        swordTag.setInteger("Damage", (int) (maliability + 4.0));
+        swordTag.setInteger("HarvestLevel", (int) (hardness - 0.5));
+        int maxDurability = (int) ((density * density) * hardness);
+        swordTag.setInteger("MaxDurability", maxDurability);
+        swordTag.setInteger("Durability", maxDurability);
+
+        returnStack.setTagCompound(swordTag);
+        return returnStack;
+    }
+}

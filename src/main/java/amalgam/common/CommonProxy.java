@@ -7,23 +7,23 @@ import net.minecraft.world.World;
 import amalgam.common.container.ContainerCastingTable;
 import amalgam.common.tile.TileCastingTable;
 
-public class CommonProxy implements IGuiHandler{
+public class CommonProxy implements IGuiHandler {
 
-	@Override
-	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		if(ID == Amalgam.CASTING_GUI_ID){
-			TileEntity te = world.getTileEntity(x, y, z);
-			return new ContainerCastingTable(player.inventory, (TileCastingTable)te);
-		}
-		return null;
-	}
-	
-	@Override
-	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		return null;
-	}
+    @Override
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        if (id == Amalgam.CASTING_GUI_ID) {
+            TileEntity te = world.getTileEntity(x, y, z);
+            return new ContainerCastingTable(player.inventory, (TileCastingTable) te);
+        }
+        return null;
+    }
 
-	public World getClientWorld() {
-		return null;
-	}
+    @Override
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        return null;
+    }
+
+    public World getClientWorld() {
+        return null;
+    }
 }

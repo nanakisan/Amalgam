@@ -4,46 +4,46 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-public class SlotCasting extends Slot{
+public class SlotCasting extends Slot {
 
-	private static final int maxState = 1;
-	private int castState;
-	private boolean hasAmalgam;
-	
-	public SlotCasting(IInventory inv, int slotNum, int xPos, int yPos) {
-		super(inv, slotNum, xPos, yPos);
-		
-		castState = 0;
-		hasAmalgam = false;
-	}
-	
-    public boolean isItemValid(ItemStack p_75214_1_){
-    	// only return true if the cast state is zero
-    	return castState == 0;
+    private static final int MAX_STATE = 1;
+    private int castState;
+    private boolean hasAmalgam;
+
+    public SlotCasting(IInventory inv, int slotNum, int xPos, int yPos) {
+        super(inv, slotNum, xPos, yPos);
+
+        castState = 0;
+        hasAmalgam = false;
     }
 
-    public int toggleCastState(){
-    	castState = castState + 1;
-    	if(castState > maxState){
-    		castState = 0;
-    		hasAmalgam = false;
-    	}
-    	return castState;
-    }
-    
-    public int castState(){
-    	return this.castState;
-    }
-    
-    public boolean hasAmalgam(){
-    	return this.hasAmalgam && (this.castState != 0);
-    }
-    
-    public void setHasAmalgam(boolean a){
-    	this.hasAmalgam = a;
+    public boolean isItemValid(ItemStack stack) {
+        // only return true if the cast state is zero
+        return castState == 0;
     }
 
-	public void setCastState(int castState) {
-		this.castState = castState;
-	}
+    public int toggleCastState() {
+        castState = castState + 1;
+        if (castState > MAX_STATE) {
+            castState = 0;
+            hasAmalgam = false;
+        }
+        return castState;
+    }
+
+    public int getCastState() {
+        return this.castState;
+    }
+
+    public boolean hasAmalgam() {
+        return this.hasAmalgam && this.castState != 0;
+    }
+
+    public void setHasAmalgam(boolean a) {
+        this.hasAmalgam = a;
+    }
+
+    public void setCastState(int castState) {
+        this.castState = castState;
+    }
 }
