@@ -1,20 +1,14 @@
 package amalgam.common.casting;
 
-import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import amalgam.common.properties.PropertyList;
+import amalgam.common.container.InventoryCasting;
 
 public class ShapedCastingRecipe implements ICastingRecipe {
 
     @Override
-    public boolean matches(InventoryCrafting inv, World world) {
+    public boolean matches(InventoryCasting inv, World world) {
         return false;
-    }
-
-    @Override
-    public ItemStack getCraftingResult(InventoryCrafting inv, PropertyList p) {
-        return null;
     }
 
     @Override
@@ -24,6 +18,11 @@ public class ShapedCastingRecipe implements ICastingRecipe {
 
     @Override
     public ItemStack getRecipeOutput() {
+        return null;
+    }
+
+    @Override
+    public ItemStack getCastingResult(InventoryCasting inv) {
         return null;
     }
 

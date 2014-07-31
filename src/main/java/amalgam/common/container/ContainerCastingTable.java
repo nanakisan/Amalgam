@@ -13,31 +13,40 @@ public class ContainerCastingTable extends Container {
 
     // this tile entity associated with this container has the crafting
     // inventories (craftMatrix and craftResult in ContianerWorkbench)
-    public TileCastingTable castingTable;
-    private InventoryPlayer playerInv;
+    // FIXME right now the tileEntity itself is used as the casting inventory, refactor this using the InventoryCasting
+    // and InventoryCastResult classes so it is more like the crafting table. This is necessary to make the
+    // CastingManager work
+    public TileCastingTable     castingTable;
+    private InventoryPlayer     playerInv;
+    private InventoryCasting    castingMatrix = new InventoryCasting(this, 3, 3);
+    private InventoryCastResult castResult    = new InventoryCastResult();
 
     public ContainerCastingTable(InventoryPlayer inv, TileCastingTable te) {
         this.castingTable = te;
         this.playerInv = inv;
 
-        // we use 9 as the slotIndex below because that is the index in
-
         int rowNum;
         int colNum;
+        int slotNum;
 
         for (rowNum = 0; rowNum < 3; ++rowNum) {
             for (colNum = 0; colNum < 3; ++colNum) {
-                SlotCasting s = new SlotCasting(this.castingTable, colNum + rowNum * 3, 30 + colNum * 18, 17 + rowNum * 18);
-                s.setCastState(te.getCastState(colNum + rowNum * 3));
+                slotNum = colNum + rowNum * 3;
+                castingMatrix.setInventorySlotContents(slotNum, castingTable.getStackInSlot(slotNum));
+
+                SlotCasting s = new SlotCasting(castingMatrix, slotNum, 30 + colNum * 18, 17 + rowNum * 18);
+                s.setCastState(te.getCastState(slotNum));
                 this.addSlotToContainer(s);
             }
         }
 
-        this.addSlotToContainer(new SlotCastingResult(this.playerInv.player, this.castingTable, 9, 124, 35));
+        this.addSlotToContainer(new SlotCastingResult(this.playerInv.player, this.castingTable.getTank(), this.castingMatrix, this.castResult, 0,
+                124, 35));
 
         for (rowNum = 0; rowNum < 3; ++rowNum) {
             for (colNum = 0; colNum < 9; ++colNum) {
-                this.addSlotToContainer(new Slot(this.playerInv, colNum + rowNum * 9 + 9, 8 + colNum * 18, 84 + rowNum * 18));
+                slotNum = colNum + rowNum * 9 + 9;
+                this.addSlotToContainer(new Slot(this.playerInv, slotNum, 8 + colNum * 18, 84 + rowNum * 18));
             }
         }
 
@@ -45,14 +54,13 @@ public class ContainerCastingTable extends Container {
             this.addSlotToContainer(new Slot(this.playerInv, colNum, 8 + colNum * 18, 142));
         }
 
-        this.onCraftMatrixChanged(this.castingTable);
-        this.updateAmalgamDistribution(); // not sure if this should go here or
-                                          // not
+        this.onCraftMatrixChanged(this.castingMatrix);
+        this.updateAmalgamDistribution();
     }
 
     public final void updateAmalgamDistribution() {
         TileCastingTable te = this.castingTable;
-        int amount = te.tank.getFluidAmount();
+        int amount = te.getTankAmount();
         for (int slotNum = 0; slotNum < 9; slotNum++) {
             SlotCasting s = (SlotCasting) this.getSlot(slotNum);
             if (te.getCastState(slotNum) == 1 && amount > 0) {
@@ -77,13 +85,13 @@ public class ContainerCastingTable extends Container {
     @Override
     public boolean canInteractWith(EntityPlayer player) {
         // TODO look into this
-        return castingTable.getWorldObj().getBlock(castingTable.xCoord, castingTable.yCoord, castingTable.zCoord) != Amalgam.castingTable ? false
-                : player.getDistanceSq((double) castingTable.xCoord + 0.5D, (double) castingTable.yCoord + 0.5D, (double) castingTable.zCoord + 0.5D) <= 64.0D;
+        return castingTable.getWorldObj().getBlock(castingTable.xCoord, castingTable.yCoord, castingTable.zCoord) == Amalgam.castingTable ? player
+                .getDistanceSq((double) castingTable.xCoord + 0.5D, (double) castingTable.yCoord + 0.5D, (double) castingTable.zCoord + 0.5D) <= 64.0D
+                : false;
     }
 
     /**
-     * Called when a player shift-clicks on a slot. You must override this or
-     * you will crash when someone does that.
+     * Called when a player shift-clicks on a slot. You must override this or you will crash when someone does that.
      */
     public ItemStack transferStackInSlot(EntityPlayer player, int slotNum) {
         ItemStack itemstack = null;

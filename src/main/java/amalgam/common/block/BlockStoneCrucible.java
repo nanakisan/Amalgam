@@ -21,8 +21,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockStoneCrucible extends Block implements ITileEntityProvider {
 
-    // TODO make the stone crucible require a heat source, and possibly render
-    // like the cauldron
+    // TODO make the stone crucible require a heat source, and possibly render like the cauldron
+
     public BlockStoneCrucible() {
         super(Material.rock);
         this.setHardness(3.0F);
@@ -44,53 +44,27 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
         }
 
         ItemStack stack = player.inventory.getCurrentItem();
-        // here we decide what to do based on what item was used to activate the
-        // block
-        if (stack == null) {// if there was no item we print info to the chat
+        if (stack == null) {
             return true;
         }
 
         TileStoneCrucible crucible = (TileStoneCrucible) world.getTileEntity(x, y, z);
         if (stack.getItem() instanceof IAmalgamContainerItem) {
             IAmalgamContainerItem container = (IAmalgamContainerItem) stack.getItem();
-            // if we are sneaking or the tongs are empty we attempt to drain
-            // the crucible, otherwise we attempt to fill
             if (player.isSneaking()) {
-                // if we are sneaking try to drain just a little bit
                 int drainAmount = Math.min(container.getEmptySpace(stack), Amalgam.BASEAMOUNT);
-                AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, drainAmount, true); // drain
-                                                                                                                    // fluid
-                                                                                                                    // from
-                                                                                                                    // the
-                                                                                                                    // crucible
+                AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, drainAmount, true);
                 if (fluidStack != null) { // see if we drained anything
-                    int result = container.fill(stack, fluidStack, true); // fill
-                                                                          // the
-                                                                          // tongs
-                                                                          // with
-                                                                          // the
-                                                                          // drained
-                                                                          // amalgam
+                    int result = container.fill(stack, fluidStack, true);
                     fluidStack.amount -= result;
                     if (fluidStack.amount > 0) {
                         crucible.fill(ForgeDirection.UNKNOWN, fluidStack, true);
                     }
                 }
             } else if (container.getFluid(stack).amount == 0) {
-                // if we are not sneaking try to drain as much as possible
-                AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, container.getEmptySpace(stack), true); // drain
-                                                                                                                                       // fluid
-                                                                                                                                       // from
-                                                                                                                                       // the
-                                                                                                                                       // crucible
-                if (fluidStack != null) { // see if we drained anything
-                    int result = container.fill(stack, fluidStack, true); // fill
-                                                                          // the
-                                                                          // tongs
-                                                                          // with
-                                                                          // the
-                                                                          // drained
-                                                                          // amalgam
+                AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, container.getEmptySpace(stack), true);
+                if (fluidStack != null) {
+                    int result = container.fill(stack, fluidStack, true);
                     fluidStack.amount -= result;
                     if (fluidStack.amount > 0) {
                         crucible.fill(ForgeDirection.UNKNOWN, fluidStack, true);
@@ -104,20 +78,11 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
             }
             return true;
         }
-        // next we see if the item is amalgable, if it is we make it into
-        // a fluid and add it to the crucible if we have space
 
         if (PropertyManager.itemIsAmalgable(stack)) {
             player.addChatMessage(new ChatComponentText("Item is amalgable"));
             int amount = PropertyManager.getVolume(stack);
-            // Amalgam.log.info("amount for amalgable item: " + amount);
-            if (amount > 0 && amount < crucible.getEmptySpace()) { // make sure
-                                                                   // we have
-                                                                   // space
-                                                                   // before we
-                                                                   // add it to
-                                                                   // the
-                                                                   // crucible
+            if (amount > 0 && amount < crucible.getEmptySpace()) {
                 PropertyList amalgProperties = PropertyManager.getProperties(stack);
                 AmalgamStack amalg = new AmalgamStack(amount, amalgProperties);
 
@@ -125,12 +90,11 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
                     Amalgam.LOG.error("No properties!!!!!");
                 }
 
-                // fill the crucible
                 crucible.fill(ForgeDirection.UNKNOWN, amalg, true);
 
-                // decrement stack size
+                // TODO we might not have to check stackSize, decrementing to 0 might simply delete the stack
+
                 if (stack.stackSize == 1) {
-                    // set stack to null
                     player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
                 } else {
                     stack.stackSize = stack.stackSize - 1;
@@ -159,13 +123,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
     }
 
     @Override
-    public boolean onBlockEventReceived(World world, int x, int y, int z, int side, int metaData) { // I
-                                                                                                    // might
-                                                                                                    // have
-                                                                                                    // side
-                                                                                                    // and
-                                                                                                    // metaData
-                                                                                                    // reversed!
+    public boolean onBlockEventReceived(World world, int x, int y, int z, int side, int metaData) {
         super.onBlockEventReceived(world, x, y, z, side, metaData);
 
         TileEntity tileentity = world.getTileEntity(x, y, z);

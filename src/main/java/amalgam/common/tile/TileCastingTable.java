@@ -1,9 +1,6 @@
 package amalgam.common.tile;
 
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -24,36 +21,31 @@ import amalgam.common.network.PacketHandler;
 import amalgam.common.network.PacketSyncCastingTank;
 import amalgam.common.properties.PropertyList;
 
-public class TileCastingTable extends TileEntity implements IInventory, ISidedInventory, IFluidHandler {
+public class TileCastingTable extends TileEntity implements IFluidHandler {
 
     // TODO emit light when holding amalgam
     // TODO render blobs of liquid amalgam on table when they are placed there
 
-    public ItemStack[] castingMatrix = new ItemStack[9];
-    private ItemStack castResult;
-
-    public int castState[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-    // store the amalgam used in casting here
-    public AmalgamTank tank = new AmalgamTank(0);
+    private ItemStack[] castingItems = new ItemStack[10];
+    private int[]       castStates   = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    private AmalgamTank tank         = new AmalgamTank(0);
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
-        NBTTagList nbttaglist = tag.getTagList("castingMatrix", 10);
-        this.castingMatrix = new ItemStack[9];
+        NBTTagList nbttaglist = tag.getTagList("castingItems", 10);
+        this.castingItems = new ItemStack[10];
 
         for (int i = 0; i < nbttaglist.tagCount(); ++i) {
             NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
             byte b0 = nbttagcompound1.getByte("Slot");
 
-            if (b0 >= 0 && b0 < this.castingMatrix.length) {
-                this.castingMatrix[b0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+            if (b0 >= 0 && b0 < this.castingItems.length) {
+                this.castingItems[b0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
             }
         }
 
-        this.castResult = ItemStack.loadItemStackFromNBT(tag.getCompoundTag("castResult"));
-        this.castState = tag.getIntArray("castState");
+        this.castStates = tag.getIntArray("castStates");
         tank.readFromNBT(tag);
     }
 
@@ -61,156 +53,20 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
     public void writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
         tank.writeToNBT(tag);
-        tag.setIntArray("castState", this.castState);
+        tag.setIntArray("castStates", this.castStates);
 
         NBTTagList nbttaglist = new NBTTagList();
 
-        for (int i = 0; i < this.castingMatrix.length; ++i) {
-            if (this.castingMatrix[i] != null) {
+        for (int i = 0; i < this.castingItems.length; ++i) {
+            if (this.castingItems[i] != null) {
                 NBTTagCompound nbttagcompound1 = new NBTTagCompound();
                 nbttagcompound1.setByte("Slot", (byte) i);
-                this.castingMatrix[i].writeToNBT(nbttagcompound1);
+                this.castingItems[i].writeToNBT(nbttagcompound1);
                 nbttaglist.appendTag(nbttagcompound1);
             }
         }
 
-        tag.setTag("castingMatrix", nbttaglist);
-    }
-
-    // ///////////////////
-    // ISidedInventory //
-    // ///////////////////
-
-    @Override
-    public int[] getAccessibleSlotsFromSide(int side) {
-        int slots[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-        return slots;
-    }
-
-    @Override
-    public boolean canInsertItem(int slot, ItemStack stack, int meta) {
-        // return true if the casting state for the slot is 0, can't insert item
-        // into the result slot
-        if (slot >= 9) {
-            return false;
-        }
-        return castState[slot] == 0;
-    }
-
-    @Override
-    public boolean canExtractItem(int slot, ItemStack stack, int meta) {
-        // return false unless the slot is the crafted item slot and the item is
-        // completely crafted
-        if (slot == 9) {
-            return true;
-        }
-
-        return false;
-    }
-
-    // //////////////
-    // IInventory //
-    // //////////////
-
-    @Override
-    public int getSizeInventory() {
-
-        // the 9 casting slots - the slots used for amalgam
-        int unusableSlots = 0;
-        for (int i = 0; i < 9; i++) {
-            if (castState[i] != 0) {
-                unusableSlots++;
-            }
-        }
-        return 9 - unusableSlots;
-    }
-
-    @Override
-    public ItemStack getStackInSlot(int slot) {
-        if (slot == 9) {
-            return castResult;
-        }
-
-        if (castState[slot] == 1) {
-            return null;
-        }
-
-        return castingMatrix[slot];
-    }
-
-    @Override
-    public ItemStack decrStackSize(int slot, int decNum) {
-        if (slot == 9) {
-            ItemStack stack = castResult;
-            return stack.splitStack(decNum);
-        }
-
-        if (castState[slot] != 0) {
-            return null;
-        }
-
-        ItemStack stack = castingMatrix[slot];
-        return stack.splitStack(decNum);
-    }
-
-    @Override
-    public ItemStack getStackInSlotOnClosing(int slot) {
-        // Does nothing because we keep the items in the slots on closing
-        return null;
-    }
-
-    @Override
-    public void setInventorySlotContents(int slot, ItemStack stack) {
-        if (slot == 9) {
-            castResult = stack;
-        } else {
-            if (castState[slot] != 0) {
-                return;
-            }
-            castingMatrix[slot] = stack;
-        }
-    }
-
-    @Override
-    public String getInventoryName() {
-        return "container.castingtable";
-    }
-
-    @Override
-    public boolean hasCustomInventoryName() {
-        return true;
-    }
-
-    @Override
-    public int getInventoryStackLimit() {
-        return 64;
-    }
-
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
-        // TODO look at other implementations
-        return true;
-    }
-
-    @Override
-    public void openInventory() {
-        // nothing here
-    }
-
-    @Override
-    public void closeInventory() {
-        // nothing here
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int slot, ItemStack stack) {
-        if (slot >= 9) {
-            return false;
-        }
-        if (castState[slot] == 0) {
-            return true;
-        }
-        return false;
+        tag.setTag("castingItems", nbttaglist);
     }
 
     // /////////////////
@@ -268,11 +124,10 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
     }
 
     public void updateAmalgamTankCapacity() {
-        // loop through the casting slots
         int newCapacity = 0;
 
         for (int i = 0; i < 9; i++) {
-            newCapacity += castState[i] * Amalgam.INGOTAMOUNT;
+            newCapacity += castStates[i] * Amalgam.INGOTAMOUNT;
         }
 
         AmalgamStack extraAmalgam = tank.setCapacity(newCapacity);
@@ -301,32 +156,30 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
     }
 
     public int getCastState(int i) {
-        return castState[i];
+        return castStates[i];
     }
 
     public void setCastState(int index, int value) {
-        this.castState[index] = value;
+        this.castStates[index] = value;
         this.updateAmalgamTankCapacity();
     }
 
-    // use this for syncing the cast state between server and client when we
-    // load the tile entity
-    // these functions should probably be used for all custom NBT data
+    /**
+     * Use this for syncing the cast state between server and client when we load the tile entity these functions should
+     * probably be used for all custom NBT data
+     */
     @Override
     public Packet getDescriptionPacket() {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setIntArray("castState", this.castState);
+        tag.setIntArray("castStates", this.castStates);
         tank.writeToNBT(tag);
         return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, this.blockMetadata, tag);
-        // return null;
     }
 
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
-        // Amalgam.log.info("TileCastingTable onDataPacket net:" +
-        // net.channel().toString());
         NBTTagCompound tag = pkt.func_148857_g();
-        this.castState = tag.getIntArray("castState");
+        this.castStates = tag.getIntArray("castStates");
         this.tank.readFromNBT(tag);
     }
 
@@ -348,4 +201,21 @@ public class TileCastingTable extends TileEntity implements IInventory, ISidedIn
             }
         }
     }
+
+    public ItemStack getStackInSlot(int slotNum) {
+        return castingItems[slotNum];
+    }
+
+    public int getTankAmount() {
+        return tank.getFluidAmount();
+    }
+
+    public void setTankFluid(AmalgamStack fluid) {
+        tank.setFluid(fluid);
+    }
+
+    public AmalgamTank getTank() {
+        return tank;
+    }
+
 }

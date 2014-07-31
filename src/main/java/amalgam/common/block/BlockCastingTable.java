@@ -32,10 +32,7 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
         }
 
         ItemStack stack = player.inventory.getCurrentItem();
-        // here we decide what to do based on what item was used to activate the
-        // block
-        if (stack == null) {// if there was no item we print info to the chat
-            // player.addChatMessage(new ChatComponentText(te.tank.toString()));
+        if (stack == null) {
             player.openGui(Amalgam.instance, Amalgam.CASTING_GUI_ID, world, x, y, z);
             return false;
         }
@@ -43,44 +40,20 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
         TileCastingTable te = (TileCastingTable) world.getTileEntity(x, y, z);
         if (stack.getItem() instanceof IAmalgamContainerItem) {
             IAmalgamContainerItem container = (IAmalgamContainerItem) stack.getItem();
-            // if we are sneaking or the tongs are empty we attempt to drain the
-            // castingTable, otherwise we attempt to fill
             if (player.isSneaking()) {
-                // if we are sneaking try to drain just a little bit
                 int drainAmount = Math.min(container.getEmptySpace(stack), Amalgam.BASEAMOUNT);
-                AmalgamStack fluidStack = (AmalgamStack) te.drain(ForgeDirection.UNKNOWN, drainAmount, true); // drain
-                                                                                                              // fluid
-                                                                                                              // from
-                                                                                                              // the
-                                                                                                              // crucible
-                if (fluidStack != null) { // see if we drained anything
-                    int result = container.fill(stack, fluidStack, true); // fill
-                                                                          // the
-                                                                          // tongs
-                                                                          // with
-                                                                          // the
-                                                                          // drained
-                                                                          // amalgam
+                AmalgamStack fluidStack = (AmalgamStack) te.drain(ForgeDirection.UNKNOWN, drainAmount, true);
+                if (fluidStack != null) {
+                    int result = container.fill(stack, fluidStack, true);
                     fluidStack.amount -= result;
                     if (fluidStack.amount > 0) {
                         te.fill(ForgeDirection.UNKNOWN, fluidStack, true);
                     }
                 }
             } else if (container.getFluid(stack).amount == 0) {
-                // if we are not sneaking try to drain as much as possible
-                AmalgamStack fluidStack = (AmalgamStack) te.drain(ForgeDirection.UNKNOWN, container.getEmptySpace(stack), true); // drain
-                                                                                                                                 // fluid
-                                                                                                                                 // from
-                                                                                                                                 // the
-                                                                                                                                 // crucible
-                if (fluidStack != null) { // see if we drained anything
-                    int result = container.fill(stack, fluidStack, true); // fill
-                                                                          // the
-                                                                          // tongs
-                                                                          // with
-                                                                          // the
-                                                                          // drained
-                                                                          // amalgam
+                AmalgamStack fluidStack = (AmalgamStack) te.drain(ForgeDirection.UNKNOWN, container.getEmptySpace(stack), true);
+                if (fluidStack != null) {
+                    int result = container.fill(stack, fluidStack, true);
                     fluidStack.amount -= result;
                     if (fluidStack.amount > 0) {
                         te.fill(ForgeDirection.UNKNOWN, fluidStack, true);
@@ -103,8 +76,8 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
     }
 
     @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int metaData) { // or
-                                                                                          // side?
+    // the metadata variable might actually be the block side, not sure
+    public void breakBlock(World world, int x, int y, int z, Block block, int metaData) {
         TileCastingTable t = (TileCastingTable) world.getTileEntity(x, y, z);
         if (t != null) {
             t.emptyTank();

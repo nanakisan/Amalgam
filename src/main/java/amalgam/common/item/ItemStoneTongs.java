@@ -21,8 +21,8 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
     // holding down the item use button instead of having to do it repeatedly
 
     public static final int CAPACITY = Amalgam.INGOTAMOUNT;
-    IIcon fullIcon;
-    IIcon emptyIcon;
+    private IIcon           fullIcon;
+    private IIcon           emptyIcon;
 
     public ItemStoneTongs() {
         super();
@@ -50,21 +50,18 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
         if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Amalgam")) {
             return 0;
         }
-        // read the Amalgam tag compound
+
         NBTTagCompound containerNBT = container.stackTagCompound.getCompoundTag("Amalgam");
-        // get amount and PropertyList
         return containerNBT.getInteger("Amount");
     }
 
     @Override
     public AmalgamStack getFluid(ItemStack container) {
-        // Amalgam.log.info("here");
         if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Amalgam")) {
             return new AmalgamStack(0, new PropertyList());
         }
-        // read the Amalgam tag compound
+
         NBTTagCompound containerNBT = container.stackTagCompound.getCompoundTag("Amalgam");
-        // get amount and PropertyList
         int amount = containerNBT.getInteger("Amount");
         PropertyList pList = new PropertyList();
         pList.readFromNBT(containerNBT.getCompoundTag("Tag"));
@@ -110,21 +107,15 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
             return 0;
         }
 
-        // if container isn't empty
-        int filled = CAPACITY - stack.amount; // this is how much space is left
-                                              // in the container
-        if (resource.amount < filled) { // we have enough space to take all the
-                                        // resource
+        int filled = CAPACITY - stack.amount;
+        if (resource.amount < filled) {
             stack = AmalgamStack.combine(stack, (AmalgamStack) resource);
             filled = resource.amount;
-        } else { // we don't have enough space to take all the resource, so we
-                 // create a temporary stack of the resource of the amount we
-                 // can fill.
+        } else {
             AmalgamStack temp = new AmalgamStack((AmalgamStack) resource, filled);
             stack = AmalgamStack.combine(stack, temp);
         }
 
-        // write our new amalgam to the NBT tag for the container
         container.stackTagCompound.setTag("Amalgam", stack.writeToNBT(amalgamTag));
         return filled;
     }
@@ -161,23 +152,6 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
         return CAPACITY;
     }
 
-    /**
-     *
-     * Should this item, when held, allow sneak-clicks to pass through to the
-     * underlying block?
-     *
-     * @param world
-     *            The world
-     * @param x
-     *            The X Position
-     * @param y
-     *            The X Position
-     * @param z
-     *            The X Position
-     * @param player
-     *            The Player that is wielding the item
-     * @return
-     */
     public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
         if (world.getTileEntity(x, y, z) instanceof IFluidHandler) {
             return true;
@@ -215,13 +189,6 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
         return true;
     }
 
-    /**
-     * Queries the percentage of the 'Durability' bar that should be drawn.
-     * 
-     * @param stack
-     *            The current ItemStack
-     * @return 1.0 for 100% 0 for 0%
-     */
     public double getDurabilityForDisplay(ItemStack stack) {
 
         return 1.0 - (float) this.getFluidAmount(stack) / (float) CAPACITY;

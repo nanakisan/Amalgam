@@ -39,27 +39,27 @@ public class Amalgam {
 
     // TODO add Waila support
 
-    public static final String MODID = "amalgam";
-    public static final String VERSION = "0.0.1";
-    public static final int BASEAMOUNT = 10;
-    public static final int INGOTAMOUNT = BASEAMOUNT * 9;
-    public static final Logger LOG = LogManager.getLogger("Amalgam");
-    public static final int CASTING_GUI_ID = 1;
+    public static final String    MODID           = "amalgam";
+    public static final String    VERSION         = "0.0.1";
+    public static final int       BASEAMOUNT      = 10;
+    public static final int       INGOTAMOUNT     = BASEAMOUNT * 9;
+    public static final Logger    LOG             = LogManager.getLogger("Amalgam");
+    public static final int       CASTING_GUI_ID  = 1;
 
     // this needs to be the same as the modid, including the capitalization
     @Instance("amalgam")
-    public static Amalgam instance;
+    public static Amalgam         instance;
 
     @SidedProxy(clientSide = "amalgam.client.ClientProxy", serverSide = "amalgam.common.CommonProxy")
-    public static CommonProxy proxy;
+    public static CommonProxy     proxy;
 
     public static PropertyManager propertyManager = PropertyManager.getInstance();
-    public static Fluid fluidAmalgam;
-    public static Block stoneCrucible;
-    public static Block castingTable;
-    public static Item stoneTongs;
-    public static Item amalgamBlob;
-    public static CreativeTabs tab;
+    public static Fluid           fluidAmalgam;
+    public static Block           stoneCrucible;
+    public static Block           castingTable;
+    public static Item            stoneTongs;
+    public static Item            amalgamBlob;
+    public static CreativeTabs    tab;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {

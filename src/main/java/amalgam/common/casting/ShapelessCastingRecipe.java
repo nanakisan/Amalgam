@@ -4,18 +4,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import amalgam.common.properties.PropertyList;
+import amalgam.common.container.InventoryCasting;
 
 public class ShapelessCastingRecipe implements ICastingRecipe {
 
-    /** Is the ItemStack that you get when craft the recipe. */
+    /** Is the Item that you get when craft the recipe. */
     private final ICastItem recipeOutput;
-    private final int amount;
+
+    /** The amount of items in the itemStack output */
+    private final int       amount;
+
     /** Is a List of ItemStack that composes the recipe. */
-    public final List recipeItems;
+    public final List       recipeItems;
 
     public ShapelessCastingRecipe(ICastItem item, int amount, List list) {
         this.recipeOutput = item;
@@ -30,7 +32,7 @@ public class ShapelessCastingRecipe implements ICastingRecipe {
     /**
      * Used to check if a recipe matches current crafting inventory
      */
-    public boolean matches(InventoryCrafting inv, World world) {
+    public boolean matches(InventoryCasting inv, World world) {
         ArrayList arraylist = new ArrayList(this.recipeItems);
 
         for (int i = 0; i < 3; ++i) {
@@ -62,13 +64,6 @@ public class ShapelessCastingRecipe implements ICastingRecipe {
     }
 
     /**
-     * Returns an Item that is the result of this recipe
-     */
-    public ItemStack getCraftingResult(InventoryCrafting inv, PropertyList p) {
-        return this.recipeOutput.generateStackWithProperties(p, this.amount);
-    }
-
-    /**
      * Returns the size of the recipe area
      */
     public int getRecipeSize() {
@@ -78,4 +73,10 @@ public class ShapelessCastingRecipe implements ICastingRecipe {
     public int getRecipeAmount() {
         return this.amount;
     }
+
+    @Override
+    public ItemStack getCastingResult(InventoryCasting inv) {
+        return this.recipeOutput.generateStackWithProperties(inv.getPropertyList(), this.amount);
+    }
+
 }

@@ -1,21 +1,19 @@
 package amalgam.common.casting;
 
-import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import amalgam.common.properties.PropertyList;
+import amalgam.common.container.InventoryCasting;
 
 public interface ICastingRecipe {
     /**
      * Used to check if a recipe matches current crafting inventory
      */
-    boolean matches(InventoryCrafting inv, World world);
+    boolean matches(InventoryCasting inv, World world);
 
     /**
-     * Returns an Item that is the result of this recipe based on an amalgam
-     * property list
+     * Returns an Item that is the result of this recipe based on an amalgam property list
      */
-    ItemStack getCraftingResult(InventoryCrafting inv, PropertyList p);
+    ItemStack getCastingResult(InventoryCasting inv);
 
     /**
      * Returns the size of the recipe area

@@ -15,33 +15,33 @@ public class Property {
 
     private static Map<String, Property> properties = new HashMap<String, Property>();
 
-    private final ComboType comboType;
-    private final float defaultValue;
-    private final String name;
+    private final ComboType              comboType;
+    private final float                  defaultValue;
+    private final String                 name;
 
-    public Property(String n) {
-        this.name = n;
+    public Property(String name) {
+        this.name = name;
         this.comboType = ComboType.QUADAVERAGE;
         this.defaultValue = 0;
         properties.put(this.name, this);
     }
 
-    public Property(String n, float dValue) {
-        this.name = n;
+    public Property(String name, float dValue) {
+        this.name = name;
         this.defaultValue = dValue;
         this.comboType = ComboType.QUADAVERAGE;
         properties.put(this.name, this);
     }
 
-    public Property(String n, float dValue, ComboType cType) {
-        this.name = n;
+    public Property(String name, float dValue, ComboType cType) {
+        this.name = name;
         this.defaultValue = dValue;
         this.comboType = cType;
         properties.put(this.name, this);
     }
 
-    public static Property getProperty(String n) {
-        return (Property) properties.get(n);
+    public static Property getProperty(String name) {
+        return (Property) properties.get(name);
     }
 
     public float getDefaultValue() {

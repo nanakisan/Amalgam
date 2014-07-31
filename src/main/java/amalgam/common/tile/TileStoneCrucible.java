@@ -68,8 +68,6 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler {
     }
 
     public int getEmptySpace() {
-        // Amalgam.log.info("Calculating empty space... capacity: " +
-        // tank.getCapacity() + " fluid amount: " + tank.getFluidAmount());
         return tank.getCapacity() - tank.getFluidAmount();
     }
 

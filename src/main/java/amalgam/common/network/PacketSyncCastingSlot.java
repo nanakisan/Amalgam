@@ -13,10 +13,9 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 
 /**
- * This packet tells the server when the casting state of a slot in the casting
- * table changes due to a player using the casting table gui. Since the gui is
- * Client Side only the server the server needs to be made aware so it can
- * update the casting table tile entity.
+ * This packet tells the server when the casting state of a slot in the casting table changes due to a player using the
+ * casting table gui. Since the gui is Client Side only the server the server needs to be made aware so it can update
+ * the casting table tile entity.
  */
 
 public class PacketSyncCastingSlot implements IMessage, IMessageHandler<PacketSyncCastingSlot, IMessage> {
@@ -52,7 +51,6 @@ public class PacketSyncCastingSlot implements IMessage, IMessageHandler<PacketSy
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        // Amalgam.log.info("reading buffer");
         this.xCoord = buf.readInt();
         this.yCoord = buf.readInt();
         this.zCoord = buf.readInt();
@@ -62,7 +60,6 @@ public class PacketSyncCastingSlot implements IMessage, IMessageHandler<PacketSy
 
     @Override
     public void toBytes(ByteBuf buf) {
-        // Amalgam.log.info("writing buffer");
         buf.writeInt(this.xCoord);
         buf.writeInt(this.yCoord);
         buf.writeInt(this.zCoord);

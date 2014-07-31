@@ -11,8 +11,8 @@ import amalgam.common.Amalgam;
 public class AmalgamTank implements IFluidTank {
 
     protected AmalgamStack fluid;
-    protected int capacity;
-    protected TileEntity tile;
+    protected int          capacity;
+    protected TileEntity   tile;
 
     public AmalgamTank(int cap) {
         super();
@@ -148,8 +148,8 @@ public class AmalgamTank implements IFluidTank {
                 + (this.getCapacity() - this.getFluidAmount()) + " Properties: " + fluid.getProperties().toString();
     }
 
-    public void setFluid(AmalgamStack fluid2) {
-        this.fluid = fluid2;
+    public void setFluid(AmalgamStack fluid) {
+        this.fluid = fluid;
     }
 
 }

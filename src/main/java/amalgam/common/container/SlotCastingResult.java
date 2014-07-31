@@ -1,30 +1,32 @@
 package amalgam.common.container;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-import amalgam.common.tile.TileCastingTable;
+import amalgam.common.fluid.AmalgamTank;
+import cpw.mods.fml.common.FMLCommonHandler;
 
 public class SlotCastingResult extends Slot {
 
     /** The casting matrix inventory linked to this result slot. */
-    private TileCastingTable castingTable;
+    private InventoryCasting castingMatrix;
     /** The player that is using the GUI where this slot resides. */
-    private EntityPlayer player;
+    private EntityPlayer     player;
     /**
-     * The number of items that have been crafted so far. Gets passed to
-     * ItemStack.onCrafting before being reset.
+     * The number of items that have been crafted so far. Gets passed to ItemStack.onCrafting before being reset.
      */
-    private int amountCrafted;
+    private int              amountCrafted;
 
-    public SlotCastingResult(EntityPlayer player, TileCastingTable castingTable, int slotID, int xPos, int yPos) {
-        super(castingTable, slotID, xPos, yPos);
-        this.castingTable = castingTable;
+    private AmalgamTank      tank;
+
+    public SlotCastingResult(EntityPlayer player, AmalgamTank tank, InventoryCasting castMatrix, InventoryCastResult castResult, int slotID,
+            int xPos, int yPos) {
+        super(castResult, slotID, xPos, yPos);
+        this.castingMatrix = castMatrix;
         this.player = player;
+        this.tank = tank;
     }
 
     public boolean isItemValid(ItemStack stack) {
@@ -40,9 +42,8 @@ public class SlotCastingResult extends Slot {
     }
 
     /**
-     * The itemStack passed in is the output - ie, iron ingots, and pickaxes,
-     * not ore and wood. Typically increases an internal count then calls
-     * onCasting(item).
+     * The itemStack passed in is the output - ie, iron ingots, and pickaxes, not ore and wood. Typically increases an
+     * internal count then calls onCasting(item).
      */
     protected void onCrafting(ItemStack output, int amount) {
         this.amountCrafted += amount;
@@ -50,8 +51,7 @@ public class SlotCastingResult extends Slot {
     }
 
     /**
-     * The itemStack passed in is the output - ie, iron ingots, and pickaxes,
-     * not ore and wood.
+     * The itemStack passed in is the output - ie, iron ingots, and pickaxes, not ore and wood.
      */
     protected void onCrafting(ItemStack output) {
         output.onCrafting(this.player.worldObj, this.player, this.amountCrafted);
@@ -59,17 +59,18 @@ public class SlotCastingResult extends Slot {
     }
 
     public void onPickupFromSlot(EntityPlayer player, ItemStack stack) {
-        FMLCommonHandler.instance().firePlayerCraftingEvent(player, stack, castingTable);
+        FMLCommonHandler.instance().firePlayerCraftingEvent(player, stack, castingMatrix);
         this.onCrafting(stack);
 
-        // remove amalgam from casting table tank here
-        this.castingTable.drain(ForgeDirection.UNKNOWN, -1, true);
+        // TODO need to drain amalgam at some point after cast item is picked up.
 
-        for (int i = 0; i < this.castingTable.getSizeInventory(); ++i) {
-            ItemStack itemstack1 = this.castingTable.getStackInSlot(i);
+        this.tank.drain(-1, true);
+
+        for (int i = 0; i < this.castingMatrix.getSizeInventory(); ++i) {
+            ItemStack itemstack1 = this.castingMatrix.getStackInSlot(i);
 
             if (itemstack1 != null) {
-                this.castingTable.decrStackSize(i, 1);
+                this.castingMatrix.decrStackSize(i, 1);
 
                 if (itemstack1.getItem().hasContainerItem(itemstack1)) {
                     ItemStack itemstack2 = itemstack1.getItem().getContainerItem(itemstack1);
@@ -81,8 +82,8 @@ public class SlotCastingResult extends Slot {
 
                     if (!itemstack1.getItem().doesContainerItemLeaveCraftingGrid(itemstack1)
                             || !this.player.inventory.addItemStackToInventory(itemstack2)) {
-                        if (this.castingTable.getStackInSlot(i) == null) {
-                            this.castingTable.setInventorySlotContents(i, itemstack2);
+                        if (this.castingMatrix.getStackInSlot(i) == null) {
+                            this.castingMatrix.setInventorySlotContents(i, itemstack2);
                         } else {
                             this.player.dropPlayerItemWithRandomChoice(itemstack2, false);
                         }

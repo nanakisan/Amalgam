@@ -21,8 +21,6 @@ public class ItemAmalgamSword extends Item implements ICastItem {
 
     @Override
     public boolean hitEntity(ItemStack stack, EntityLivingBase entityBeingHit, EntityLivingBase entityHitting) {
-        // get the property list from the stack
-
         // I am pretty sure this should work!!!!
         EntityPlayer player = (EntityPlayer) entityHitting;
         float damage = ItemAmalgamSword.getWeaponDamageFromStack(stack);
@@ -54,8 +52,7 @@ public class ItemAmalgamSword extends Item implements ICastItem {
 
     @Override
     public ItemStack generateStackWithProperties(PropertyList pList, int stackSize) {
-        // here is where we take the properties of the amalgam and use them
-        // to create an itemStack with the proper item and NBT tags
+
         float luster = pList.getValue(PropertyManager.LUSTER);
         float density = pList.getValue(PropertyManager.DENSITY);
         float hardness = pList.getValue(PropertyManager.HARDNESS);

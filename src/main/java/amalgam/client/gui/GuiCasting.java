@@ -25,14 +25,14 @@ public class GuiCasting extends GuiContainer {
     protected void drawGuiContainerBackgroundLayer(float f1, int i1, int i2) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(CRAFTING_GUI_TEXTURES);
-        int k = (this.width - this.xSize) / 2;
-        int l = (this.height - this.ySize) / 2;
-        this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
+        int xPos = (this.width - this.xSize) / 2;
+        int yPos = (this.height - this.ySize) / 2;
+        this.drawTexturedModalRect(xPos, yPos, 0, 0, this.xSize, this.ySize);
 
         ContainerCastingTable table = (ContainerCastingTable) this.inventorySlots;
         for (int i = 0; i < 9; i++) {
-            SlotCasting s = (SlotCasting) table.getSlot(i);
-            if (s.getCastState() != 0) {
+            SlotCasting slot = (SlotCasting) table.getSlot(i);
+            if (slot.getCastState() != 0) {
                 // TODO add custom image to the corner generic workbench gui
                 // that can be used as an overlay to show a slot is casting
 
@@ -41,10 +41,10 @@ public class GuiCasting extends GuiContainer {
                 // parameters 1 and 2 are where we draw
                 // parameters 3 and 4 determine where on the image we draw from
                 // parameters 5 and 6 determine how much we are drawing
-                if (s.hasAmalgam()) {
-                    this.drawTexturedModalRect(k + 30 + 18 * colNum, l + 17 + 18 * rowNum, 10, 10, 16, 16);
+                if (slot.hasAmalgam()) {
+                    this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 10, 10, 16, 16);
                 } else {
-                    this.drawTexturedModalRect(k + 30 + 18 * colNum, l + 17 + 18 * rowNum, 20, 20, 16, 16);
+                    this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 20, 20, 16, 16);
                 }
             }
         }
@@ -58,9 +58,7 @@ public class GuiCasting extends GuiContainer {
                 int newState = ((SlotCasting) slot).toggleCastState();
                 ContainerCastingTable table = (ContainerCastingTable) this.inventorySlots;
                 TileCastingTable te = table.castingTable;
-                // set the client's state
                 te.setCastState(slot.slotNumber, newState);
-                // tell the server the new state
                 PacketHandler.INSTANCE.sendToServer(new PacketSyncCastingSlot(te.xCoord, te.yCoord, te.zCoord, slot.slotNumber, newState));
                 table.updateAmalgamDistribution();
             }

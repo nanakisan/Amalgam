@@ -7,18 +7,16 @@ import net.minecraft.item.ItemStack;
 public class SlotCasting extends Slot {
 
     private static final int MAX_STATE = 1;
-    private int castState;
-    private boolean hasAmalgam;
+    private int              castState;
+    private boolean          hasAmalgam;
 
     public SlotCasting(IInventory inv, int slotNum, int xPos, int yPos) {
         super(inv, slotNum, xPos, yPos);
-
         castState = 0;
         hasAmalgam = false;
     }
 
     public boolean isItemValid(ItemStack stack) {
-        // only return true if the cast state is zero
         return castState == 0;
     }
 
@@ -39,8 +37,8 @@ public class SlotCasting extends Slot {
         return this.hasAmalgam && this.castState != 0;
     }
 
-    public void setHasAmalgam(boolean a) {
-        this.hasAmalgam = a;
+    public void setHasAmalgam(boolean hasAmalgam) {
+        this.hasAmalgam = hasAmalgam;
     }
 
     public void setCastState(int castState) {
