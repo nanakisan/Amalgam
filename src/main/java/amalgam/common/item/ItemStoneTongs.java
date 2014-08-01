@@ -19,10 +19,12 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
 
     // TODO figure out how to steadily and constantly drain amalgam while
     // holding down the item use button instead of having to do it repeatedly
+    private static final String AMALGAM_KEY = "Amalgam";
+    private static final String AMOUNT_KEY  = "Amount";
+    public static final int     CAPACITY    = Amalgam.INGOT_AMOUNT;
 
-    public static final int CAPACITY = Amalgam.INGOTAMOUNT;
-    private IIcon           fullIcon;
-    private IIcon           emptyIcon;
+    private IIcon               fullIcon;
+    private IIcon               emptyIcon;
 
     public ItemStoneTongs() {
         super();
@@ -47,22 +49,22 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
     }
 
     public int getFluidAmount(ItemStack container) {
-        if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Amalgam")) {
+        if (container.stackTagCompound == null || !container.stackTagCompound.hasKey(AMALGAM_KEY)) {
             return 0;
         }
 
-        NBTTagCompound containerNBT = container.stackTagCompound.getCompoundTag("Amalgam");
-        return containerNBT.getInteger("Amount");
+        NBTTagCompound containerNBT = container.stackTagCompound.getCompoundTag(AMALGAM_KEY);
+        return containerNBT.getInteger(AMOUNT_KEY);
     }
 
     @Override
     public AmalgamStack getFluid(ItemStack container) {
-        if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Amalgam")) {
+        if (container.stackTagCompound == null || !container.stackTagCompound.hasKey(AMALGAM_KEY)) {
             return new AmalgamStack(0, new PropertyList());
         }
 
-        NBTTagCompound containerNBT = container.stackTagCompound.getCompoundTag("Amalgam");
-        int amount = containerNBT.getInteger("Amount");
+        NBTTagCompound containerNBT = container.stackTagCompound.getCompoundTag(AMALGAM_KEY);
+        int amount = containerNBT.getInteger(AMOUNT_KEY);
         PropertyList pList = new PropertyList();
         pList.readFromNBT(containerNBT.getCompoundTag("Tag"));
         return new AmalgamStack(amount, pList);
@@ -75,12 +77,12 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
         }
 
         if (!doFill) {
-            if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Amalgam")) {
+            if (container.stackTagCompound == null || !container.stackTagCompound.hasKey(AMALGAM_KEY)) {
                 return Math.min(CAPACITY, resource.amount);
             }
 
-            NBTTagCompound containerNBT = container.stackTagCompound.getCompoundTag("Amalgam");
-            int amount = containerNBT.getInteger("Amount");
+            NBTTagCompound containerNBT = container.stackTagCompound.getCompoundTag(AMALGAM_KEY);
+            int amount = containerNBT.getInteger(AMOUNT_KEY);
             return Math.min(CAPACITY - amount, resource.amount);
         }
 
@@ -88,19 +90,19 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
             container.stackTagCompound = new NBTTagCompound();
         }
 
-        if (!container.stackTagCompound.hasKey("Amalgam")) {
+        if (!container.stackTagCompound.hasKey(AMALGAM_KEY)) {
             NBTTagCompound amalgamTag = resource.writeToNBT(new NBTTagCompound());
 
             if (CAPACITY < resource.amount) {
-                amalgamTag.setInteger("Amount", CAPACITY);
-                container.stackTagCompound.setTag("Amalgam", amalgamTag);
+                amalgamTag.setInteger(AMOUNT_KEY, CAPACITY);
+                container.stackTagCompound.setTag(AMALGAM_KEY, amalgamTag);
                 return CAPACITY;
             }
 
-            container.stackTagCompound.setTag("Amalgam", amalgamTag);
+            container.stackTagCompound.setTag(AMALGAM_KEY, amalgamTag);
             return resource.amount;
         }
-        NBTTagCompound amalgamTag = container.stackTagCompound.getCompoundTag("Amalgam");
+        NBTTagCompound amalgamTag = container.stackTagCompound.getCompoundTag(AMALGAM_KEY);
         AmalgamStack stack = AmalgamStack.loadAmalgamStackFromNBT(amalgamTag);
 
         if (stack.fluidID != resource.fluidID) {
@@ -116,32 +118,32 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
             stack = AmalgamStack.combine(stack, temp);
         }
 
-        container.stackTagCompound.setTag("Amalgam", stack.writeToNBT(amalgamTag));
+        container.stackTagCompound.setTag(AMALGAM_KEY, stack.writeToNBT(amalgamTag));
         return filled;
     }
 
     @Override
     public AmalgamStack drain(ItemStack container, int maxDrain, boolean doDrain) {
-        if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Amalgam")) {
+        if (container.stackTagCompound == null || !container.stackTagCompound.hasKey(AMALGAM_KEY)) {
             return null;
         }
 
-        AmalgamStack stack = AmalgamStack.loadAmalgamStackFromNBT(container.stackTagCompound.getCompoundTag("Amalgam"));
+        AmalgamStack stack = AmalgamStack.loadAmalgamStackFromNBT(container.stackTagCompound.getCompoundTag(AMALGAM_KEY));
         stack.amount = Math.min(stack.amount, maxDrain);
 
         if (doDrain) {
             if (maxDrain >= CAPACITY) {
-                container.stackTagCompound.removeTag("Amalgam");
+                container.stackTagCompound.removeTag(AMALGAM_KEY);
                 if (container.stackTagCompound.hasNoTags()) {
                     container.stackTagCompound = null;
                 }
                 return stack;
             }
 
-            NBTTagCompound amalgamTag = container.stackTagCompound.getCompoundTag("Amalgam");
-            amalgamTag.setInteger("Amount", amalgamTag.getInteger("Amount") - maxDrain);
+            NBTTagCompound amalgamTag = container.stackTagCompound.getCompoundTag(AMALGAM_KEY);
+            amalgamTag.setInteger(AMOUNT_KEY, amalgamTag.getInteger(AMOUNT_KEY) - maxDrain);
 
-            container.stackTagCompound.setTag("Amalgam", amalgamTag);
+            container.stackTagCompound.setTag(AMALGAM_KEY, amalgamTag);
         }
 
         return stack;

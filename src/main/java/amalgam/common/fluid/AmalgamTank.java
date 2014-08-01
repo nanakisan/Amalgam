@@ -10,9 +10,12 @@ import amalgam.common.Amalgam;
 
 public class AmalgamTank implements IFluidTank {
 
-    protected AmalgamStack fluid;
-    protected int          capacity;
-    protected TileEntity   tile;
+    private static final String EMPTY_KEY    = "Empty";
+    private static final String CAPACITY_KEY = "Capacity";
+
+    protected AmalgamStack      fluid;
+    protected int               capacity;
+    protected TileEntity        tile;
 
     public AmalgamTank(int cap) {
         super();
@@ -20,20 +23,20 @@ public class AmalgamTank implements IFluidTank {
     }
 
     public AmalgamTank readFromNBT(NBTTagCompound nbt) {
-        if (!nbt.hasKey("Empty")) {
+        if (!nbt.hasKey(EMPTY_KEY)) {
             this.fluid = AmalgamStack.loadAmalgamStackFromNBT(nbt);
         }
-        this.capacity = nbt.getInteger("cap");
+        this.capacity = nbt.getInteger(CAPACITY_KEY);
         return this;
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         if (fluid == null) {
-            nbt.setString("Empty", "");
+            nbt.setString(EMPTY_KEY, "");
         } else {
             fluid.writeToNBT(nbt);
         }
-        nbt.setInteger("cap", this.capacity);
+        nbt.setInteger(CAPACITY_KEY, this.capacity);
         return nbt;
     }
 

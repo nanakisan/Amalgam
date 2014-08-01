@@ -15,7 +15,10 @@ import org.apache.logging.log4j.Logger;
 
 import amalgam.common.block.BlockCastingTable;
 import amalgam.common.block.BlockStoneCrucible;
+import amalgam.common.casting.CastingManager;
+import amalgam.common.casting.ICastItem;
 import amalgam.common.item.ItemAmalgamBlob;
+import amalgam.common.item.ItemAmalgamSword;
 import amalgam.common.item.ItemStoneTongs;
 import amalgam.common.network.PacketHandler;
 import amalgam.common.properties.PropertyList;
@@ -39,27 +42,28 @@ public class Amalgam {
 
     // TODO add Waila support
 
-    public static final String    MODID           = "amalgam";
-    public static final String    VERSION         = "0.0.1";
-    public static final int       BASEAMOUNT      = 10;
-    public static final int       INGOTAMOUNT     = BASEAMOUNT * 9;
-    public static final Logger    LOG             = LogManager.getLogger("Amalgam");
-    public static final int       CASTING_GUI_ID  = 1;
+    public static final String MODID          = "amalgam";
+    public static final String VERSION        = "0.0.1";
+    public static final int    BASE_AMOUNT    = 10;
+    public static final int    INGOT_AMOUNT   = BASE_AMOUNT * 9;
+    public static final Logger LOG            = LogManager.getLogger(MODID);
+    public static final int    CASTING_GUI_ID = 1;
 
-    // this needs to be the same as the modid, including the capitalization
-    @Instance("amalgam")
-    public static Amalgam         instance;
+    @Instance(MODID)
+    public static Amalgam      instance;
 
     @SidedProxy(clientSide = "amalgam.client.ClientProxy", serverSide = "amalgam.common.CommonProxy")
-    public static CommonProxy     proxy;
+    public static CommonProxy  proxy;
 
-    public static PropertyManager propertyManager = PropertyManager.getInstance();
-    public static Fluid           fluidAmalgam;
-    public static Block           stoneCrucible;
-    public static Block           castingTable;
-    public static Item            stoneTongs;
-    public static Item            amalgamBlob;
-    public static CreativeTabs    tab;
+    // public static PropertyManager propertyManager = PropertyManager.getInstance();
+    // public static CastingManager castingManager = CastingManager.getInstance();
+    public static Fluid        fluidAmalgam;
+    public static Block        stoneCrucible;
+    public static Block        castingTable;
+    public static Item         stoneTongs;
+    public static Item         amalgamBlob;
+    public static Item         amalgamSword;
+    public static CreativeTabs tab;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -83,8 +87,10 @@ public class Amalgam {
 
         stoneTongs = new ItemStoneTongs().setUnlocalizedName("stoneTongs");
         amalgamBlob = new ItemAmalgamBlob().setUnlocalizedName("amalgamBlob");
+        amalgamSword = new ItemAmalgamSword().setUnlocalizedName("amalgamSword");
         GameRegistry.registerItem(stoneTongs, "stoneTongs");
         GameRegistry.registerItem(amalgamBlob, "amalgamBlob");
+        GameRegistry.registerItem(amalgamSword, "amalgamSword");
 
         GameRegistry.registerTileEntity(TileStoneCrucible.class, "stoneCrucible");
         GameRegistry.registerTileEntity(TileCastingTable.class, "castingTable");
@@ -99,17 +105,17 @@ public class Amalgam {
         PropertyList goldProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.GOLD);
         PropertyList diamondProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.EMERALD);
 
-        PropertyManager.registerItemProperties(new ItemStack(Items.iron_ingot), ironProp, INGOTAMOUNT);
-        PropertyManager.registerItemProperties(new ItemStack(Items.gold_ingot), goldProp, INGOTAMOUNT);
-        PropertyManager.registerItemProperties(new ItemStack(Items.diamond), diamondProp, INGOTAMOUNT);
-        PropertyManager.registerItemProperties(new ItemStack(Blocks.iron_block), ironProp, INGOTAMOUNT * 9);
-        PropertyManager.registerItemProperties(new ItemStack(Blocks.gold_block), goldProp, INGOTAMOUNT * 9);
-        PropertyManager.registerItemProperties(new ItemStack(Blocks.diamond_block), diamondProp, INGOTAMOUNT * 9);
-        PropertyManager.registerItemProperties(new ItemStack(Items.gold_nugget), goldProp, BASEAMOUNT);
+        PropertyManager.registerItemProperties(new ItemStack(Items.iron_ingot), ironProp, INGOT_AMOUNT);
+        PropertyManager.registerItemProperties(new ItemStack(Items.gold_ingot), goldProp, INGOT_AMOUNT);
+        PropertyManager.registerItemProperties(new ItemStack(Items.diamond), diamondProp, INGOT_AMOUNT);
+        PropertyManager.registerItemProperties(new ItemStack(Blocks.iron_block), ironProp, INGOT_AMOUNT * 9);
+        PropertyManager.registerItemProperties(new ItemStack(Blocks.gold_block), goldProp, INGOT_AMOUNT * 9);
+        PropertyManager.registerItemProperties(new ItemStack(Blocks.diamond_block), diamondProp, INGOT_AMOUNT * 9);
+        PropertyManager.registerItemProperties(new ItemStack(Items.gold_nugget), goldProp, BASE_AMOUNT);
 
         PropertyManager.registerItemProperties(new ItemStack(amalgamBlob), null, 0);
 
-        // MinecraftForge.EVENT_BUS.register(new TestEventHandler());
+        CastingManager.addShapelessRecipe((ICastItem) amalgamSword, 1, "Amalgam", Blocks.stone);
 
     }
 

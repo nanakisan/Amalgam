@@ -17,7 +17,7 @@ import amalgam.common.properties.PropertyList;
 
 public class TileStoneCrucible extends TileEntity implements IFluidHandler {
 
-    protected AmalgamTank tank = new AmalgamTank(Amalgam.BASEAMOUNT * 100);
+    protected AmalgamTank tank = new AmalgamTank(Amalgam.BASE_AMOUNT * 100);
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
@@ -76,7 +76,7 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler {
             int amount = tank.getFluidAmount();
             PropertyList p = ((AmalgamStack) tank.getFluid()).getProperties();
             while (amount > 0) {
-                int dropAmount = Math.min(amount, Amalgam.INGOTAMOUNT);
+                int dropAmount = Math.min(amount, Amalgam.INGOT_AMOUNT);
                 amount -= dropAmount;
                 ItemStack droppedBlob = new ItemStack(Amalgam.amalgamBlob, 1);
 

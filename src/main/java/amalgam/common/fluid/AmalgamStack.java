@@ -8,6 +8,10 @@ import amalgam.common.properties.PropertyList;
 
 public class AmalgamStack extends FluidStack {
 
+    // the property key should be Tag due to the way FluidStacks work
+    private static final String PROPERTY_KEY = "Tag";
+    private static final String AMOUNT_KEY   = "Amount";
+
     public AmalgamStack(int amount, PropertyList pList) {
         super(Amalgam.fluidAmalgam.getID(), amount, null);
         this.tag = new NBTTagCompound();
@@ -61,9 +65,9 @@ public class AmalgamStack extends FluidStack {
     }
 
     public static AmalgamStack loadAmalgamStackFromNBT(NBTTagCompound nbtComp) {
-        int amount = nbtComp.getInteger("Amount");
+        int amount = nbtComp.getInteger(AMOUNT_KEY);
         PropertyList pList = new PropertyList();
-        pList.readFromNBT(nbtComp.getCompoundTag("Tag"));
+        pList.readFromNBT(nbtComp.getCompoundTag(PROPERTY_KEY));
         return new AmalgamStack(amount, pList);
     }
 

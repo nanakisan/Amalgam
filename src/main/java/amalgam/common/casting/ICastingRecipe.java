@@ -3,6 +3,7 @@ package amalgam.common.casting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import amalgam.common.container.InventoryCasting;
+import amalgam.common.properties.PropertyList;
 
 public interface ICastingRecipe {
     /**
@@ -13,7 +14,7 @@ public interface ICastingRecipe {
     /**
      * Returns an Item that is the result of this recipe based on an amalgam property list
      */
-    ItemStack getCastingResult(InventoryCasting inv);
+    ItemStack getCastingResult(InventoryCasting inv, PropertyList list);
 
     /**
      * Returns the size of the recipe area

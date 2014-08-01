@@ -25,13 +25,8 @@ public final class PropertyManager {
     private PropertyManager() {
     }
 
-    public static PropertyManager getInstance() {
-        return INSTANCE;
-    }
+    /* public static PropertyManager getInstance() { return INSTANCE; } */
 
-    // Pass null for PropertyList to use an Items NBT tags for properties
-    // instead of pre-registered values
-    // Volume is generally 9 for an ingot, 1 for a nugget
     public static void registerItemProperties(ItemStack stack, PropertyList list, int volume) {
         Item item = stack.getItem();
         if (list != null && volume > 0) {

@@ -17,25 +17,17 @@ public final class CastingManager {
     private static final CastingManager INSTANCE = new CastingManager();
 
     /** A list of all the recipes added */
-    private List                        recipes  = new ArrayList();
+    private static List<ICastingRecipe> recipes  = new ArrayList<ICastingRecipe>();
 
     /**
      * Returns the static instance of this class
      */
     public static CastingManager getInstance() {
-        /** The static instance of this class */
         return INSTANCE;
     }
 
     private CastingManager() {
         // TODO add recipes here?
-
-        /* Collections.sort(this.recipes, new Comparator(){ public int compare(IRecipe p_compare_1_, IRecipe
-         * p_compare_2_) { return p_compare_1_ instanceof ShapelessRecipes && p_compare_2_ instanceof ShapedRecipes ? 1
-         * : (p_compare_2_ instanceof ShapelessRecipes && p_compare_1_ instanceof ShapedRecipes ? -1 :
-         * (p_compare_2_.getRecipeSize() < p_compare_1_.getRecipeSize() ? -1 : (p_compare_2_.getRecipeSize() >
-         * p_compare_1_.getRecipeSize() ? 1 : 0))); } public int compare(Object p_compare_1_, Object p_compare_2_) {
-         * return this.compare((IRecipe)p_compare_1_, (IRecipe)p_compare_2_); } }); */
     }
 
     /* public ShapedRecipes addRecipe(ItemStack p_92103_1_, Object ... p_92103_2_) { String s = ""; int i = 0; int j =
@@ -52,8 +44,10 @@ public final class CastingManager {
      * ShapedRecipes shapedrecipes = new ShapedRecipes(j, k, aitemstack, p_92103_1_); this.recipes.add(shapedrecipes);
      * return shapedrecipes; } */
 
-    public void addShapelessRecipe(ICastItem output, int amount, Object... recipeInput) {
-        ArrayList arraylist = new ArrayList();
+    public static void addShapelessRecipe(ICastItem output, int amount, Object... recipeInput) {
+        Amalgam.LOG.info("Registering shapeless recipe");
+
+        ArrayList<ItemStack> arraylist = new ArrayList<ItemStack>();
         Object[] recipeList = recipeInput;
         int numRecipeItems = recipeList.length;
 
@@ -79,15 +73,16 @@ public final class CastingManager {
             }
         }
 
-        this.recipes.add(new ShapelessCastingRecipe(output, amount, arraylist));
+        recipes.add(new ShapelessCastingRecipe(output, amount, arraylist));
     }
 
-    public ItemStack findMatchingRecipe(InventoryCasting inv, World world) {
-        for (int recipeIndex = 0; recipeIndex < this.recipes.size(); ++recipeIndex) {
-            ICastingRecipe irecipe = (ICastingRecipe) this.recipes.get(recipeIndex);
+    public static ICastingRecipe findMatchingRecipe(InventoryCasting inv, World world) {
+        for (int recipeIndex = 0; recipeIndex < recipes.size(); ++recipeIndex) {
+            ICastingRecipe irecipe = (ICastingRecipe) recipes.get(recipeIndex);
 
             if (irecipe.matches(inv, world)) {
-                return irecipe.getCastingResult(inv);
+                Amalgam.LOG.info("found match!");
+                return irecipe;
             }
         }
 
@@ -97,7 +92,7 @@ public final class CastingManager {
     /**
      * returns the List<> of all recipes
      */
-    public List getRecipeList() {
-        return this.recipes;
+    public static List<ICastingRecipe> getRecipeList() {
+        return recipes;
     }
 }

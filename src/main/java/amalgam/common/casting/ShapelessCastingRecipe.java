@@ -7,19 +7,20 @@ import java.util.List;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import amalgam.common.container.InventoryCasting;
+import amalgam.common.properties.PropertyList;
 
 public class ShapelessCastingRecipe implements ICastingRecipe {
 
     /** Is the Item that you get when craft the recipe. */
-    private final ICastItem recipeOutput;
+    private final ICastItem      recipeOutput;
 
     /** The amount of items in the itemStack output */
-    private final int       amount;
+    private final int            amount;
 
     /** Is a List of ItemStack that composes the recipe. */
-    public final List       recipeItems;
+    public final List<ItemStack> recipeItems;
 
-    public ShapelessCastingRecipe(ICastItem item, int amount, List list) {
+    public ShapelessCastingRecipe(ICastItem item, int amount, List<ItemStack> list) {
         this.recipeOutput = item;
         this.amount = amount;
         this.recipeItems = list;
@@ -33,7 +34,8 @@ public class ShapelessCastingRecipe implements ICastingRecipe {
      * Used to check if a recipe matches current crafting inventory
      */
     public boolean matches(InventoryCasting inv, World world) {
-        ArrayList arraylist = new ArrayList(this.recipeItems);
+
+        ArrayList<ItemStack> arraylist = new ArrayList<ItemStack>(this.recipeItems);
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
@@ -41,7 +43,7 @@ public class ShapelessCastingRecipe implements ICastingRecipe {
 
                 if (itemstack != null) {
                     boolean flag = false;
-                    Iterator iterator = arraylist.iterator();
+                    Iterator<ItemStack> iterator = arraylist.iterator();
 
                     while (iterator.hasNext()) {
                         ItemStack itemstack1 = (ItemStack) iterator.next();
@@ -75,8 +77,8 @@ public class ShapelessCastingRecipe implements ICastingRecipe {
     }
 
     @Override
-    public ItemStack getCastingResult(InventoryCasting inv) {
-        return this.recipeOutput.generateStackWithProperties(inv.getPropertyList(), this.amount);
+    public ItemStack getCastingResult(InventoryCasting inv, PropertyList list) {
+        return this.recipeOutput.generateStackWithProperties(list, this.amount);
     }
 
 }

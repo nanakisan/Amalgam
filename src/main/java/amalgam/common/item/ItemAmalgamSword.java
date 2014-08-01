@@ -52,6 +52,9 @@ public class ItemAmalgamSword extends Item implements ICastItem {
 
     @Override
     public ItemStack generateStackWithProperties(PropertyList pList, int stackSize) {
+        if (pList == null) {
+            return null;
+        }
 
         float luster = pList.getValue(PropertyManager.LUSTER);
         float density = pList.getValue(PropertyManager.DENSITY);

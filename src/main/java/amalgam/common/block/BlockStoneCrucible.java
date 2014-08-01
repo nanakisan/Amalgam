@@ -38,7 +38,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitx, float hity, float hitz) {
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
         if (world.isRemote) {
             return true;
         }
@@ -52,7 +52,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
         if (stack.getItem() instanceof IAmalgamContainerItem) {
             IAmalgamContainerItem container = (IAmalgamContainerItem) stack.getItem();
             if (player.isSneaking()) {
-                int drainAmount = Math.min(container.getEmptySpace(stack), Amalgam.BASEAMOUNT);
+                int drainAmount = Math.min(container.getEmptySpace(stack), Amalgam.BASE_AMOUNT);
                 AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, drainAmount, true);
                 if (fluidStack != null) { // see if we drained anything
                     int result = container.fill(stack, fluidStack, true);

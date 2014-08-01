@@ -1,37 +1,19 @@
 package amalgam.common.container;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
-import amalgam.common.properties.PropertyList;
 
 public class InventoryCasting implements IInventory, ISidedInventory {
 
-    /** properties of the amalgam used to cast */
-    private PropertyList propertyList;
-    /** List of the stacks in the crafting matrix. */
-    private ItemStack[]  stackList;
-    /** the width of the crafting inventory */
-    private int          inventoryWidth;
-    /** Class containing the callbacks for the events on_GUIClosed and on_CraftMaxtrixChanged. */
-    private Container    eventHandler;
-    /** an array holding the casting state of each slot */
-    private int          castState[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    private ItemStack[]      stackList = new ItemStack[9];
+    private int              inventoryWidth;
+    private ContainerCasting table;
 
-    public InventoryCasting(Container container, int rows, int cols) {
-        this.stackList = new ItemStack[rows * cols];
-        this.eventHandler = container;
+    public InventoryCasting(ContainerCasting container, int rows, int cols) {
+        this.table = container;
         this.inventoryWidth = rows;
-    }
-
-    public void setPropertyList(PropertyList pList) {
-        propertyList = pList;
-    }
-
-    public PropertyList getPropertyList() {
-        return propertyList;
     }
 
     // ///////////////////
@@ -49,7 +31,8 @@ public class InventoryCasting implements IInventory, ISidedInventory {
         if (slot >= 9) {
             return false;
         }
-        return castState[slot] == 0;
+
+        return ((SlotCasting) table.getSlot(slot)).getCastState() == 0;
     }
 
     @Override
@@ -67,18 +50,13 @@ public class InventoryCasting implements IInventory, ISidedInventory {
 
     @Override
     public int getSizeInventory() {
-        int unusableSlots = 0;
-        for (int i = 0; i < 9; i++) {
-            if (castState[i] != 0) {
-                unusableSlots++;
-            }
-        }
-        return 9 - unusableSlots;
+        return this.stackList.length;
     }
 
     @Override
     public ItemStack getStackInSlot(int slot) {
-        if (castState[slot] == 1) {
+        if (((SlotCasting) table.getSlot(slot)).getCastState() == 1) {
+            // Amalgam.LOG.info("found some amalgam");
             return null;
         }
 
@@ -87,12 +65,30 @@ public class InventoryCasting implements IInventory, ISidedInventory {
 
     @Override
     public ItemStack decrStackSize(int slot, int decNum) {
-        if (castState[slot] != 0) {
+        if (((SlotCasting) table.getSlot(slot)).getCastState() != 0) {
             return null;
         }
 
-        ItemStack stack = stackList[slot];
-        return stack.splitStack(decNum);
+        if (stackList[slot] != null) {
+            ItemStack itemstack;
+
+            if (stackList[slot].stackSize <= decNum) {
+                itemstack = stackList[slot];
+                this.setInventorySlotContents(slot, null);
+                return itemstack;
+            } else {
+                itemstack = stackList[slot].splitStack(decNum);
+
+                if (stackList[slot].stackSize == 0) {
+                    this.setInventorySlotContents(slot, itemstack);
+                }
+
+                return itemstack;
+            }
+        } else {
+            return null;
+        }
+
     }
 
     @Override
@@ -102,10 +98,12 @@ public class InventoryCasting implements IInventory, ISidedInventory {
 
     @Override
     public void setInventorySlotContents(int slot, ItemStack stack) {
-        if (castState[slot] != 0) {
+        if (((SlotCasting) table.getSlot(slot)).getCastState() != 0) {
             return;
         }
+
         stackList[slot] = stack;
+        table.castingTable.setStackInSlot(slot, stack);
     }
 
     @Override
@@ -140,7 +138,7 @@ public class InventoryCasting implements IInventory, ISidedInventory {
     @Override
     public boolean isItemValidForSlot(int slot, ItemStack stack) {
 
-        if (castState[slot] == 0) {
+        if (((SlotCasting) table.getSlot(slot)).getCastState() == 0) {
             return true;
         }
         return false;
@@ -152,7 +150,7 @@ public class InventoryCasting implements IInventory, ISidedInventory {
     public ItemStack getStackInRowAndColumn(int row, int col) {
         if (row >= 0 && col < this.inventoryWidth) {
             int slotNum = row + col * this.inventoryWidth;
-            return this.getStackInSlot(slotNum);
+            return stackList[slotNum];
         } else {
             return null;
         }

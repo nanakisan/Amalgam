@@ -19,14 +19,10 @@ public class SlotCastingResult extends Slot {
      */
     private int              amountCrafted;
 
-    private AmalgamTank      tank;
-
-    public SlotCastingResult(EntityPlayer player, AmalgamTank tank, InventoryCasting castMatrix, InventoryCastResult castResult, int slotID,
-            int xPos, int yPos) {
+    public SlotCastingResult(EntityPlayer player, InventoryCasting castMatrix, InventoryCastResult castResult, int slotID, int xPos, int yPos) {
         super(castResult, slotID, xPos, yPos);
         this.castingMatrix = castMatrix;
         this.player = player;
-        this.tank = tank;
     }
 
     public boolean isItemValid(ItemStack stack) {
@@ -63,8 +59,6 @@ public class SlotCastingResult extends Slot {
         this.onCrafting(stack);
 
         // TODO need to drain amalgam at some point after cast item is picked up.
-
-        this.tank.drain(-1, true);
 
         for (int i = 0; i < this.castingMatrix.getSizeInventory(); ++i) {
             ItemStack itemstack1 = this.castingMatrix.getStackInSlot(i);

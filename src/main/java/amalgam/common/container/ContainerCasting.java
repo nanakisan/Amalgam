@@ -7,23 +7,29 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import amalgam.common.Amalgam;
+import amalgam.common.casting.CastingManager;
+import amalgam.common.casting.ICastingRecipe;
+import amalgam.common.network.PacketHandler;
 import amalgam.common.tile.TileCastingTable;
 
-public class ContainerCastingTable extends Container {
+public class ContainerCasting extends Container {
 
     // this tile entity associated with this container has the crafting
     // inventories (craftMatrix and craftResult in ContianerWorkbench)
     // FIXME right now the tileEntity itself is used as the casting inventory, refactor this using the InventoryCasting
     // and InventoryCastResult classes so it is more like the crafting table. This is necessary to make the
     // CastingManager work
-    public TileCastingTable     castingTable;
-    private InventoryPlayer     playerInv;
-    private InventoryCasting    castingMatrix = new InventoryCasting(this, 3, 3);
-    private InventoryCastResult castResult    = new InventoryCastResult();
+    public TileCastingTable    castingTable;
+    private InventoryPlayer    playerInv;
+    public InventoryCasting    castingMatrix;
+    public InventoryCastResult castResult;
 
-    public ContainerCastingTable(InventoryPlayer inv, TileCastingTable te) {
+    public ContainerCasting(InventoryPlayer inv, TileCastingTable te) {
         this.castingTable = te;
         this.playerInv = inv;
+
+        castingMatrix = new InventoryCasting(this, 3, 3);
+        castResult = new InventoryCastResult();
 
         int rowNum;
         int colNum;
@@ -32,16 +38,16 @@ public class ContainerCastingTable extends Container {
         for (rowNum = 0; rowNum < 3; ++rowNum) {
             for (colNum = 0; colNum < 3; ++colNum) {
                 slotNum = colNum + rowNum * 3;
-                castingMatrix.setInventorySlotContents(slotNum, castingTable.getStackInSlot(slotNum));
 
                 SlotCasting s = new SlotCasting(castingMatrix, slotNum, 30 + colNum * 18, 17 + rowNum * 18);
                 s.setCastState(te.getCastState(slotNum));
                 this.addSlotToContainer(s);
+
+                castingMatrix.setInventorySlotContents(slotNum, castingTable.getStackInSlot(slotNum));
             }
         }
 
-        this.addSlotToContainer(new SlotCastingResult(this.playerInv.player, this.castingTable.getTank(), this.castingMatrix, this.castResult, 0,
-                124, 35));
+        this.addSlotToContainer(new SlotCastingResult(this.playerInv.player, castingMatrix, castResult, 0, 124, 35));
 
         for (rowNum = 0; rowNum < 3; ++rowNum) {
             for (colNum = 0; colNum < 9; ++colNum) {
@@ -55,7 +61,6 @@ public class ContainerCastingTable extends Container {
         }
 
         this.onCraftMatrixChanged(this.castingMatrix);
-        this.updateAmalgamDistribution();
     }
 
     public final void updateAmalgamDistribution() {
@@ -65,21 +70,11 @@ public class ContainerCastingTable extends Container {
             SlotCasting s = (SlotCasting) this.getSlot(slotNum);
             if (te.getCastState(slotNum) == 1 && amount > 0) {
                 s.setHasAmalgam(true);
-                amount -= Amalgam.INGOTAMOUNT;
+                amount -= Amalgam.INGOT_AMOUNT;
             } else {
                 s.setHasAmalgam(false);
             }
         }
-    }
-
-    /**
-     * Callback for when the crafting matrix is changed.
-     */
-    public void onCraftMatrixChanged(IInventory castingTable) {
-        super.onCraftMatrixChanged(castingTable);
-        // this.castingTable.castResult.setInventorySlotContents(0,
-        // CraftingManager.getInstance().findMatchingRecipe(this.castingTable,
-        // this.castingTable.getWorldObj()));
     }
 
     @Override
@@ -90,9 +85,7 @@ public class ContainerCastingTable extends Container {
                 : false;
     }
 
-    /**
-     * Called when a player shift-clicks on a slot. You must override this or you will crash when someone does that.
-     */
+    @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int slotNum) {
         ItemStack itemstack = null;
         Slot slot = (Slot) this.inventorySlots.get(slotNum);
@@ -134,4 +127,32 @@ public class ContainerCastingTable extends Container {
 
         return itemstack;
     }
+
+    @Override
+    public void onCraftMatrixChanged(IInventory inv) {
+        super.onCraftMatrixChanged(inv);
+        this.updateAmalgamDistribution();
+        ICastingRecipe recipe = CastingManager.findMatchingRecipe(castingMatrix, castingTable.getWorldObj());
+        if (recipe == null) {
+            return;
+        }
+
+        castResult.setInventorySlotContents(0, recipe.getCastingResult(castingMatrix, castingTable.getAmalgamPropertyList()));
+    }
+
+    @Override
+    public ItemStack slotClick(int slotNum, int ctrNum, int shiftNum, EntityPlayer player) {
+        if (slotNum >= 0 && slotNum < this.inventorySlots.size()) {
+            Slot slot = this.getSlot(slotNum);
+            if (slot instanceof SlotCasting) {
+                if (!slot.getHasStack() && player.inventory.getItemStack() == null) {
+                    int newState = ((SlotCasting) slot).toggleCastState();
+                    castingTable.setCastState(slot.slotNumber, newState);
+                    this.onCraftMatrixChanged(castingMatrix);
+                }
+            }
+        }
+        return super.slotClick(slotNum, ctrNum, shiftNum, player);
+    }
+
 }

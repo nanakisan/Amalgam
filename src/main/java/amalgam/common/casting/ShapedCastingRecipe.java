@@ -3,6 +3,7 @@ package amalgam.common.casting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import amalgam.common.container.InventoryCasting;
+import amalgam.common.properties.PropertyList;
 
 public class ShapedCastingRecipe implements ICastingRecipe {
 
@@ -22,7 +23,7 @@ public class ShapedCastingRecipe implements ICastingRecipe {
     }
 
     @Override
-    public ItemStack getCastingResult(InventoryCasting inv) {
+    public ItemStack getCastingResult(InventoryCasting inv, PropertyList list) {
         return null;
     }
 

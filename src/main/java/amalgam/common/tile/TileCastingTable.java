@@ -26,26 +26,30 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
     // TODO emit light when holding amalgam
     // TODO render blobs of liquid amalgam on table when they are placed there
 
-    private ItemStack[] castingItems = new ItemStack[10];
-    private int[]       castStates   = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    private AmalgamTank tank         = new AmalgamTank(0);
+    private ItemStack[]         castingItems = new ItemStack[10];
+    private int[]               castStates   = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    private AmalgamTank         tank         = new AmalgamTank(0);
+
+    private static final String ITEMS_KEY    = "ItemStacks";
+    private static final String CAST_KEY     = "CastStates";
+    private static final String SLOT_KEY     = "Slot";
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
-        NBTTagList nbttaglist = tag.getTagList("castingItems", 10);
+        NBTTagList nbttaglist = tag.getTagList(ITEMS_KEY, 10);
         this.castingItems = new ItemStack[10];
 
         for (int i = 0; i < nbttaglist.tagCount(); ++i) {
             NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
-            byte b0 = nbttagcompound1.getByte("Slot");
+            byte b0 = nbttagcompound1.getByte(SLOT_KEY);
 
             if (b0 >= 0 && b0 < this.castingItems.length) {
                 this.castingItems[b0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
             }
         }
 
-        this.castStates = tag.getIntArray("castStates");
+        this.castStates = tag.getIntArray(CAST_KEY);
         tank.readFromNBT(tag);
     }
 
@@ -53,20 +57,20 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
     public void writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
         tank.writeToNBT(tag);
-        tag.setIntArray("castStates", this.castStates);
+        tag.setIntArray(CAST_KEY, this.castStates);
 
         NBTTagList nbttaglist = new NBTTagList();
 
         for (int i = 0; i < this.castingItems.length; ++i) {
             if (this.castingItems[i] != null) {
                 NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-                nbttagcompound1.setByte("Slot", (byte) i);
+                nbttagcompound1.setByte(SLOT_KEY, (byte) i);
                 this.castingItems[i].writeToNBT(nbttagcompound1);
                 nbttaglist.appendTag(nbttagcompound1);
             }
         }
 
-        tag.setTag("castingItems", nbttaglist);
+        tag.setTag(ITEMS_KEY, nbttaglist);
     }
 
     // /////////////////
@@ -127,7 +131,7 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         int newCapacity = 0;
 
         for (int i = 0; i < 9; i++) {
-            newCapacity += castStates[i] * Amalgam.INGOTAMOUNT;
+            newCapacity += castStates[i] * Amalgam.INGOT_AMOUNT;
         }
 
         AmalgamStack extraAmalgam = tank.setCapacity(newCapacity);
@@ -160,6 +164,7 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
     }
 
     public void setCastState(int index, int value) {
+        Amalgam.LOG.info("setting cast state of castingTableTank slot " + index + " to " + value);
         this.castStates[index] = value;
         this.updateAmalgamTankCapacity();
     }
@@ -171,7 +176,7 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
     @Override
     public Packet getDescriptionPacket() {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setIntArray("castStates", this.castStates);
+        tag.setIntArray(CAST_KEY, this.castStates);
         tank.writeToNBT(tag);
         return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, this.blockMetadata, tag);
     }
@@ -179,7 +184,7 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
         NBTTagCompound tag = pkt.func_148857_g();
-        this.castStates = tag.getIntArray("castStates");
+        this.castStates = tag.getIntArray(CAST_KEY);
         this.tank.readFromNBT(tag);
     }
 
@@ -188,7 +193,7 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
             int amount = tank.getFluidAmount();
             PropertyList p = ((AmalgamStack) tank.getFluid()).getProperties();
             while (amount > 0) {
-                int dropAmount = Math.min(amount, Amalgam.INGOTAMOUNT);
+                int dropAmount = Math.min(amount, Amalgam.INGOT_AMOUNT);
                 amount -= dropAmount;
                 ItemStack droppedBlob = new ItemStack(Amalgam.amalgamBlob, 1);
 
@@ -206,6 +211,10 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         return castingItems[slotNum];
     }
 
+    public void setStackInSlot(int slotNum, ItemStack stack) {
+        castingItems[slotNum] = stack;
+    }
+
     public int getTankAmount() {
         return tank.getFluidAmount();
     }
@@ -214,8 +223,7 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         tank.setFluid(fluid);
     }
 
-    public AmalgamTank getTank() {
-        return tank;
+    public PropertyList getAmalgamPropertyList() {
+        return ((AmalgamStack) tank.getFluid()).getProperties();
     }
-
 }

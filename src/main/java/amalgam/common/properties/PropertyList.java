@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagList;
 
 public class PropertyList {
 
-    private Map<Property, Float> properties = new HashMap<Property, Float>();
+    private final Map<Property, Float> properties = new HashMap<Property, Float>();
 
     public PropertyList() {
         // empty constructor

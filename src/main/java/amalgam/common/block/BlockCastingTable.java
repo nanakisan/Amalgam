@@ -26,7 +26,7 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float px, float py, float pz) {
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
         if (world.isRemote) {
             return true;
         }
@@ -37,31 +37,31 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
             return false;
         }
 
-        TileCastingTable te = (TileCastingTable) world.getTileEntity(x, y, z);
+        TileCastingTable table = (TileCastingTable) world.getTileEntity(x, y, z);
         if (stack.getItem() instanceof IAmalgamContainerItem) {
             IAmalgamContainerItem container = (IAmalgamContainerItem) stack.getItem();
             if (player.isSneaking()) {
-                int drainAmount = Math.min(container.getEmptySpace(stack), Amalgam.BASEAMOUNT);
-                AmalgamStack fluidStack = (AmalgamStack) te.drain(ForgeDirection.UNKNOWN, drainAmount, true);
+                int drainAmount = Math.min(container.getEmptySpace(stack), Amalgam.BASE_AMOUNT);
+                AmalgamStack fluidStack = (AmalgamStack) table.drain(ForgeDirection.UNKNOWN, drainAmount, true);
                 if (fluidStack != null) {
                     int result = container.fill(stack, fluidStack, true);
                     fluidStack.amount -= result;
                     if (fluidStack.amount > 0) {
-                        te.fill(ForgeDirection.UNKNOWN, fluidStack, true);
+                        table.fill(ForgeDirection.UNKNOWN, fluidStack, true);
                     }
                 }
             } else if (container.getFluid(stack).amount == 0) {
-                AmalgamStack fluidStack = (AmalgamStack) te.drain(ForgeDirection.UNKNOWN, container.getEmptySpace(stack), true);
+                AmalgamStack fluidStack = (AmalgamStack) table.drain(ForgeDirection.UNKNOWN, container.getEmptySpace(stack), true);
                 if (fluidStack != null) {
                     int result = container.fill(stack, fluidStack, true);
                     fluidStack.amount -= result;
                     if (fluidStack.amount > 0) {
-                        te.fill(ForgeDirection.UNKNOWN, fluidStack, true);
+                        table.fill(ForgeDirection.UNKNOWN, fluidStack, true);
                     }
                 }
             } else {
                 AmalgamStack newStack = (AmalgamStack) container.drain(stack, container.getCapacity(stack), true);
-                int filled = te.fill(ForgeDirection.UNKNOWN, newStack, true);
+                int filled = table.fill(ForgeDirection.UNKNOWN, newStack, true);
                 newStack.amount -= filled;
                 container.fill(stack, newStack, true);
             }
@@ -78,9 +78,9 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
     @Override
     // the metadata variable might actually be the block side, not sure
     public void breakBlock(World world, int x, int y, int z, Block block, int metaData) {
-        TileCastingTable t = (TileCastingTable) world.getTileEntity(x, y, z);
-        if (t != null) {
-            t.emptyTank();
+        TileCastingTable table = (TileCastingTable) world.getTileEntity(x, y, z);
+        if (table != null) {
+            table.emptyTank();
         }
         super.breakBlock(world, x, y, z, block, metaData);
         world.removeTileEntity(x, y, z);
