@@ -37,7 +37,7 @@ public class SlotCasting extends Slot {
         return this.hasAmalgam && this.castState != 0;
     }
 
-    public void setHasAmalgam(boolean hasAmalgam) {
+    public void doesHaveAmalgam(boolean hasAmalgam) {
         this.hasAmalgam = hasAmalgam;
     }
 

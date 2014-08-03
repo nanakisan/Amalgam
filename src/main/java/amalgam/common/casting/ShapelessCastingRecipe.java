@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import amalgam.common.container.InventoryCasting;
@@ -40,6 +41,9 @@ public class ShapelessCastingRecipe implements ICastingRecipe {
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
                 ItemStack itemstack = inv.getStackInRowAndColumn(j, i);
+                if (itemstack == null && inv.getCastState(j + i * 3) != 0) {
+                    itemstack = new ItemStack(Blocks.fire);
+                }
 
                 if (itemstack != null) {
                     boolean flag = false;

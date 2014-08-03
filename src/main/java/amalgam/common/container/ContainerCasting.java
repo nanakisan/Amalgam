@@ -9,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import amalgam.common.Amalgam;
 import amalgam.common.casting.CastingManager;
 import amalgam.common.casting.ICastingRecipe;
-import amalgam.common.network.PacketHandler;
 import amalgam.common.tile.TileCastingTable;
 
 public class ContainerCasting extends Container {
@@ -43,10 +42,15 @@ public class ContainerCasting extends Container {
                 s.setCastState(te.getCastState(slotNum));
                 this.addSlotToContainer(s);
 
-                castingMatrix.setInventorySlotContents(slotNum, castingTable.getStackInSlot(slotNum));
             }
         }
 
+        for (rowNum = 0; rowNum < 3; ++rowNum) {
+            for (colNum = 0; colNum < 3; ++colNum) {
+                slotNum = colNum + rowNum * 3;
+                castingMatrix.setInventorySlotContents(slotNum, castingTable.getStackInSlot(slotNum));
+            }
+        }
         this.addSlotToContainer(new SlotCastingResult(this.playerInv.player, castingMatrix, castResult, 0, 124, 35));
 
         for (rowNum = 0; rowNum < 3; ++rowNum) {
@@ -66,13 +70,15 @@ public class ContainerCasting extends Container {
     public final void updateAmalgamDistribution() {
         TileCastingTable te = this.castingTable;
         int amount = te.getTankAmount();
-        for (int slotNum = 0; slotNum < 9; slotNum++) {
-            SlotCasting s = (SlotCasting) this.getSlot(slotNum);
-            if (te.getCastState(slotNum) == 1 && amount > 0) {
-                s.setHasAmalgam(true);
-                amount -= Amalgam.INGOT_AMOUNT;
-            } else {
-                s.setHasAmalgam(false);
+        for (int slotNum = 0; slotNum < this.inventorySlots.size(); slotNum++) {
+            Slot s = this.getSlot(slotNum);
+            if (s instanceof SlotCasting) {
+                if (te.getCastState(slotNum) == 1 && amount > 0) {
+                    ((SlotCasting) s).doesHaveAmalgam(true);
+                    amount -= Amalgam.INGOT_AMOUNT;
+                } else {
+                    ((SlotCasting) s).doesHaveAmalgam(false);
+                }
             }
         }
     }
@@ -133,10 +139,11 @@ public class ContainerCasting extends Container {
         super.onCraftMatrixChanged(inv);
         this.updateAmalgamDistribution();
         ICastingRecipe recipe = CastingManager.findMatchingRecipe(castingMatrix, castingTable.getWorldObj());
-        if (recipe == null) {
+        if (recipe == null || !this.castingTable.tankIsFull()) {
+            castResult.setInventorySlotContents(0, null);
             return;
         }
-
+        Amalgam.LOG.info("found matching recipe!!!");
         castResult.setInventorySlotContents(0, recipe.getCastingResult(castingMatrix, castingTable.getAmalgamPropertyList()));
     }
 
@@ -152,6 +159,7 @@ public class ContainerCasting extends Container {
                 }
             }
         }
+
         return super.slotClick(slotNum, ctrNum, shiftNum, player);
     }
 

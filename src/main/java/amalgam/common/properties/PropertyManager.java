@@ -45,7 +45,7 @@ public final class PropertyManager {
         list.add(DENSITY, (float) Math.sqrt(mat.getMaxUses() / (mat.getHarvestLevel() + 1)));
         list.add(HARDNESS, mat.getHarvestLevel() + 1);
         list.add(LUSTER, mat.getEnchantability());
-        list.add(MALIABILITY, mat.getDamageVsEntity() * 2 + 2);
+        list.add(MALIABILITY, mat.getDamageVsEntity() + 4);
 
         return list;
     }

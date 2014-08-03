@@ -77,6 +77,7 @@ public final class CastingManager {
     }
 
     public static ICastingRecipe findMatchingRecipe(InventoryCasting inv, World world) {
+        Amalgam.LOG.info("looking for a matching recipe");
         for (int recipeIndex = 0; recipeIndex < recipes.size(); ++recipeIndex) {
             ICastingRecipe irecipe = (ICastingRecipe) recipes.get(recipeIndex);
 

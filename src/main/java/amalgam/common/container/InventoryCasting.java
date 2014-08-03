@@ -3,7 +3,9 @@ package amalgam.common.container;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import amalgam.common.Amalgam;
 
 public class InventoryCasting implements IInventory, ISidedInventory {
 
@@ -14,6 +16,7 @@ public class InventoryCasting implements IInventory, ISidedInventory {
     public InventoryCasting(ContainerCasting container, int rows, int cols) {
         this.table = container;
         this.inventoryWidth = rows;
+        this.stackList = new ItemStack[rows*cols];
     }
 
     // ///////////////////
@@ -55,7 +58,8 @@ public class InventoryCasting implements IInventory, ISidedInventory {
 
     @Override
     public ItemStack getStackInSlot(int slot) {
-        if (((SlotCasting) table.getSlot(slot)).getCastState() == 1) {
+        Slot s = table.getSlot(slot);
+        if (s instanceof SlotCasting && ((SlotCasting) s).getCastState() == 1) {
             // Amalgam.LOG.info("found some amalgam");
             return null;
         }
@@ -65,7 +69,8 @@ public class InventoryCasting implements IInventory, ISidedInventory {
 
     @Override
     public ItemStack decrStackSize(int slot, int decNum) {
-        if (((SlotCasting) table.getSlot(slot)).getCastState() != 0) {
+        Slot s = table.getSlot(slot);
+        if (s instanceof SlotCasting && ((SlotCasting) s).getCastState() != 0) {
             return null;
         }
 
@@ -75,14 +80,16 @@ public class InventoryCasting implements IInventory, ISidedInventory {
             if (stackList[slot].stackSize <= decNum) {
                 itemstack = stackList[slot];
                 this.setInventorySlotContents(slot, null);
+                this.table.onCraftMatrixChanged(this);
                 return itemstack;
             } else {
                 itemstack = stackList[slot].splitStack(decNum);
 
                 if (stackList[slot].stackSize == 0) {
                     this.setInventorySlotContents(slot, itemstack);
-                }
 
+                }
+                this.table.onCraftMatrixChanged(this);
                 return itemstack;
             }
         } else {
@@ -98,12 +105,14 @@ public class InventoryCasting implements IInventory, ISidedInventory {
 
     @Override
     public void setInventorySlotContents(int slot, ItemStack stack) {
-        if (((SlotCasting) table.getSlot(slot)).getCastState() != 0) {
+        Slot s = table.getSlot(slot);
+        if (s instanceof SlotCasting && ((SlotCasting) s).getCastState() != 0) {
             return;
         }
 
         stackList[slot] = stack;
         table.castingTable.setStackInSlot(slot, stack);
+        this.table.onCraftMatrixChanged(this);
     }
 
     @Override
@@ -138,7 +147,8 @@ public class InventoryCasting implements IInventory, ISidedInventory {
     @Override
     public boolean isItemValidForSlot(int slot, ItemStack stack) {
 
-        if (((SlotCasting) table.getSlot(slot)).getCastState() == 0) {
+        Slot s = table.getSlot(slot);
+        if (s instanceof SlotCasting && ((SlotCasting) s).getCastState() != 0) {
             return true;
         }
         return false;
@@ -160,4 +170,16 @@ public class InventoryCasting implements IInventory, ISidedInventory {
     public void markDirty() {
     }
 
+    public int getCastState(int slot) {
+        Slot s = table.getSlot(slot);
+        if (s instanceof SlotCasting) {
+            return ((SlotCasting) this.table.getSlot(slot)).getCastState();
+        }
+        return 0;
+    }
+
+    public void useAmalgamForCrafting() {
+        Amalgam.LOG.info("using amalgam tank fluid for crafting");
+        this.table.castingTable.setTankFluid(null);
+    }
 }

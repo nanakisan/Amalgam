@@ -1,5 +1,7 @@
 package amalgam.common.item;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -7,16 +9,17 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
-import amalgam.common.Amalgam;
 import amalgam.common.casting.ICastItem;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemAmalgamSword extends Item implements ICastItem {
 
     public ItemAmalgamSword() {
         super();
-        this.setCreativeTab(Amalgam.tab);
+        // this.setCreativeTab(Amalgam.tab);
     }
 
     @Override
@@ -30,17 +33,28 @@ public class ItemAmalgamSword extends Item implements ICastItem {
         return true;
     }
 
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, EntityPlayer player, List dataList, boolean b) {
+        dataList.add("Duarbility: " + getDurabilityFromStack(stack) + "/" + getMaxDurabilityFromStack(stack));
+        dataList.add("Damage: " + getWeaponDamageFromStack(stack));
+    }
+
     public static int getWeaponDamageFromStack(ItemStack stack) {
         // TODO return a default value if we can't find this entry in the nbt
         return stack.getTagCompound().getInteger("Damage");
     }
 
-    public static float getHarvestLevelFromStack(ItemStack stack) {
+    public static int getHarvestLevelFromStack(ItemStack stack) {
         return stack.getTagCompound().getInteger("HarvestLevel");
     }
 
-    public static float getMaxDurabilityFromStack(ItemStack stack) {
+    public static int getMaxDurabilityFromStack(ItemStack stack) {
         return stack.getTagCompound().getInteger("MaxDurability");
+    }
+
+    public static int getDurabilityFromStack(ItemStack stack) {
+        return stack.getTagCompound().getInteger("Durability");
     }
 
     public boolean canHarvestBlock(ItemStack stack, int meta, Block block, EntityPlayer player) {
@@ -81,7 +95,7 @@ public class ItemAmalgamSword extends Item implements ICastItem {
 
         NBTTagCompound swordTag = new NBTTagCompound();
 
-        swordTag.setInteger("Damage", (int) (maliability + 4.0));
+        swordTag.setInteger("Damage", (int) maliability);
         swordTag.setInteger("HarvestLevel", (int) (hardness - 0.5));
         int maxDurability = (int) ((density * density) * hardness);
         swordTag.setInteger("MaxDurability", maxDurability);
