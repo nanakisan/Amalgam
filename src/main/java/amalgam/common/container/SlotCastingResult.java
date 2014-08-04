@@ -5,7 +5,6 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-import amalgam.common.Amalgam;
 import cpw.mods.fml.common.FMLCommonHandler;
 
 public class SlotCastingResult extends Slot {
@@ -52,15 +51,12 @@ public class SlotCastingResult extends Slot {
     protected void onCrafting(ItemStack output) {
         output.onCrafting(this.player.worldObj, this.player, this.amountCrafted);
         this.amountCrafted = 0;
-        Amalgam.LOG.info("onCrafting");
     }
 
     public void onPickupFromSlot(EntityPlayer player, ItemStack stack) {
         FMLCommonHandler.instance().firePlayerCraftingEvent(player, stack, castingMatrix);
         this.onCrafting(stack);
 
-        // TODO need to drain amalgam at some point after cast item is picked up.
-        Amalgam.LOG.info("onPickupFromSlot");
         this.castingMatrix.useAmalgamForCrafting();
         for (int i = 0; i < this.castingMatrix.getSizeInventory(); ++i) {
             ItemStack itemstack1 = this.castingMatrix.getStackInSlot(i);

@@ -76,7 +76,6 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
     }
 
     @Override
-    // the metadata variable might actually be the block side, not sure
     public void breakBlock(World world, int x, int y, int z, Block block, int metaData) {
         TileCastingTable table = (TileCastingTable) world.getTileEntity(x, y, z);
         if (table != null) {

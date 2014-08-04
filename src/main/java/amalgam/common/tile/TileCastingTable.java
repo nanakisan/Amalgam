@@ -23,9 +23,6 @@ import amalgam.common.properties.PropertyList;
 
 public class TileCastingTable extends TileEntity implements IFluidHandler {
 
-    // TODO emit light when holding amalgam
-    // TODO render blobs of liquid amalgam on table when they are placed there
-
     private ItemStack[]         castingItems = new ItemStack[10];
     private int[]               castStates   = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     private AmalgamTank         tank         = new AmalgamTank(0);

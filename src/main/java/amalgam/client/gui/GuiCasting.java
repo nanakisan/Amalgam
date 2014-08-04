@@ -29,14 +29,10 @@ public class GuiCasting extends GuiContainer {
         for (int i = 0; i < 9; i++) {
             SlotCasting slot = (SlotCasting) table.getSlot(i);
             if (slot.getCastState() != 0) {
-                // TODO add custom image to the corner generic workbench gui
-                // that can be used as an overlay to show a slot is casting
 
                 int rowNum = i / 3;
                 int colNum = i % 3;
-                // parameters 1 and 2 are where we draw
-                // parameters 3 and 4 determine where on the image we draw from
-                // parameters 5 and 6 determine how much we are drawing
+
                 if (slot.hasAmalgam()) {
                     this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 10, 10, 16, 16);
                 } else {

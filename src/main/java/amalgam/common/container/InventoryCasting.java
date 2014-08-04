@@ -16,7 +16,7 @@ public class InventoryCasting implements IInventory, ISidedInventory {
     public InventoryCasting(ContainerCasting container, int rows, int cols) {
         this.table = container;
         this.inventoryWidth = rows;
-        this.stackList = new ItemStack[rows*cols];
+        this.stackList = new ItemStack[rows * cols];
     }
 
     // ///////////////////
@@ -132,7 +132,6 @@ public class InventoryCasting implements IInventory, ISidedInventory {
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        // TODO look at other implementations
         return true;
     }
 

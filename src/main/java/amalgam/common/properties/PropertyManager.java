@@ -17,7 +17,7 @@ public final class PropertyManager {
 
     private static final PropertyManager         INSTANCE    = new PropertyManager();
     private static final Map<Item, List<Object>> REGISTRY    = new HashMap<Item, List<Object>>();
-    public static final Property                 MALIABILITY = new Property("Maliability", 4, ComboType.QUADAVERAGE);
+    public static final Property                 MALIABILITY = new Property("Maliability", 1, ComboType.QUADAVERAGE);
     public static final Property                 DENSITY     = new Property("Density", 6, ComboType.QUADAVERAGE);
     public static final Property                 LUSTER      = new Property("Luster", 10, ComboType.QUADAVERAGE);
     public static final Property                 HARDNESS    = new Property("Hardness", 1, ComboType.QUADAVERAGE);
@@ -25,7 +25,9 @@ public final class PropertyManager {
     private PropertyManager() {
     }
 
-    /* public static PropertyManager getInstance() { return INSTANCE; } */
+    public static PropertyManager getInstance() {
+        return INSTANCE;
+    }
 
     public static void registerItemProperties(ItemStack stack, PropertyList list, int volume) {
         Item item = stack.getItem();

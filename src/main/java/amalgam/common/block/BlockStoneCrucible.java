@@ -21,8 +21,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockStoneCrucible extends Block implements ITileEntityProvider {
 
-    // TODO make the stone crucible require a heat source, and possibly render like the cauldron
-
     public BlockStoneCrucible() {
         super(Material.rock);
         this.setHardness(3.0F);
@@ -91,8 +89,6 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
                 }
 
                 crucible.fill(ForgeDirection.UNKNOWN, amalg, true);
-
-                // TODO we might not have to check stackSize, decrementing to 0 might simply delete the stack
 
                 if (stack.stackSize == 1) {
                     player.inventory.setInventorySlotContents(player.inventory.currentItem, null);

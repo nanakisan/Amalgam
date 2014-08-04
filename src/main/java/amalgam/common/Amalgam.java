@@ -40,8 +40,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 @Mod(modid = Amalgam.MODID, version = Amalgam.VERSION)
 public class Amalgam {
 
-    // TODO add Waila support
-
     public static final String MODID          = "amalgam";
     public static final String VERSION        = "0.0.1";
     public static final int    BASE_AMOUNT    = 10;
@@ -100,7 +98,6 @@ public class Amalgam {
     public void init(FMLInitializationEvent event) {
         NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy);
 
-        // TODO use OreDictionary
         PropertyList ironProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.IRON);
         PropertyList goldProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.GOLD);
         PropertyList diamondProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.EMERALD);
@@ -116,6 +113,7 @@ public class Amalgam {
         PropertyManager.registerItemProperties(new ItemStack(amalgamBlob), null, 0);
 
         CastingManager.addShapelessRecipe((ICastItem) amalgamSword, 1, "Amalgam", Blocks.stone);
+        CastingManager.addRecipe((ICastItem) amalgamSword, 1, "a","a","s",'s', Items.stick);
 
     }
 

@@ -13,11 +13,6 @@ import amalgam.common.tile.TileCastingTable;
 
 public class ContainerCasting extends Container {
 
-    // this tile entity associated with this container has the crafting
-    // inventories (craftMatrix and craftResult in ContianerWorkbench)
-    // FIXME right now the tileEntity itself is used as the casting inventory, refactor this using the InventoryCasting
-    // and InventoryCastResult classes so it is more like the crafting table. This is necessary to make the
-    // CastingManager work
     public TileCastingTable    castingTable;
     private InventoryPlayer    playerInv;
     public InventoryCasting    castingMatrix;
@@ -85,7 +80,6 @@ public class ContainerCasting extends Container {
 
     @Override
     public boolean canInteractWith(EntityPlayer player) {
-        // TODO look into this
         return castingTable.getWorldObj().getBlock(castingTable.xCoord, castingTable.yCoord, castingTable.zCoord) == Amalgam.castingTable ? player
                 .getDistanceSq((double) castingTable.xCoord + 0.5D, (double) castingTable.yCoord + 0.5D, (double) castingTable.zCoord + 0.5D) <= 64.0D
                 : false;
