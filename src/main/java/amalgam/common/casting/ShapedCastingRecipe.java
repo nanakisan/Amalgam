@@ -10,16 +10,16 @@ import amalgam.common.properties.PropertyList;
 public class ShapedCastingRecipe implements ICastingRecipe {
 
     /** How many horizontal slots this recipe is wide. */
-    public final int recipeWidth;
+    public final int         recipeWidth;
     /** How many vertical slots this recipe uses. */
-    public final int recipeHeight;
+    public final int         recipeHeight;
     /** Is a array of ItemStack that composes the recipe. */
     public final ItemStack[] recipeItems;
     /** Is the ItemStack that you get when craft the recipe. */
-    private ICastItem recipeOutput;
-    
-    private int amount;
-    
+    private ICastItem        recipeOutput;
+
+    private int              amount;
+
     public ShapedCastingRecipe(int cols, int rows, ItemStack[] aitemstack, ICastItem output, int amount) {
         this.recipeWidth = cols;
         this.recipeHeight = rows;
@@ -30,17 +30,13 @@ public class ShapedCastingRecipe implements ICastingRecipe {
 
     @Override
     public boolean matches(InventoryCasting inv, World world) {
-        for (int i = 0; i <= 3 - this.recipeWidth; ++i)
-        {
-            for (int j = 0; j <= 3 - this.recipeHeight; ++j)
-            {
-                if (this.checkMatch(inv, i, j, true))
-                {
+        for (int i = 0; i <= 3 - this.recipeWidth; ++i) {
+            for (int j = 0; j <= 3 - this.recipeHeight; ++j) {
+                if (this.checkMatch(inv, i, j, true)) {
                     return true;
                 }
 
-                if (this.checkMatch(inv, i, j, false))
-                {
+                if (this.checkMatch(inv, i, j, false)) {
                     return true;
                 }
             }
@@ -48,25 +44,18 @@ public class ShapedCastingRecipe implements ICastingRecipe {
 
         return false;
     }
-    
-    private boolean checkMatch(InventoryCasting inv, int row, int col, boolean flag)
-    {
-        for (int k = 0; k < 3; ++k)
-        {
-            for (int l = 0; l < 3; ++l)
-            {
+
+    private boolean checkMatch(InventoryCasting inv, int row, int col, boolean flag) {
+        for (int k = 0; k < 3; ++k) {
+            for (int l = 0; l < 3; ++l) {
                 int i1 = k - row;
                 int j1 = l - col;
                 ItemStack itemstack = null;
 
-                if (i1 >= 0 && j1 >= 0 && i1 < this.recipeWidth && j1 < this.recipeHeight)
-                {
-                    if (flag)
-                    {
+                if (i1 >= 0 && j1 >= 0 && i1 < this.recipeWidth && j1 < this.recipeHeight) {
+                    if (flag) {
                         itemstack = this.recipeItems[this.recipeWidth - i1 - 1 + j1 * this.recipeWidth];
-                    }
-                    else
-                    {
+                    } else {
                         itemstack = this.recipeItems[i1 + j1 * this.recipeWidth];
                     }
                 }
@@ -75,21 +64,17 @@ public class ShapedCastingRecipe implements ICastingRecipe {
                 if (itemstack1 == null && inv.getCastState(k + l * 3) != 0) {
                     itemstack1 = new ItemStack(Blocks.fire);
                 }
-                
-                if (itemstack1 != null || itemstack != null)
-                {
-                    if (itemstack1 == null && itemstack != null || itemstack1 != null && itemstack == null)
-                    {
+
+                if (itemstack1 != null || itemstack != null) {
+                    if (itemstack1 == null && itemstack != null || itemstack1 != null && itemstack == null) {
                         return false;
                     }
 
-                    if (itemstack.getItem() != itemstack1.getItem())
-                    {
+                    if (itemstack.getItem() != itemstack1.getItem()) {
                         return false;
                     }
 
-                    if (itemstack.getItemDamage() != 32767 && itemstack.getItemDamage() != itemstack1.getItemDamage())
-                    {
+                    if (itemstack.getItemDamage() != 32767 && itemstack.getItemDamage() != itemstack1.getItemDamage()) {
                         return false;
                     }
                 }

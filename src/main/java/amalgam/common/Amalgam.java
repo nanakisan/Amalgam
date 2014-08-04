@@ -18,6 +18,7 @@ import amalgam.common.block.BlockStoneCrucible;
 import amalgam.common.casting.CastingManager;
 import amalgam.common.casting.ICastItem;
 import amalgam.common.item.ItemAmalgamBlob;
+import amalgam.common.item.ItemAmalgamPick;
 import amalgam.common.item.ItemAmalgamSword;
 import amalgam.common.item.ItemStoneTongs;
 import amalgam.common.network.PacketHandler;
@@ -61,6 +62,7 @@ public class Amalgam {
     public static Item         stoneTongs;
     public static Item         amalgamBlob;
     public static Item         amalgamSword;
+    public static Item         amalgamPick;
     public static CreativeTabs tab;
 
     @EventHandler
@@ -86,9 +88,11 @@ public class Amalgam {
         stoneTongs = new ItemStoneTongs().setUnlocalizedName("stoneTongs");
         amalgamBlob = new ItemAmalgamBlob().setUnlocalizedName("amalgamBlob");
         amalgamSword = new ItemAmalgamSword().setUnlocalizedName("amalgamSword");
+        amalgamPick = new ItemAmalgamPick().setUnlocalizedName("amalgamPick");
         GameRegistry.registerItem(stoneTongs, "stoneTongs");
         GameRegistry.registerItem(amalgamBlob, "amalgamBlob");
         GameRegistry.registerItem(amalgamSword, "amalgamSword");
+        GameRegistry.registerItem(amalgamPick, "amalgamPick");
 
         GameRegistry.registerTileEntity(TileStoneCrucible.class, "stoneCrucible");
         GameRegistry.registerTileEntity(TileCastingTable.class, "castingTable");
@@ -113,7 +117,8 @@ public class Amalgam {
         PropertyManager.registerItemProperties(new ItemStack(amalgamBlob), null, 0);
 
         CastingManager.addShapelessRecipe((ICastItem) amalgamSword, 1, "Amalgam", Blocks.stone);
-        CastingManager.addRecipe((ICastItem) amalgamSword, 1, "a","a","s",'s', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamSword, 1, "a", "a", "s", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamPick, 1, "aaa", " s ", " s ", 's', Items.stick);
 
     }
 

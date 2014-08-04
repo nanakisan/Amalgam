@@ -74,7 +74,7 @@ public final class CastingManager {
             char c0 = s.charAt(i1);
             if (hashmap.containsKey(Character.valueOf(c0))) {
                 aitemstack[i1] = ((ItemStack) hashmap.get(Character.valueOf(c0))).copy();
-            } else if (c0 == 'a' || c0 == 'A')  {
+            } else if (c0 == 'a' || c0 == 'A') {
                 aitemstack[i1] = new ItemStack(Blocks.fire);
             } else {
                 aitemstack[i1] = null;

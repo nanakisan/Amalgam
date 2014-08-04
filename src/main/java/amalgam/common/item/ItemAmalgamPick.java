@@ -2,12 +2,12 @@ package amalgam.common.item;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,49 +17,8 @@ import amalgam.common.Amalgam;
 import amalgam.common.casting.ICastItem;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
-public class ItemAmalgamSword extends Item implements ICastItem {
-
-    public ItemAmalgamSword() {
-        super();
-    }
-
-    @Override
-    public int getItemStackLimit(ItemStack stack) {
-        return 1;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister iconRegister) {
-        this.itemIcon = iconRegister.registerIcon("amalgam:amalgamSword");
-    }
-
-    /**
-     * returns the action that specifies what animation to play when the items is being used
-     */
-    @Override
-    public EnumAction getItemUseAction(ItemStack stack) {
-        return EnumAction.block;
-    }
-
-    /**
-     * How long it takes to use or consume an item
-     */
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 72000;
-    }
-
-    /**
-     * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
-     */
-    @Override
-    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-        player.setItemInUse(stack, this.getMaxItemUseDuration(stack));
-        return stack;
-    }
+public class ItemAmalgamPick extends Item implements ICastItem {
 
     @Override
     public boolean hitEntity(ItemStack stack, EntityLivingBase entityBeingHit, EntityLivingBase entityHitting) {
@@ -69,7 +28,7 @@ public class ItemAmalgamSword extends Item implements ICastItem {
         entityBeingHit.attackEntityFrom(damageSource, (int) damage);
 
         Amalgam.LOG.info("hitEntity");
-        stack.damageItem(1, entityHitting);
+        stack.damageItem(2, entityHitting);
         return true;
     }
 
@@ -77,7 +36,7 @@ public class ItemAmalgamSword extends Item implements ICastItem {
     public boolean onBlockDestroyed(ItemStack stack, World world, Block block, int x, int y, int z, EntityLivingBase entity) {
         if ((double) block.getBlockHardness(world, x, y, z) != 0.0D) {
             Amalgam.LOG.info("blockDestoryed");
-            stack.damageItem(2, entity);
+            stack.damageItem(1, entity);
         }
 
         return true;
@@ -87,12 +46,9 @@ public class ItemAmalgamSword extends Item implements ICastItem {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer player, List dataList, boolean b) {
         dataList.add("Duarbility: " + (getMaxDamage(stack) - getDamage(stack)) + "/" + getMaxDamage(stack));
-        dataList.add("Damage: " + stack.getTagCompound().getInteger("Damage"));
+        dataList.add("Harvest Level: " + stack.getTagCompound().getInteger("HarvestLevel"));
+        dataList.add("Efficiency: " + stack.getTagCompound().getInteger("Efficiency"));
         dataList.add("Enchantability: " + stack.getTagCompound().getInteger("Enchantability"));
-    }
-
-    public boolean canHarvestBlock(ItemStack stack, int meta, Block block, EntityPlayer player) {
-        return block == Blocks.web;
     }
 
     @Override
@@ -132,6 +88,33 @@ public class ItemAmalgamSword extends Item implements ICastItem {
     }
 
     @Override
+    public int getHarvestLevel(ItemStack stack, String toolClass) {
+        if (toolClass.equals("pickaxe")) {
+            return stack.getTagCompound().getInteger("HarvestLevel");
+        }
+
+        return -1;
+    }
+
+    @Override
+    public int getItemStackLimit(ItemStack stack) {
+        return 1;
+    }
+
+    /**
+     * Metadata-sensitive version of getStrVsBlock
+     * 
+     * @param itemstack The Item Stack
+     * @param block The block the item is trying to break
+     * @param metadata The items current metadata
+     * @return The damage strength
+     */
+    @Override
+    public float getDigSpeed(ItemStack stack, Block block, int metadata) {
+        return stack.getTagCompound().getInteger("Efficiency");
+    }
+
+    @Override
     public ItemStack generateStackWithProperties(PropertyList pList, int stackSize) {
         if (pList == null) {
             return null;
@@ -140,14 +123,14 @@ public class ItemAmalgamSword extends Item implements ICastItem {
         float luster = pList.getValue(PropertyManager.LUSTER);
         float density = pList.getValue(PropertyManager.DENSITY);
         float hardness = pList.getValue(PropertyManager.HARDNESS);
-        float maliability = pList.getValue(PropertyManager.MALIABILITY);
 
         ItemStack returnStack = new ItemStack(this, stackSize);
 
         NBTTagCompound swordTag = new NBTTagCompound();
 
-        swordTag.setInteger("Damage", (int) maliability);
+        swordTag.setInteger("HarvestLevel", (int) (hardness - 0.5));
         swordTag.setInteger("Enchantability", (int) (luster));
+        swordTag.setInteger("Efficiency", (int) ((3 * luster * luster + 1.5 * density * density) / 120.0) + 1);
         int maxDurability = (int) ((density * density) * hardness);
         swordTag.setInteger("MaxDurability", maxDurability);
         swordTag.setInteger("Durability", 0);
@@ -155,4 +138,5 @@ public class ItemAmalgamSword extends Item implements ICastItem {
         returnStack.setTagCompound(swordTag);
         return returnStack;
     }
+
 }

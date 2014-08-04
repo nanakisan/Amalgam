@@ -1,9 +1,12 @@
 package amalgam.common.block;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -23,6 +26,11 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
         this.setStepSound(soundTypeStone);
         getCreativeTabToDisplayOn();
         this.setCreativeTab(Amalgam.tab);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void registerBlockIcons(IIconRegister iconRegister) {
+        this.blockIcon = iconRegister.registerIcon("amalgam:castingTable");
     }
 
     @Override

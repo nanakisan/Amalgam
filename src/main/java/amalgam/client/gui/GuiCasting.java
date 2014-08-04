@@ -6,12 +6,13 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
+import amalgam.common.Amalgam;
 import amalgam.common.container.ContainerCasting;
 import amalgam.common.container.SlotCasting;
 
 public class GuiCasting extends GuiContainer {
 
-    private static final ResourceLocation CRAFTING_GUI_TEXTURES = new ResourceLocation("textures/gui/container/crafting_table.png");
+    private static final ResourceLocation CRAFTING_GUI_TEXTURES = new ResourceLocation(Amalgam.MODID, "textures/gui/CastingGui.png");
 
     public GuiCasting(Container container) {
         super(container);
@@ -34,9 +35,9 @@ public class GuiCasting extends GuiContainer {
                 int colNum = i % 3;
 
                 if (slot.hasAmalgam()) {
-                    this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 10, 10, 16, 16);
+                    this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 178, 18, 16, 16);
                 } else {
-                    this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 20, 20, 16, 16);
+                    this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 178, 1, 16, 16);
                 }
             }
         }
