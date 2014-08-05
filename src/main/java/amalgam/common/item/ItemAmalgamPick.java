@@ -5,20 +5,28 @@ import java.util.List;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-import amalgam.common.Amalgam;
 import amalgam.common.casting.ICastItem;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
 
 public class ItemAmalgamPick extends Item implements ICastItem {
+
+    public ItemAmalgamPick() {
+        super();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(IIconRegister iconRegister) {
+        this.itemIcon = iconRegister.registerIcon("amalgam:amalgamPick");
+    }
 
     @Override
     public boolean hitEntity(ItemStack stack, EntityLivingBase entityBeingHit, EntityLivingBase entityHitting) {
@@ -27,7 +35,6 @@ public class ItemAmalgamPick extends Item implements ICastItem {
         DamageSource damageSource = DamageSource.causePlayerDamage(player);
         entityBeingHit.attackEntityFrom(damageSource, (int) damage);
 
-        Amalgam.LOG.info("hitEntity");
         stack.damageItem(2, entityHitting);
         return true;
     }
@@ -35,7 +42,6 @@ public class ItemAmalgamPick extends Item implements ICastItem {
     @Override
     public boolean onBlockDestroyed(ItemStack stack, World world, Block block, int x, int y, int z, EntityLivingBase entity) {
         if ((double) block.getBlockHardness(world, x, y, z) != 0.0D) {
-            Amalgam.LOG.info("blockDestoryed");
             stack.damageItem(1, entity);
         }
 
@@ -68,7 +74,6 @@ public class ItemAmalgamPick extends Item implements ICastItem {
             amount = 0;
         }
 
-        Amalgam.LOG.info("setting item durability to " + amount);
         stack.getTagCompound().setInteger("Durability", amount);
     }
 
@@ -89,7 +94,7 @@ public class ItemAmalgamPick extends Item implements ICastItem {
 
     @Override
     public int getHarvestLevel(ItemStack stack, String toolClass) {
-        if (toolClass.equals("pickaxe")) {
+        if ("pickaxe".equals(toolClass)) {
             return stack.getTagCompound().getInteger("HarvestLevel");
         }
 
@@ -101,14 +106,6 @@ public class ItemAmalgamPick extends Item implements ICastItem {
         return 1;
     }
 
-    /**
-     * Metadata-sensitive version of getStrVsBlock
-     * 
-     * @param itemstack The Item Stack
-     * @param block The block the item is trying to break
-     * @param metadata The items current metadata
-     * @return The damage strength
-     */
     @Override
     public float getDigSpeed(ItemStack stack, Block block, int metadata) {
         return stack.getTagCompound().getInteger("Efficiency");

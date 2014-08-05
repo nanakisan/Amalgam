@@ -24,7 +24,6 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
         this.setHardness(3.0F);
         this.setResistance(5.0F);
         this.setStepSound(soundTypeStone);
-        getCreativeTabToDisplayOn();
         this.setCreativeTab(Amalgam.tab);
     }
 

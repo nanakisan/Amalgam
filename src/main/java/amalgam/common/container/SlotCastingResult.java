@@ -9,13 +9,8 @@ import cpw.mods.fml.common.FMLCommonHandler;
 
 public class SlotCastingResult extends Slot {
 
-    /** The casting matrix inventory linked to this result slot. */
     private InventoryCasting castingMatrix;
-    /** The player that is using the GUI where this slot resides. */
     private EntityPlayer     player;
-    /**
-     * The number of items that have been crafted so far. Gets passed to ItemStack.onCrafting before being reset.
-     */
     private int              amountCrafted;
 
     public SlotCastingResult(EntityPlayer player, InventoryCasting castMatrix, InventoryCastResult castResult, int slotID, int xPos, int yPos) {
@@ -36,18 +31,11 @@ public class SlotCastingResult extends Slot {
         return super.decrStackSize(amount);
     }
 
-    /**
-     * The itemStack passed in is the output - ie, iron ingots, and pickaxes, not ore and wood. Typically increases an
-     * internal count then calls onCasting(item).
-     */
     protected void onCrafting(ItemStack output, int amount) {
         this.amountCrafted += amount;
         this.onCrafting(output);
     }
 
-    /**
-     * The itemStack passed in is the output - ie, iron ingots, and pickaxes, not ore and wood.
-     */
     protected void onCrafting(ItemStack output) {
         output.onCrafting(this.player.worldObj, this.player, this.amountCrafted);
         this.amountCrafted = 0;

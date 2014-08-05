@@ -72,12 +72,10 @@ public final class PropertyManager {
 
         List<Object> blob = (List<Object>) REGISTRY.get(item);
 
-        // if the blob is null we get the property list using this
         if (blob == null) {
             return ((IAmalgableItem) item).getProperties(stack);
         }
 
-        // otherwise we get the property list using the registered value
         return (PropertyList) blob.get(0);
     }
 
@@ -85,12 +83,10 @@ public final class PropertyManager {
         Item item = stack.getItem();
         List<Object> blob = (List<Object>) REGISTRY.get(item);
 
-        // if the blob is null we get the volume using this
         if (blob == null) {
             return ((IAmalgableItem) item).getVolume(stack);
         }
 
-        // otherwise we get the volume using the registered value
         return (Integer) blob.get(1);
     }
 

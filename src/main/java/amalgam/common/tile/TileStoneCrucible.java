@@ -83,7 +83,6 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler {
                 ((ItemAmalgamBlob) Amalgam.amalgamBlob).setProperties(droppedBlob, p);
                 ((ItemAmalgamBlob) Amalgam.amalgamBlob).setVolume(droppedBlob, dropAmount);
 
-                Amalgam.LOG.info("attempting to spawn an amalgam blob entity");
                 EntityItem amalgEntity = new EntityItem(this.worldObj, xCoord, yCoord, zCoord, droppedBlob);
                 this.worldObj.spawnEntityInWorld(amalgEntity);
             }

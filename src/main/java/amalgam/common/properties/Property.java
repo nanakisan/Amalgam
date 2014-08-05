@@ -6,11 +6,7 @@ import java.util.Map;
 public class Property {
 
     public enum ComboType {
-        MAX, // this should be used sparingly
-        MIN, // this should be used sparingly
-        AVERAGE, // a basic average of all the values
-        QUADAVERAGE // this is the default method of combination, it shifts
-                    // towards higher values
+        MAX, MIN, AVERAGE, QUADAVERAGE
     }
 
     private static Map<String, Property> properties = new HashMap<String, Property>();

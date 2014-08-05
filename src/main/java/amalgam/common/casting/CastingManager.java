@@ -8,22 +8,15 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.world.World;
 import amalgam.common.Amalgam;
 import amalgam.common.container.InventoryCasting;
 
 public final class CastingManager {
 
-    /** The static instance of this class */
     private static final CastingManager INSTANCE = new CastingManager();
-
-    /** A list of all the recipes added */
     private static List<ICastingRecipe> recipes  = new ArrayList<ICastingRecipe>();
 
-    /**
-     * Returns the static instance of this class
-     */
     public static CastingManager getInstance() {
         return INSTANCE;
     }
@@ -86,8 +79,6 @@ public final class CastingManager {
     }
 
     public static void addShapelessRecipe(ICastItem output, int amount, Object... recipeInput) {
-        Amalgam.LOG.info("Registering shapeless recipe");
-
         ArrayList<ItemStack> arraylist = new ArrayList<ItemStack>();
         Object[] recipeList = recipeInput;
         int numRecipeItems = recipeList.length;
@@ -100,7 +91,6 @@ public final class CastingManager {
             } else if (component instanceof Item) {
                 arraylist.add(new ItemStack((Item) component));
             } else if (component instanceof String) {
-                Amalgam.LOG.info("string component found in shapeless recipe");
                 if (((String) component).equalsIgnoreCase("a") || ((String) component).equalsIgnoreCase("amalgam")) {
                     arraylist.add(new ItemStack(Blocks.fire));
                 }
@@ -117,12 +107,10 @@ public final class CastingManager {
     }
 
     public static ICastingRecipe findMatchingRecipe(InventoryCasting inv, World world) {
-        Amalgam.LOG.info("looking for a matching recipe");
         for (int recipeIndex = 0; recipeIndex < recipes.size(); ++recipeIndex) {
             ICastingRecipe irecipe = (ICastingRecipe) recipes.get(recipeIndex);
 
             if (irecipe.matches(inv, world)) {
-                Amalgam.LOG.info("found match!");
                 return irecipe;
             }
         }
@@ -130,9 +118,6 @@ public final class CastingManager {
         return null;
     }
 
-    /**
-     * returns the List<> of all recipes
-     */
     public static List<ICastingRecipe> getRecipeList() {
         return recipes;
     }

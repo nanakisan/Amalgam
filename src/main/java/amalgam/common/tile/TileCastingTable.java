@@ -70,10 +70,6 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         tag.setTag(ITEMS_KEY, nbttaglist);
     }
 
-    // /////////////////
-    // IFluidHandler //
-    // /////////////////
-
     @Override
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
         int r = tank.fill(resource, doFill);
@@ -145,7 +141,6 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
                 ((ItemAmalgamBlob) Amalgam.amalgamBlob).setProperties(droppedBlob, extraAmalgam.getProperties());
                 ((ItemAmalgamBlob) Amalgam.amalgamBlob).setVolume(droppedBlob, extraAmalgam.amount);
 
-                Amalgam.LOG.info("attempting to spawn an amalgam blob entity");
                 EntityItem amalgEntity = new EntityItem(this.worldObj, xCoord, yCoord, zCoord, droppedBlob);
                 this.worldObj.spawnEntityInWorld(amalgEntity);
             }
@@ -161,15 +156,10 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
     }
 
     public void setCastState(int index, int value) {
-        Amalgam.LOG.info("setting cast state of castingTableTank slot " + index + " to " + value);
         this.castStates[index] = value;
         this.updateAmalgamTankCapacity();
     }
 
-    /**
-     * Use this for syncing the cast state between server and client when we load the tile entity these functions should
-     * probably be used for all custom NBT data
-     */
     @Override
     public Packet getDescriptionPacket() {
         NBTTagCompound tag = new NBTTagCompound();
@@ -197,7 +187,6 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
                 ((ItemAmalgamBlob) Amalgam.amalgamBlob).setProperties(droppedBlob, p);
                 ((ItemAmalgamBlob) Amalgam.amalgamBlob).setVolume(droppedBlob, dropAmount);
 
-                Amalgam.LOG.info("attempting to spawn an amalgam blob entity");
                 EntityItem amalgEntity = new EntityItem(this.worldObj, xCoord, yCoord, zCoord, droppedBlob);
                 this.worldObj.spawnEntityInWorld(amalgEntity);
             }

@@ -54,8 +54,6 @@ public class Amalgam {
     @SidedProxy(clientSide = "amalgam.client.ClientProxy", serverSide = "amalgam.common.CommonProxy")
     public static CommonProxy  proxy;
 
-    // public static PropertyManager propertyManager = PropertyManager.getInstance();
-    // public static CastingManager castingManager = CastingManager.getInstance();
     public static Fluid        fluidAmalgam;
     public static Block        stoneCrucible;
     public static Block        castingTable;

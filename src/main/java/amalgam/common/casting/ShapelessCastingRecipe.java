@@ -12,13 +12,8 @@ import amalgam.common.properties.PropertyList;
 
 public class ShapelessCastingRecipe implements ICastingRecipe {
 
-    /** Is the Item that you get when craft the recipe. */
     private final ICastItem      recipeOutput;
-
-    /** The amount of items in the itemStack output */
     private final int            amount;
-
-    /** Is a List of ItemStack that composes the recipe. */
     public final List<ItemStack> recipeItems;
 
     public ShapelessCastingRecipe(ICastItem item, int amount, List<ItemStack> list) {
@@ -31,9 +26,6 @@ public class ShapelessCastingRecipe implements ICastingRecipe {
         return this.recipeOutput.generateStackWithProperties(null, amount);
     }
 
-    /**
-     * Used to check if a recipe matches current crafting inventory
-     */
     public boolean matches(InventoryCasting inv, World world) {
 
         ArrayList<ItemStack> arraylist = new ArrayList<ItemStack>(this.recipeItems);
@@ -69,9 +61,6 @@ public class ShapelessCastingRecipe implements ICastingRecipe {
         return arraylist.isEmpty();
     }
 
-    /**
-     * Returns the size of the recipe area
-     */
     public int getRecipeSize() {
         return this.recipeItems.size();
     }

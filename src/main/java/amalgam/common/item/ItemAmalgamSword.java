@@ -36,25 +36,16 @@ public class ItemAmalgamSword extends Item implements ICastItem {
         this.itemIcon = iconRegister.registerIcon("amalgam:amalgamSword");
     }
 
-    /**
-     * returns the action that specifies what animation to play when the items is being used
-     */
     @Override
     public EnumAction getItemUseAction(ItemStack stack) {
         return EnumAction.block;
     }
 
-    /**
-     * How long it takes to use or consume an item
-     */
     @Override
     public int getMaxItemUseDuration(ItemStack stack) {
         return 72000;
     }
 
-    /**
-     * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
-     */
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         player.setItemInUse(stack, this.getMaxItemUseDuration(stack));
@@ -68,7 +59,6 @@ public class ItemAmalgamSword extends Item implements ICastItem {
         DamageSource damageSource = DamageSource.causePlayerDamage(player);
         entityBeingHit.attackEntityFrom(damageSource, (int) damage);
 
-        Amalgam.LOG.info("hitEntity");
         stack.damageItem(1, entityHitting);
         return true;
     }
@@ -76,7 +66,7 @@ public class ItemAmalgamSword extends Item implements ICastItem {
     @Override
     public boolean onBlockDestroyed(ItemStack stack, World world, Block block, int x, int y, int z, EntityLivingBase entity) {
         if ((double) block.getBlockHardness(world, x, y, z) != 0.0D) {
-            Amalgam.LOG.info("blockDestoryed");
+
             stack.damageItem(2, entity);
         }
 
@@ -112,7 +102,6 @@ public class ItemAmalgamSword extends Item implements ICastItem {
             amount = 0;
         }
 
-        Amalgam.LOG.info("setting item durability to " + amount);
         stack.getTagCompound().setInteger("Durability", amount);
     }
 

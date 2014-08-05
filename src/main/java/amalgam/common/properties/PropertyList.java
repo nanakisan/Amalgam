@@ -12,7 +12,6 @@ public class PropertyList {
     private final Map<Property, Float> properties = new HashMap<Property, Float>();
 
     public PropertyList() {
-        // empty constructor
     }
 
     public PropertyList(ItemStack stack) {

@@ -5,7 +5,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import amalgam.common.Amalgam;
 
 public class InventoryCasting implements IInventory, ISidedInventory {
 
@@ -18,10 +17,6 @@ public class InventoryCasting implements IInventory, ISidedInventory {
         this.inventoryWidth = rows;
         this.stackList = new ItemStack[rows * cols];
     }
-
-    // ///////////////////
-    // ISidedInventory //
-    // ///////////////////
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
@@ -47,10 +42,6 @@ public class InventoryCasting implements IInventory, ISidedInventory {
         return false;
     }
 
-    // //////////////
-    // IInventory //
-    // //////////////
-
     @Override
     public int getSizeInventory() {
         return this.stackList.length;
@@ -60,7 +51,6 @@ public class InventoryCasting implements IInventory, ISidedInventory {
     public ItemStack getStackInSlot(int slot) {
         Slot s = table.getSlot(slot);
         if (s instanceof SlotCasting && ((SlotCasting) s).getCastState() == 1) {
-            // Amalgam.LOG.info("found some amalgam");
             return null;
         }
 
@@ -153,9 +143,6 @@ public class InventoryCasting implements IInventory, ISidedInventory {
         return false;
     }
 
-    /**
-     * Returns the itemstack in the slot specified (Top left is 0, 0). Args: row, column
-     */
     public ItemStack getStackInRowAndColumn(int row, int col) {
         if (row >= 0 && col < this.inventoryWidth) {
             int slotNum = row + col * this.inventoryWidth;
@@ -178,7 +165,6 @@ public class InventoryCasting implements IInventory, ISidedInventory {
     }
 
     public void useAmalgamForCrafting() {
-        Amalgam.LOG.info("using amalgam tank fluid for crafting");
         this.table.castingTable.setTankFluid(null);
     }
 }

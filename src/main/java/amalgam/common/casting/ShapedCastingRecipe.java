@@ -1,7 +1,6 @@
 package amalgam.common.casting;
 
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import amalgam.common.container.InventoryCasting;
@@ -9,13 +8,9 @@ import amalgam.common.properties.PropertyList;
 
 public class ShapedCastingRecipe implements ICastingRecipe {
 
-    /** How many horizontal slots this recipe is wide. */
     public final int         recipeWidth;
-    /** How many vertical slots this recipe uses. */
     public final int         recipeHeight;
-    /** Is a array of ItemStack that composes the recipe. */
     public final ItemStack[] recipeItems;
-    /** Is the ItemStack that you get when craft the recipe. */
     private ICastItem        recipeOutput;
 
     private int              amount;

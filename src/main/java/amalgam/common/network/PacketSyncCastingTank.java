@@ -13,19 +13,12 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 
-/**
- * This packet tells the client when amalgam has been added to the casting table tank. Since we need to know how much
- * amalgam is in the tank to render the casting table gui, we need to send a packet of info about the tank to the
- * clients whenever it changes on the server.
- */
-
 public class PacketSyncCastingTank implements IMessage, IMessageHandler<PacketSyncCastingTank, IMessage> {
 
     private int          xCoord, yCoord, zCoord;
     private AmalgamStack fluid;
 
     public PacketSyncCastingTank() {
-        // an empty constructor is necessary for an IMessage implementation
     }
 
     public PacketSyncCastingTank(int x, int y, int z, AmalgamStack fluid) {
@@ -37,7 +30,6 @@ public class PacketSyncCastingTank implements IMessage, IMessageHandler<PacketSy
 
     @Override
     public IMessage onMessage(PacketSyncCastingTank message, MessageContext ctx) {
-        Amalgam.LOG.info("Syncing casting tank: on message");
 
         TileEntity tileEntity = Amalgam.proxy.getClientWorld().getTileEntity(message.xCoord, message.yCoord, message.zCoord);
 

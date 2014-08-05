@@ -36,7 +36,6 @@ public class ContainerCasting extends Container {
                 SlotCasting s = new SlotCasting(castingMatrix, slotNum, 30 + colNum * 18, 17 + rowNum * 18);
                 s.setCastState(te.getCastState(slotNum));
                 this.addSlotToContainer(s);
-
             }
         }
 
@@ -137,7 +136,6 @@ public class ContainerCasting extends Container {
             castResult.setInventorySlotContents(0, null);
             return;
         }
-        Amalgam.LOG.info("found matching recipe!!!");
         castResult.setInventorySlotContents(0, recipe.getCastingResult(castingMatrix, castingTable.getAmalgamPropertyList()));
     }
 
