@@ -13,7 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-import amalgam.common.Amalgam;
 import amalgam.common.casting.ICastItem;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;

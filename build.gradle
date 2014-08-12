@@ -16,7 +16,7 @@ buildscript {
 }
 
 apply plugin: 'forge'
-version = "0.0.1"
+version = "0.0.2"
 group= "com.mm4cc.amalgam" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Amalgam"
 
@@ -24,7 +24,7 @@ archivesBaseName = "Amalgam"
 
 
 minecraft {
-    version = "1.7.10-10.13.0.1187"
+    version = "1.7.10-10.13.0.1203"
     if(file('../run').exists()){
         runDir = "../run"
     }else{

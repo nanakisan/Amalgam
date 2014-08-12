@@ -8,7 +8,6 @@ import amalgam.common.properties.PropertyList;
 
 public class AmalgamStack extends FluidStack {
 
-    // the property key should be Tag due to the way FluidStacks work
     private static final String PROPERTY_KEY = "Tag";
     private static final String AMOUNT_KEY   = "Amount";
 

@@ -129,4 +129,13 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
     public TileEntity createNewTileEntity(World world, int metaData) {
         return new TileStoneCrucible();
     }
+
+    @Override
+    public boolean isToolEffective(String type, int metadata) {
+        if ("pickaxe".equals(type)) {
+            return true;
+        }
+
+        return false;
+    }
 }

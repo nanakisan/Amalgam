@@ -122,7 +122,6 @@ public class Amalgam {
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        // might need to put something here eventually?
     }
 
 }

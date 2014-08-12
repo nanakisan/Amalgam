@@ -91,4 +91,13 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
         super.breakBlock(world, x, y, z, block, metaData);
         world.removeTileEntity(x, y, z);
     }
+
+    @Override
+    public boolean isToolEffective(String type, int metadata) {
+        if ("pickaxe".equals(type)) {
+            return true;
+        }
+
+        return false;
+    }
 }
