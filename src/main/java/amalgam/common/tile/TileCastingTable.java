@@ -23,9 +23,11 @@ import amalgam.common.properties.PropertyList;
 
 public class TileCastingTable extends TileEntity implements IFluidHandler {
 
+    // TODO custom rendering based on the casting state and amalgam on the table. Show empty and filled casting slots.
+
     private ItemStack[]         castingItems = new ItemStack[10];
     private int[]               castStates   = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    private AmalgamTank         tank         = new AmalgamTank(0);
+    private final AmalgamTank   tank         = new AmalgamTank(0);
 
     private static final String ITEMS_KEY    = "ItemStacks";
     private static final String CAST_KEY     = "CastStates";

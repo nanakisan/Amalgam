@@ -9,9 +9,9 @@ import cpw.mods.fml.common.FMLCommonHandler;
 
 public class SlotCastingResult extends Slot {
 
-    private InventoryCasting castingMatrix;
-    private EntityPlayer     player;
-    private int              amountCrafted;
+    private final InventoryCasting castingMatrix;
+    private final EntityPlayer     player;
+    private int                    amountCrafted;
 
     public SlotCastingResult(EntityPlayer player, InventoryCasting castMatrix, InventoryCastResult castResult, int slotID, int xPos, int yPos) {
         super(castResult, slotID, xPos, yPos);

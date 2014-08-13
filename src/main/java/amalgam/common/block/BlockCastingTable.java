@@ -19,6 +19,8 @@ import amalgam.common.tile.TileCastingTable;
 
 public class BlockCastingTable extends BlockContainer implements ITileEntityProvider {
 
+    // FIXME right clicking on casting table only opens up the gui if the player isn't holding anything!
+
     public BlockCastingTable() {
         super(Material.rock);
         this.setHardness(3.0F);

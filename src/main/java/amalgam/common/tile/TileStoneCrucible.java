@@ -17,6 +17,8 @@ import amalgam.common.properties.PropertyList;
 
 public class TileStoneCrucible extends TileEntity implements IFluidHandler {
 
+    // TODO custom rendering for the crucible. Render similar to the cauldron, but with amalgam instead of water.
+
     protected AmalgamTank tank = new AmalgamTank(Amalgam.BASE_AMOUNT * 100);
 
     @Override

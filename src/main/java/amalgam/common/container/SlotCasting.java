@@ -33,7 +33,7 @@ public class SlotCasting extends Slot {
         return this.castState;
     }
 
-    public boolean hasAmalgam() {
+    public boolean containsAmalgam() {
         return this.hasAmalgam && this.castState != 0;
     }
 

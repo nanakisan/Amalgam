@@ -46,6 +46,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 @Mod(modid = Amalgam.MODID, version = Amalgam.VERSION)
 public class Amalgam {
 
+    // TODO consider refactoring some constants and registration to another class (Config?)
+
     public static final String MODID          = "amalgam";
     public static final String VERSION        = "0.0.1";
     public static final int    BASE_AMOUNT    = 10;
@@ -60,10 +62,13 @@ public class Amalgam {
     public static CommonProxy  proxy;
 
     public static Fluid        fluidAmalgam;
+
     public static Block        stoneCrucible;
     public static Block        castingTable;
+
     public static Item         stoneTongs;
     public static Item         amalgamBlob;
+
     public static Item         amalgamSword;
     public static Item         amalgamPick;
     public static Item         amalgamAxe;
@@ -153,7 +158,7 @@ public class Amalgam {
         CastingManager.addRecipe((ICastItem) amalgamHoe, 1, "aa", " s", " s", 's', Items.stick);
         CastingManager.addRecipe((ICastItem) amalgamHoe, 1, "aa", "s ", "s ", 's', Items.stick);
 
-        // TODO recipes with just amalgam are not working
+        // FIXME recipes with just amalgam are not working
         CastingManager.addRecipe((ICastItem) amalgamHelmet, 1, "aaa", "a a", 's', Items.stick);
         CastingManager.addRecipe((ICastItem) amalgamChest, 1, "a a", "aaa", "aaa", 's', Items.stick);
         CastingManager.addRecipe((ICastItem) amalgamLegs, 1, "aaa", "a a", "a a", 's', Items.stick);

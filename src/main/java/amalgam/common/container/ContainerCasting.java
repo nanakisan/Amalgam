@@ -14,13 +14,15 @@ import amalgam.common.tile.TileCastingTable;
 public class ContainerCasting extends Container {
 
     public TileCastingTable    castingTable;
-    private InventoryPlayer    playerInv;
+    // private InventoryPlayer playerInv;
     public InventoryCasting    castingMatrix;
     public InventoryCastResult castResult;
 
     public ContainerCasting(InventoryPlayer inv, TileCastingTable te) {
+        super();
+
         this.castingTable = te;
-        this.playerInv = inv;
+        // this.playerInv = inv;
 
         castingMatrix = new InventoryCasting(this, 3, 3);
         castResult = new InventoryCastResult();
@@ -45,17 +47,17 @@ public class ContainerCasting extends Container {
                 castingMatrix.setInventorySlotContents(slotNum, castingTable.getStackInSlot(slotNum));
             }
         }
-        this.addSlotToContainer(new SlotCastingResult(this.playerInv.player, castingMatrix, castResult, 0, 124, 35));
+        this.addSlotToContainer(new SlotCastingResult(inv.player, castingMatrix, castResult, 0, 124, 35));
 
         for (rowNum = 0; rowNum < 3; ++rowNum) {
             for (colNum = 0; colNum < 9; ++colNum) {
                 slotNum = colNum + rowNum * 9 + 9;
-                this.addSlotToContainer(new Slot(this.playerInv, slotNum, 8 + colNum * 18, 84 + rowNum * 18));
+                this.addSlotToContainer(new Slot(inv, slotNum, 8 + colNum * 18, 84 + rowNum * 18));
             }
         }
 
         for (colNum = 0; colNum < 9; ++colNum) {
-            this.addSlotToContainer(new Slot(this.playerInv, colNum, 8 + colNum * 18, 142));
+            this.addSlotToContainer(new Slot(inv, colNum, 8 + colNum * 18, 142));
         }
 
         this.onCraftMatrixChanged(this.castingMatrix);

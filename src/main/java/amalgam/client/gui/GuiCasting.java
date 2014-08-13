@@ -34,7 +34,7 @@ public class GuiCasting extends GuiContainer {
                 int rowNum = i / 3;
                 int colNum = i % 3;
 
-                if (slot.hasAmalgam()) {
+                if (slot.containsAmalgam()) {
                     this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 178, 18, 16, 16);
                 } else {
                     this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 178, 1, 16, 16);

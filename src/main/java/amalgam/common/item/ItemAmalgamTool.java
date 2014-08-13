@@ -14,7 +14,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.EnumHelper;
-import amalgam.common.Amalgam;
 import amalgam.common.casting.ICastItem;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
@@ -39,8 +38,8 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
     public static final String      TOOL_CLASS_AXE     = "axe";
     public static final String      TOOL_CLASS_SHOVEL  = "shovel";
 
-    private String                  toolClass;
-    private float                   damageMod;
+    private final String            toolClass;
+    private final float             damageMod;
 
     protected ItemAmalgamTool(float damageMod, String toolClass, Set<Block> blocks) {
         super(damageMod, toolMatAmalgam, blocks);
@@ -123,6 +122,8 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         dataList.add(EnumChatFormatting.DARK_GREEN + "+" + getHarvestLevel(stack, this.toolClass) + " Harvest Level");
         dataList.add(EnumChatFormatting.BLUE + "+" + (int) getDamageVsEntity(stack) + " Attack Damage");
     }
+
+    // TODO revisit algorithms for generating tool properties
 
     @Override
     public ItemStack generateStackWithProperties(PropertyList pList, int stackSize) {

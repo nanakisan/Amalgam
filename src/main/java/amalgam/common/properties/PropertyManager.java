@@ -17,6 +17,7 @@ public final class PropertyManager {
 
     private static final PropertyManager         INSTANCE    = new PropertyManager();
     private static final Map<Item, List<Object>> REGISTRY    = new HashMap<Item, List<Object>>();
+
     public static final Property                 MALIABILITY = new Property("Maliability", 1, ComboType.QUADAVERAGE);
     public static final Property                 DENSITY     = new Property("Density", 6, ComboType.QUADAVERAGE);
     public static final Property                 LUSTER      = new Property("Luster", 10, ComboType.QUADAVERAGE);
@@ -42,6 +43,9 @@ public final class PropertyManager {
     }
 
     public static PropertyList generatePropertiesFromToolMaterial(ToolMaterial mat) {
+
+        // TODO go through the math for generating amalgam properties from tool materials
+
         PropertyList list = new PropertyList();
 
         list.add(DENSITY, (float) Math.sqrt(mat.getMaxUses() / (mat.getHarvestLevel() + 1)));
@@ -53,6 +57,9 @@ public final class PropertyManager {
     }
 
     public static PropertyList generatePropertiesFromArmorMaterial(ArmorMaterial mat) {
+
+        // TODO go through the math for generating amalgam properties from armor materials
+
         PropertyList list = new PropertyList();
 
         list.add(DENSITY, mat.getDurability(1) / 11);

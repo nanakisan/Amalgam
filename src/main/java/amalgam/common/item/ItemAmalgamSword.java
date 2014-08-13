@@ -80,6 +80,8 @@ public class ItemAmalgamSword extends ItemSword implements ICastItem {
         return HashMultimap.create();
     }
 
+    // TODO revisit algorithms for generating sword properties
+
     @Override
     public ItemStack generateStackWithProperties(PropertyList pList, int stackSize) {
         if (pList == null) {

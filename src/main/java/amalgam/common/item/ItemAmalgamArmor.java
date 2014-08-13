@@ -112,11 +112,12 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
         return returnStack;
     }
 
+    // TODO revisit algorithms for generating armor properties
+
     @Override
     public ArmorProperties getProperties(EntityLivingBase player, ItemStack armor, DamageSource source, double damage, int slot) {
         float absorbRatio = armor.getTagCompound().getInteger(ABSORB_TAG) * .04F;
         int absorbMax = (int) (absorbRatio * 20);
-        // TODO right now priority is based on slot, might want to base it on something else
         int priority = slot;
         return new ArmorProperties(priority, absorbRatio, absorbMax);
     }

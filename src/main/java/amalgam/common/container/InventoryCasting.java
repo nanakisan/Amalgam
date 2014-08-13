@@ -8,9 +8,9 @@ import net.minecraft.item.ItemStack;
 
 public class InventoryCasting implements IInventory, ISidedInventory {
 
-    private ItemStack[]      stackList = new ItemStack[9];
-    private int              inventoryWidth;
-    private ContainerCasting table;
+    private ItemStack[]            stackList = new ItemStack[9];
+    private final int              inventoryWidth;
+    private final ContainerCasting table;
 
     public InventoryCasting(ContainerCasting container, int rows, int cols) {
         this.table = container;
@@ -20,8 +20,7 @@ public class InventoryCasting implements IInventory, ISidedInventory {
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        int slots[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-        return slots;
+        return new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     }
 
     @Override

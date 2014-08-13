@@ -11,14 +11,14 @@ public class ShapedCastingRecipe implements ICastingRecipe {
     public final int         recipeWidth;
     public final int         recipeHeight;
     public final ItemStack[] recipeItems;
-    private ICastItem        recipeOutput;
+    private final ICastItem  recipeOutput;
 
-    private int              amount;
+    private final int        amount;
 
     public ShapedCastingRecipe(int cols, int rows, ItemStack[] aitemstack, ICastItem output, int amount) {
         this.recipeWidth = cols;
         this.recipeHeight = rows;
-        this.recipeItems = aitemstack;
+        this.recipeItems = aitemstack.clone();
         this.recipeOutput = output;
         this.amount = amount;
     }
