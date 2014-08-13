@@ -1,23 +1,75 @@
 package amalgam.common.item;
 
+import java.util.List;
+
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IIcon;
 import net.minecraftforge.common.ISpecialArmor;
 import amalgam.common.Amalgam;
 import amalgam.common.casting.ICastItem;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialArmor {
 
     public static final String ABSORB_TAG = "absorb max";
-    
+    public IIcon               iconHelmet;
+    public IIcon               iconChest;
+    public IIcon               iconLegs;
+    public IIcon               iconBoots;
+
     public ItemAmalgamArmor(ArmorMaterial mat, int renderIndex, int armorType) {
         super(mat, renderIndex, armorType);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void registerIcons(IIconRegister iconRegister) {
+        this.iconHelmet = iconRegister.registerIcon("amalgam:amalgamHelmet");
+        this.iconChest = iconRegister.registerIcon("amalgam:amalgamChest");
+        this.iconLegs = iconRegister.registerIcon("amalgam:amalgamLegs");
+        this.iconBoots = iconRegister.registerIcon("amalgam:amalgamBoots");
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public IIcon getIcon(ItemStack stack, int pass) {
+        switch (this.armorType) {
+            case 0:
+                return this.iconHelmet;
+            case 1:
+                return this.iconChest;
+            case 2:
+                return this.iconLegs;
+            case 3:
+                return this.iconBoots;
+            default:
+                return null;
+        }
+    }
+
+    public String getArmorTexture(ItemStack itemstack, Entity entity, int slot, String type) {
+        if (itemstack.getItem() == Amalgam.amalgamLegs) {
+            return Amalgam.MODID + ":textures/models/armor/amalgamLayer2.png";
+        }
+        return Amalgam.MODID + ":textures/models/armor/amalgamLayer1.png";
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, EntityPlayer player, List dataList, boolean b) {
+        dataList.add((getMaxDamage(stack) - getDamage(stack)) + "/" + getMaxDamage(stack));
+        dataList.add(EnumChatFormatting.DARK_GREEN + "+" + getItemEnchantability(stack) + " Enchantability");
     }
 
     @Override
@@ -53,9 +105,8 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
 
         toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (luster));
         int maxDurability = (int) ((density * density) * hardness);
-        Amalgam.LOG.info("max durability: " + maxDurability);
         toolTag.setInteger(ItemAmalgamTool.DURABILITY_TAG, maxDurability);
-        toolTag.setInteger(ABSORB_TAG, (int)(maliability / 2.0));
+        toolTag.setInteger(ABSORB_TAG, (int) (maliability / 2.0));
 
         returnStack.setTagCompound(toolTag);
         return returnStack;
@@ -64,7 +115,7 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
     @Override
     public ArmorProperties getProperties(EntityLivingBase player, ItemStack armor, DamageSource source, double damage, int slot) {
         float absorbRatio = armor.getTagCompound().getInteger(ABSORB_TAG) * .04F;
-        int absorbMax = (int)(absorbRatio * 20);
+        int absorbMax = (int) (absorbRatio * 20);
         // TODO right now priority is based on slot, might want to base it on something else
         int priority = slot;
         return new ArmorProperties(priority, absorbRatio, absorbMax);

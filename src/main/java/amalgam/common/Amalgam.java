@@ -69,12 +69,12 @@ public class Amalgam {
     public static Item         amalgamAxe;
     public static Item         amalgamShovel;
     public static Item         amalgamHoe;
-    
-    public static Item   amalgamHelmet;
-    public static Item   amalgamChest;
-    public static Item   amalgamLegs;
-    public static Item   amalgamBoots;
-    
+
+    public static Item         amalgamHelmet;
+    public static Item         amalgamChest;
+    public static Item         amalgamLegs;
+    public static Item         amalgamBoots;
+
     public static CreativeTabs tab;
 
     @EventHandler
@@ -109,8 +109,7 @@ public class Amalgam {
         amalgamChest = new ItemAmalgamArmor(ItemArmor.ArmorMaterial.CLOTH, 0, 1).setUnlocalizedName("amalgamChest");
         amalgamLegs = new ItemAmalgamArmor(ItemArmor.ArmorMaterial.CLOTH, 0, 2).setUnlocalizedName("amalgamLegs");
         amalgamBoots = new ItemAmalgamArmor(ItemArmor.ArmorMaterial.CLOTH, 0, 3).setUnlocalizedName("amalgamBoots");
-        
-        
+
         GameRegistry.registerItem(stoneTongs, "stoneTongs");
         GameRegistry.registerItem(amalgamBlob, "amalgamBlob");
         GameRegistry.registerItem(amalgamSword, "amalgamSword");
@@ -153,7 +152,7 @@ public class Amalgam {
         CastingManager.addRecipe((ICastItem) amalgamShovel, 1, "a", "s", "s", 's', Items.stick);
         CastingManager.addRecipe((ICastItem) amalgamHoe, 1, "aa", " s", " s", 's', Items.stick);
         CastingManager.addRecipe((ICastItem) amalgamHoe, 1, "aa", "s ", "s ", 's', Items.stick);
-        
+
         // TODO recipes with just amalgam are not working
         CastingManager.addRecipe((ICastItem) amalgamHelmet, 1, "aaa", "a a", 's', Items.stick);
         CastingManager.addRecipe((ICastItem) amalgamChest, 1, "a a", "aaa", "aaa", 's', Items.stick);

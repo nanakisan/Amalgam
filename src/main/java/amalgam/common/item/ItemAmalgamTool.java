@@ -143,9 +143,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         toolTag.setInteger(ENCHANTABILITY_TAG, (int) (luster));
         toolTag.setInteger(EFFICIENCY_TAG, (int) ((3 * luster * luster + 1.5 * density * density) / 120.0) + 1);
         int maxDurability = (int) ((density * density) * hardness);
-        Amalgam.LOG.info("max durability: " + maxDurability);
         toolTag.setInteger(DURABILITY_TAG, maxDurability);
-        // TODO need to add dame here
         toolTag.setFloat(DAMAGE_TAG, maliability + this.damageMod);
 
         returnStack.setTagCompound(toolTag);

@@ -31,22 +31,18 @@ public final class CastingManager {
         int k = 0;
         if (inputList[i] instanceof String[]) {
             String[] astring = (String[]) ((String[]) inputList[i++]);
-            Amalgam.LOG.info("astring: " + astring);
             for (int l = 0; l < astring.length; ++l) {
                 String s1 = astring[l];
                 ++k;
                 j = s1.length();
                 s = s + s1;
-                Amalgam.LOG.info("s: " + s);
             }
         } else {
-            Amalgam.LOG.info("no astring");
             while (inputList[i] instanceof String) {
                 String s2 = (String) inputList[i++];
                 ++k;
                 j = s2.length();
                 s = s + s2;
-                Amalgam.LOG.info("s: " + s);
             }
         }
         HashMap hashmap;

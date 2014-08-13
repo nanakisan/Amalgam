@@ -65,7 +65,6 @@ public class ItemAmalgamHoe extends ItemHoe implements ICastItem {
 
         toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (luster));
         int maxDurability = (int) ((density * density) * hardness);
-        Amalgam.LOG.info("max durability: " + maxDurability);
         toolTag.setInteger(ItemAmalgamTool.DURABILITY_TAG, maxDurability);
 
         returnStack.setTagCompound(toolTag);
