@@ -2,32 +2,28 @@ package amalgam.common.item;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.EnumAction;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
-import net.minecraft.world.World;
+import net.minecraft.util.EnumChatFormatting;
 import amalgam.common.casting.ICastItem;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class ItemAmalgamSword extends Item implements ICastItem {
+public class ItemAmalgamSword extends ItemSword implements ICastItem {
 
     public ItemAmalgamSword() {
-        super();
-    }
-
-    @Override
-    public int getItemStackLimit(ItemStack stack) {
-        return 1;
+        super(ItemAmalgamTool.toolMatAmalgam);
     }
 
     @SideOnly(Side.CLIENT)
@@ -36,87 +32,52 @@ public class ItemAmalgamSword extends Item implements ICastItem {
     }
 
     @Override
-    public EnumAction getItemUseAction(ItemStack stack) {
-        return EnumAction.block;
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, EntityPlayer player, List dataList, boolean b) {
+        dataList.add((getMaxDamage(stack) - getDamage(stack)) + "/" + getMaxDamage(stack));
+        dataList.add(EnumChatFormatting.DARK_GREEN + "+" + getItemEnchantability(stack) + " Enchantability");
+        dataList.add(EnumChatFormatting.BLUE + "+" + (int) getDamageVsEntity(stack) + " Attack Damage");
+    }
+
+    /**
+     * Return the enchantability factor of the item, most of the time is based on material.
+     */
+    @Override
+    public int getItemEnchantability(ItemStack stack) {
+        if (stack.getTagCompound() == null) {
+            return 0;
+        }
+        return stack.getTagCompound().getInteger(ItemAmalgamTool.ENCHANTABILITY_TAG);
     }
 
     @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 72000;
+    public int getMaxDamage(ItemStack stack) {
+        if (stack.getTagCompound() == null) {
+            return 1;
+        }
+        return stack.getTagCompound().getInteger(ItemAmalgamTool.DURABILITY_TAG);
     }
 
-    @Override
-    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-        player.setItemInUse(stack, this.getMaxItemUseDuration(stack));
-        return stack;
+    public float getDamageVsEntity(ItemStack stack) {
+        if (stack.getTagCompound() == null) {
+            return 0.0F;
+        }
+        return stack.getTagCompound().getInteger(ItemAmalgamTool.DAMAGE_TAG);
     }
 
     @Override
     public boolean hitEntity(ItemStack stack, EntityLivingBase entityBeingHit, EntityLivingBase entityHitting) {
         EntityPlayer player = (EntityPlayer) entityHitting;
-        float damage = stack.getTagCompound().getInteger("Damage");
+        float damage = getDamageVsEntity(stack);
         DamageSource damageSource = DamageSource.causePlayerDamage(player);
         entityBeingHit.attackEntityFrom(damageSource, (int) damage);
 
-        stack.damageItem(1, entityHitting);
-        return true;
+        return super.hitEntity(stack, entityBeingHit, entityHitting);
     }
 
     @Override
-    public boolean onBlockDestroyed(ItemStack stack, World world, Block block, int x, int y, int z, EntityLivingBase entity) {
-        if ((double) block.getBlockHardness(world, x, y, z) != 0.0D) {
-
-            stack.damageItem(2, entity);
-        }
-
-        return true;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, EntityPlayer player, List dataList, boolean b) {
-        dataList.add("Duarbility: " + (getMaxDamage(stack) - getDamage(stack)) + "/" + getMaxDamage(stack));
-        dataList.add("Damage: " + stack.getTagCompound().getInteger("Damage"));
-        dataList.add("Enchantability: " + stack.getTagCompound().getInteger("Enchantability"));
-    }
-
-    public boolean canHarvestBlock(ItemStack stack, int meta, Block block, EntityPlayer player) {
-        return block == Blocks.web;
-    }
-
-    @Override
-    public int getMaxDamage(ItemStack stack) {
-        return stack.getTagCompound().getInteger("MaxDurability");
-    }
-
-    @Override
-    public int getDamage(ItemStack stack) {
-        return stack.getTagCompound().getInteger("Durability");
-    }
-
-    @Override
-    public void setDamage(ItemStack stack, int amount) {
-
-        if (amount < 0) {
-            amount = 0;
-        }
-
-        stack.getTagCompound().setInteger("Durability", amount);
-    }
-
-    @Override
-    public boolean showDurabilityBar(ItemStack stack) {
-        return true;
-    }
-
-    @Override
-    public double getDurabilityForDisplay(ItemStack stack) {
-        return (double) getDamage(stack) / (double) getMaxDamage(stack);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public boolean isFull3D() {
-        return true;
+    public Multimap getItemAttributeModifiers() {
+        return HashMultimap.create();
     }
 
     @Override
@@ -132,15 +93,17 @@ public class ItemAmalgamSword extends Item implements ICastItem {
 
         ItemStack returnStack = new ItemStack(this, stackSize);
 
-        NBTTagCompound swordTag = new NBTTagCompound();
+        NBTTagCompound toolTag = new NBTTagCompound();
 
-        swordTag.setInteger("Damage", (int) maliability);
-        swordTag.setInteger("Enchantability", (int) (luster));
+        toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (luster));
         int maxDurability = (int) ((density * density) * hardness);
-        swordTag.setInteger("MaxDurability", maxDurability);
-        swordTag.setInteger("Durability", 0);
 
-        returnStack.setTagCompound(swordTag);
+        toolTag.setInteger(ItemAmalgamTool.DURABILITY_TAG, maxDurability);
+        float damage = maliability + 4.0F;
+        toolTag.setFloat(ItemAmalgamTool.DAMAGE_TAG, damage);
+
+        returnStack.setTagCompound(toolTag);
         return returnStack;
     }
+
 }

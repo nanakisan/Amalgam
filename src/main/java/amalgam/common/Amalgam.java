@@ -5,6 +5,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -17,8 +18,12 @@ import amalgam.common.block.BlockCastingTable;
 import amalgam.common.block.BlockStoneCrucible;
 import amalgam.common.casting.CastingManager;
 import amalgam.common.casting.ICastItem;
+import amalgam.common.item.ItemAmalgamArmor;
+import amalgam.common.item.ItemAmalgamAxe;
 import amalgam.common.item.ItemAmalgamBlob;
+import amalgam.common.item.ItemAmalgamHoe;
 import amalgam.common.item.ItemAmalgamPick;
+import amalgam.common.item.ItemAmalgamShovel;
 import amalgam.common.item.ItemAmalgamSword;
 import amalgam.common.item.ItemStoneTongs;
 import amalgam.common.network.PacketHandler;
@@ -61,6 +66,15 @@ public class Amalgam {
     public static Item         amalgamBlob;
     public static Item         amalgamSword;
     public static Item         amalgamPick;
+    public static Item         amalgamAxe;
+    public static Item         amalgamShovel;
+    public static Item         amalgamHoe;
+    
+    public static Item   amalgamHelmet;
+    public static Item   amalgamChest;
+    public static Item   amalgamLegs;
+    public static Item   amalgamBoots;
+    
     public static CreativeTabs tab;
 
     @EventHandler
@@ -87,10 +101,27 @@ public class Amalgam {
         amalgamBlob = new ItemAmalgamBlob().setUnlocalizedName("amalgamBlob");
         amalgamSword = new ItemAmalgamSword().setUnlocalizedName("amalgamSword");
         amalgamPick = new ItemAmalgamPick().setUnlocalizedName("amalgamPick");
+        amalgamAxe = new ItemAmalgamAxe().setUnlocalizedName("amalgamAxe");
+        amalgamShovel = new ItemAmalgamShovel().setUnlocalizedName("amalgamShovel");
+        amalgamHoe = new ItemAmalgamHoe().setUnlocalizedName("amalgamHoe");
+
+        amalgamHelmet = new ItemAmalgamArmor(ItemArmor.ArmorMaterial.CLOTH, 0, 0).setUnlocalizedName("amalgamHelmet");
+        amalgamChest = new ItemAmalgamArmor(ItemArmor.ArmorMaterial.CLOTH, 0, 1).setUnlocalizedName("amalgamChest");
+        amalgamLegs = new ItemAmalgamArmor(ItemArmor.ArmorMaterial.CLOTH, 0, 2).setUnlocalizedName("amalgamLegs");
+        amalgamBoots = new ItemAmalgamArmor(ItemArmor.ArmorMaterial.CLOTH, 0, 3).setUnlocalizedName("amalgamBoots");
+        
+        
         GameRegistry.registerItem(stoneTongs, "stoneTongs");
         GameRegistry.registerItem(amalgamBlob, "amalgamBlob");
         GameRegistry.registerItem(amalgamSword, "amalgamSword");
         GameRegistry.registerItem(amalgamPick, "amalgamPick");
+        GameRegistry.registerItem(amalgamAxe, "amalgamAxe");
+        GameRegistry.registerItem(amalgamShovel, "amalgamShovel");
+        GameRegistry.registerItem(amalgamHoe, "amalgamHoe");
+        GameRegistry.registerItem(amalgamHelmet, "amalgamHelmet");
+        GameRegistry.registerItem(amalgamChest, "amalgamChest");
+        GameRegistry.registerItem(amalgamLegs, "amalgamLegs");
+        GameRegistry.registerItem(amalgamBoots, "amalgamBoots");
 
         GameRegistry.registerTileEntity(TileStoneCrucible.class, "stoneCrucible");
         GameRegistry.registerTileEntity(TileCastingTable.class, "castingTable");
@@ -117,7 +148,17 @@ public class Amalgam {
         CastingManager.addShapelessRecipe((ICastItem) amalgamSword, 1, "Amalgam", Blocks.stone);
         CastingManager.addRecipe((ICastItem) amalgamSword, 1, "a", "a", "s", 's', Items.stick);
         CastingManager.addRecipe((ICastItem) amalgamPick, 1, "aaa", " s ", " s ", 's', Items.stick);
-
+        CastingManager.addRecipe((ICastItem) amalgamAxe, 1, "aa", "as", " s", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamAxe, 1, "aa", "sa", "s ", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamShovel, 1, "a", "s", "s", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamHoe, 1, "aa", " s", " s", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamHoe, 1, "aa", "s ", "s ", 's', Items.stick);
+        
+        // TODO recipes with just amalgam are not working
+        CastingManager.addRecipe((ICastItem) amalgamHelmet, 1, "aaa", "a a", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamChest, 1, "a a", "aaa", "aaa", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamLegs, 1, "aaa", "a a", "a a", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, "a a", "a a", 's', Items.stick);
     }
 
     @EventHandler

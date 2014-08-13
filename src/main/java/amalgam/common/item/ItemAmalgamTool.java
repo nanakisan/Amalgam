@@ -4,13 +4,14 @@ import java.util.List;
 import java.util.Set;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.EnumHelper;
 import amalgam.common.Amalgam;
@@ -18,6 +19,7 @@ import amalgam.common.casting.ICastItem;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import cpw.mods.fml.relauncher.Side;
@@ -38,16 +40,28 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
     public static final String      TOOL_CLASS_SHOVEL  = "shovel";
 
     private String                  toolClass;
+    private float                   damageMod;
 
     protected ItemAmalgamTool(float damageMod, String toolClass, Set<Block> blocks) {
         super(damageMod, toolMatAmalgam, blocks);
         this.toolClass = toolClass;
+        this.damageMod = damageMod;
+    }
+
+    @Override
+    public boolean hitEntity(ItemStack stack, EntityLivingBase entityBeingHit, EntityLivingBase entityHitting) {
+        EntityPlayer player = (EntityPlayer) entityHitting;
+        float damage = getDamageVsEntity(stack);
+        DamageSource damageSource = DamageSource.causePlayerDamage(player);
+        entityBeingHit.attackEntityFrom(damageSource, (int) damage);
+
+        return super.hitEntity(stack, entityBeingHit, entityHitting);
     }
 
     @Override
     public float getDigSpeed(ItemStack stack, Block block, int meta) {
         if (ForgeHooks.isToolEffective(stack, block, meta)) {
-            return stack.getTagCompound().getInteger(EFFICIENCY_TAG);
+            return getEfficiency(stack);
         }
         return super.getDigSpeed(stack, block, meta);
     }
@@ -55,6 +69,9 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
     @Override
     public int getHarvestLevel(ItemStack stack, String toolClass) {
         if (toolClass != null && toolClass.equals(this.toolClass)) {
+            if (stack.getTagCompound() == null) {
+                return 0;
+            }
             return stack.getTagCompound().getInteger(HARVEST_TAG);
         } else {
             return super.getHarvestLevel(stack, toolClass);
@@ -63,33 +80,48 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
 
     @Override
     public int getMaxDamage(ItemStack stack) {
+        if (stack.getTagCompound() == null) {
+            return 1;
+        }
         return stack.getTagCompound().getInteger(DURABILITY_TAG);
     }
 
     @Override
     public int getItemEnchantability(ItemStack stack) {
+        if (stack.getTagCompound() == null) {
+            return 0;
+        }
         return stack.getTagCompound().getInteger(ENCHANTABILITY_TAG);
     }
 
-    /**
-     * Gets a map of item attribute modifiers, used by ItemSword to increase hit damage.
-     */
+    public float getDamageVsEntity(ItemStack stack) {
+        if (stack.getTagCompound() == null) {
+            return 0.0F;
+        }
+        return stack.getTagCompound().getInteger(ItemAmalgamTool.DAMAGE_TAG);
+    }
+
+    public float getEfficiency(ItemStack stack) {
+        if (stack.getTagCompound() == null) {
+            return 1.0F;
+        }
+        return stack.getTagCompound().getInteger(ItemAmalgamTool.EFFICIENCY_TAG);
+    }
+
     @Override
-    public Multimap getAttributeModifiers(ItemStack stack) {
-        float damage = stack.getTagCompound().getInteger(DAMAGE_TAG);
-        Multimap multimap = super.getItemAttributeModifiers();
-        multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Tool modifier",
-                (double) damage, 0));
-        return multimap;
+    public Multimap getItemAttributeModifiers() {
+        return HashMultimap.create();
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer player, List dataList, boolean b) {
-        dataList.add("Duarbility: " + (getMaxDamage(stack) - getDamage(stack)) + "/" + getMaxDamage(stack));
-        dataList.add("Harvest Level: " + getHarvestLevel(stack, this.toolClass));
-        dataList.add("Efficiency: " + stack.getTagCompound().getInteger(EFFICIENCY_TAG));
-        dataList.add("Enchantability: " + getItemEnchantability(stack));
+
+        dataList.add((getMaxDamage(stack) - getDamage(stack)) + "/" + getMaxDamage(stack));
+        dataList.add(EnumChatFormatting.DARK_GREEN + "+" + getItemEnchantability(stack) + " Enchantability");
+        dataList.add(EnumChatFormatting.DARK_GREEN + "+" + (int) getEfficiency(stack) + " Efficiency");
+        dataList.add(EnumChatFormatting.DARK_GREEN + "+" + getHarvestLevel(stack, this.toolClass) + " Harvest Level");
+        dataList.add(EnumChatFormatting.BLUE + "+" + (int) getDamageVsEntity(stack) + " Attack Damage");
     }
 
     @Override
@@ -101,6 +133,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         float luster = pList.getValue(PropertyManager.LUSTER);
         float density = pList.getValue(PropertyManager.DENSITY);
         float hardness = pList.getValue(PropertyManager.HARDNESS);
+        float maliability = pList.getValue(PropertyManager.MALIABILITY);
 
         ItemStack returnStack = new ItemStack(this, stackSize);
 
@@ -113,7 +146,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         Amalgam.LOG.info("max durability: " + maxDurability);
         toolTag.setInteger(DURABILITY_TAG, maxDurability);
         // TODO need to add dame here
-        toolTag.setInteger(DAMAGE_TAG, 0);
+        toolTag.setFloat(DAMAGE_TAG, maliability + this.damageMod);
 
         returnStack.setTagCompound(toolTag);
         return returnStack;
