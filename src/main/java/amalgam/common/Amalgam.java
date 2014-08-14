@@ -49,7 +49,7 @@ public class Amalgam {
     // TODO consider refactoring some constants and registration to another class (Config?)
 
     public static final String MODID          = "amalgam";
-    public static final String VERSION        = "0.0.3";
+    public static final String VERSION        = "0.1.0";
     public static final int    BASE_AMOUNT    = 10;
     public static final int    INGOT_AMOUNT   = BASE_AMOUNT * 9;
     public static final int    BLOCK_AMOUNT   = INGOT_AMOUNT * 9;

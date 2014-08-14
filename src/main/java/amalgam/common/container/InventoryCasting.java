@@ -1,6 +1,5 @@
 package amalgam.common.container;
 
-import amalgam.common.Amalgam;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;

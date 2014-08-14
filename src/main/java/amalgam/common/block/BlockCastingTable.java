@@ -74,7 +74,7 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
             }
             return true;
         }
-        
+
         player.openGui(Amalgam.instance, Amalgam.CASTING_GUI_ID, world, x, y, z);
         return false;
     }
