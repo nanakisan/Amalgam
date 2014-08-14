@@ -49,9 +49,10 @@ public class Amalgam {
     // TODO consider refactoring some constants and registration to another class (Config?)
 
     public static final String MODID          = "amalgam";
-    public static final String VERSION        = "0.0.1";
+    public static final String VERSION        = "0.0.3";
     public static final int    BASE_AMOUNT    = 10;
     public static final int    INGOT_AMOUNT   = BASE_AMOUNT * 9;
+    public static final int    BLOCK_AMOUNT   = INGOT_AMOUNT * 9;
     public static final Logger LOG            = LogManager.getLogger(MODID);
     public static final int    CASTING_GUI_ID = 1;
 
@@ -142,9 +143,9 @@ public class Amalgam {
         PropertyManager.registerItemProperties(new ItemStack(Items.iron_ingot), ironProp, INGOT_AMOUNT);
         PropertyManager.registerItemProperties(new ItemStack(Items.gold_ingot), goldProp, INGOT_AMOUNT);
         PropertyManager.registerItemProperties(new ItemStack(Items.diamond), diamondProp, INGOT_AMOUNT);
-        PropertyManager.registerItemProperties(new ItemStack(Blocks.iron_block), ironProp, INGOT_AMOUNT * 9);
-        PropertyManager.registerItemProperties(new ItemStack(Blocks.gold_block), goldProp, INGOT_AMOUNT * 9);
-        PropertyManager.registerItemProperties(new ItemStack(Blocks.diamond_block), diamondProp, INGOT_AMOUNT * 9);
+        PropertyManager.registerItemProperties(new ItemStack(Blocks.iron_block), ironProp, BLOCK_AMOUNT);
+        PropertyManager.registerItemProperties(new ItemStack(Blocks.gold_block), goldProp, BLOCK_AMOUNT);
+        PropertyManager.registerItemProperties(new ItemStack(Blocks.diamond_block), diamondProp, BLOCK_AMOUNT);
         PropertyManager.registerItemProperties(new ItemStack(Items.gold_nugget), goldProp, BASE_AMOUNT);
 
         PropertyManager.registerItemProperties(new ItemStack(amalgamBlob), null, 0);
@@ -158,11 +159,17 @@ public class Amalgam {
         CastingManager.addRecipe((ICastItem) amalgamHoe, 1, "aa", " s", " s", 's', Items.stick);
         CastingManager.addRecipe((ICastItem) amalgamHoe, 1, "aa", "s ", "s ", 's', Items.stick);
 
-        // FIXME recipes with just amalgam are not working
+        // FIXME recipes with just amalgam are not working, currently adding useless character registration to make them
+        // work
+        // FIXME amalgam not disappearing from gui after armor is crafted
         CastingManager.addRecipe((ICastItem) amalgamHelmet, 1, "aaa", "a a", 's', Items.stick);
         CastingManager.addRecipe((ICastItem) amalgamChest, 1, "a a", "aaa", "aaa", 's', Items.stick);
         CastingManager.addRecipe((ICastItem) amalgamLegs, 1, "aaa", "a a", "a a", 's', Items.stick);
         CastingManager.addRecipe((ICastItem) amalgamBoots, 1, "a a", "a a", 's', Items.stick);
+
+        GameRegistry.addRecipe(new ItemStack(stoneTongs), " ss", " s ", "ss ", 's', Blocks.cobblestone);
+        GameRegistry.addRecipe(new ItemStack(stoneCrucible), "s s", "s s", "sss", 's', Blocks.cobblestone);
+        GameRegistry.addRecipe(new ItemStack(castingTable), "sss", "sws", "www", 's', Blocks.cobblestone, 'w', Blocks.planks);
     }
 
     @EventHandler

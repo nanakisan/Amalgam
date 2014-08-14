@@ -30,6 +30,8 @@ public final class PropertyManager {
         return INSTANCE;
     }
 
+    // TODO implement ore dictionary functionality with material property registration
+
     public static void registerItemProperties(ItemStack stack, PropertyList list, int volume) {
         Item item = stack.getItem();
         if (list != null && volume > 0) {
