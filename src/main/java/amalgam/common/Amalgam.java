@@ -159,13 +159,10 @@ public class Amalgam {
         CastingManager.addRecipe((ICastItem) amalgamHoe, 1, "aa", " s", " s", 's', Items.stick);
         CastingManager.addRecipe((ICastItem) amalgamHoe, 1, "aa", "s ", "s ", 's', Items.stick);
 
-        // FIXME recipes with just amalgam are not working, currently adding useless character registration to make them
-        // work
-        // FIXME amalgam not disappearing from gui after armor is crafted
-        CastingManager.addRecipe((ICastItem) amalgamHelmet, 1, "aaa", "a a", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamChest, 1, "a a", "aaa", "aaa", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamLegs, 1, "aaa", "a a", "a a", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, "a a", "a a", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamHelmet, 1, "aaa", "a a");
+        CastingManager.addRecipe((ICastItem) amalgamChest, 1, "a a", "aaa", "aaa");
+        CastingManager.addRecipe((ICastItem) amalgamLegs, 1, "aaa", "a a", "a a");
+        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, "a a", "a a");
 
         GameRegistry.addRecipe(new ItemStack(stoneTongs), " ss", " s ", "ss ", 's', Blocks.cobblestone);
         GameRegistry.addRecipe(new ItemStack(stoneCrucible), "s s", "s s", "sss", 's', Blocks.cobblestone);

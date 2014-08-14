@@ -37,7 +37,7 @@ public final class CastingManager {
                 s = s + s1;
             }
         } else {
-            while (inputList[i] instanceof String) {
+            while (i < inputList.length && inputList[i] instanceof String) {
                 String s2 = (String) inputList[i++];
                 ++k;
                 j = s2.length();

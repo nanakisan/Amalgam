@@ -1,5 +1,6 @@
 package amalgam.common.container;
 
+import amalgam.common.Amalgam;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -165,5 +166,6 @@ public class InventoryCasting implements IInventory, ISidedInventory {
 
     public void useAmalgamForCrafting() {
         this.table.castingTable.setTankFluid(null);
+        this.table.onCraftMatrixChanged(this);
     }
 }

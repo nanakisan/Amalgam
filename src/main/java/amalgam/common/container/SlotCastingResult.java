@@ -5,6 +5,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
+import amalgam.common.Amalgam;
 import cpw.mods.fml.common.FMLCommonHandler;
 
 public class SlotCastingResult extends Slot {
@@ -44,8 +45,9 @@ public class SlotCastingResult extends Slot {
     public void onPickupFromSlot(EntityPlayer player, ItemStack stack) {
         FMLCommonHandler.instance().firePlayerCraftingEvent(player, stack, castingMatrix);
         this.onCrafting(stack);
-
+        
         this.castingMatrix.useAmalgamForCrafting();
+        
         for (int i = 0; i < this.castingMatrix.getSizeInventory(); ++i) {
             ItemStack itemstack1 = this.castingMatrix.getStackInSlot(i);
 
