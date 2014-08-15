@@ -41,7 +41,7 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
         ItemStack stack = player.inventory.getCurrentItem();
         if (stack == null) {
             player.openGui(Amalgam.instance, Amalgam.CASTING_GUI_ID, world, x, y, z);
-            return true;
+            return false;
         }
 
         TileCastingTable table = (TileCastingTable) world.getTileEntity(x, y, z);
@@ -76,7 +76,7 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
         }
 
         player.openGui(Amalgam.instance, Amalgam.CASTING_GUI_ID, world, x, y, z);
-        return true;
+        return false;
     }
 
     @Override
