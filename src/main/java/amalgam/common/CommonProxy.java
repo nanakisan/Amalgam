@@ -5,13 +5,16 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import amalgam.common.container.ContainerCasting;
 import amalgam.common.tile.TileCastingTable;
+import amalgam.common.tile.TileStoneCrucible;
+import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.network.IGuiHandler;
 
 public class CommonProxy implements IGuiHandler {
 
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-        if (id == Amalgam.CASTING_GUI_ID) {
+        if (id == Config.CASTING_GUI_ID) {
             TileEntity te = world.getTileEntity(x, y, z);
             return new ContainerCasting(player.inventory, (TileCastingTable) te);
         }
@@ -26,4 +29,9 @@ public class CommonProxy implements IGuiHandler {
     public World getClientWorld() {
         return null;
     }
+
+    public void registerRenderers() {
+
+    }
+
 }

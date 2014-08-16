@@ -6,7 +6,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import amalgam.common.Amalgam;
+import amalgam.common.Config;
 import amalgam.common.casting.CastingManager;
 import amalgam.common.casting.ICastingRecipe;
 import amalgam.common.tile.TileCastingTable;
@@ -14,7 +14,6 @@ import amalgam.common.tile.TileCastingTable;
 public class ContainerCasting extends Container {
 
     public TileCastingTable    castingTable;
-    // private InventoryPlayer playerInv;
     public InventoryCasting    castingMatrix;
     public InventoryCastResult castResult;
 
@@ -22,7 +21,6 @@ public class ContainerCasting extends Container {
         super();
 
         this.castingTable = te;
-        // this.playerInv = inv;
 
         castingMatrix = new InventoryCasting(this, 3, 3);
         castResult = new InventoryCastResult();
@@ -71,7 +69,7 @@ public class ContainerCasting extends Container {
             if (s instanceof SlotCasting) {
                 if (te.getCastState(slotNum) == 1 && amount > 0) {
                     ((SlotCasting) s).doesHaveAmalgam(true);
-                    amount -= Amalgam.INGOT_AMOUNT;
+                    amount -= Config.INGOT_AMOUNT;
                 } else {
                     ((SlotCasting) s).doesHaveAmalgam(false);
                 }
@@ -81,7 +79,7 @@ public class ContainerCasting extends Container {
 
     @Override
     public boolean canInteractWith(EntityPlayer player) {
-        return castingTable.getWorldObj().getBlock(castingTable.xCoord, castingTable.yCoord, castingTable.zCoord) == Amalgam.castingTable ? player
+        return castingTable.getWorldObj().getBlock(castingTable.xCoord, castingTable.yCoord, castingTable.zCoord) == Config.castingTable ? player
                 .getDistanceSq((double) castingTable.xCoord + 0.5D, (double) castingTable.yCoord + 0.5D, (double) castingTable.zCoord + 0.5D) <= 64.0D
                 : false;
     }

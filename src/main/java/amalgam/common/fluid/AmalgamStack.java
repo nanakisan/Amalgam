@@ -2,7 +2,7 @@ package amalgam.common.fluid;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
-import amalgam.common.Amalgam;
+import amalgam.common.Config;
 import amalgam.common.properties.Property;
 import amalgam.common.properties.PropertyList;
 
@@ -12,7 +12,7 @@ public class AmalgamStack extends FluidStack {
     private static final String AMOUNT_KEY   = "Amount";
 
     public AmalgamStack(int amount, PropertyList pList) {
-        super(Amalgam.fluidAmalgam.getID(), amount, null);
+        super(Config.fluidAmalgam.getID(), amount, null);
         this.tag = new NBTTagCompound();
         if (pList == null) {
             new PropertyList().writeToNBT(this.tag);
@@ -22,7 +22,7 @@ public class AmalgamStack extends FluidStack {
     }
 
     public AmalgamStack(AmalgamStack resource, int amount) {
-        super(Amalgam.fluidAmalgam.getID(), amount, resource.tag);
+        super(Config.fluidAmalgam.getID(), amount, resource.tag);
     }
 
     public static AmalgamStack combine(AmalgamStack stackA, AmalgamStack stackB) {

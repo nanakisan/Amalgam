@@ -9,7 +9,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemStack;
-import amalgam.common.Amalgam;
+import amalgam.common.Config;
 import amalgam.common.fluid.IAmalgableItem;
 import amalgam.common.properties.Property.ComboType;
 
@@ -40,7 +40,7 @@ public final class PropertyManager {
         } else if (stack.getItem() instanceof IAmalgableItem) {
             REGISTRY.put(item, null);
         } else {
-            Amalgam.LOG.error("Trying to register an amalgable item with improper values or not implementing IAmalgableItem");
+            Config.LOG.error("Trying to register an amalgable item with improper values or not implementing IAmalgableItem");
         }
     }
 
@@ -75,7 +75,7 @@ public final class PropertyManager {
     public static PropertyList getProperties(ItemStack stack) {
         Item item = stack.getItem();
         if (!REGISTRY.containsKey(item)) {
-            Amalgam.LOG.error("trying to get the properties of an item which has not registered its properties");
+            Config.LOG.error("trying to get the properties of an item which has not registered its properties");
             return null;
         }
 

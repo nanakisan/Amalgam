@@ -8,7 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidHandler;
-import amalgam.common.Amalgam;
+import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.IAmalgamContainerItem;
 import amalgam.common.properties.PropertyList;
@@ -19,14 +19,14 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
 
     private static final String AMALGAM_KEY = "Amalgam";
     private static final String AMOUNT_KEY  = "Amount";
-    public static final int     CAPACITY    = Amalgam.INGOT_AMOUNT;
+    public static final int     CAPACITY    = Config.INGOT_AMOUNT;
 
     private IIcon               fullIcon;
     private IIcon               emptyIcon;
 
     public ItemStoneTongs() {
         super();
-        this.setCreativeTab(Amalgam.tab);
+        this.setCreativeTab(Config.tab);
     }
 
     @SideOnly(Side.CLIENT)
@@ -163,16 +163,16 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         AmalgamStack droppedAmalgam = this.getFluid(stack);
-        ItemStack emptyTongs = new ItemStack(Amalgam.stoneTongs);
+        ItemStack emptyTongs = new ItemStack(Config.stoneTongs);
 
         if (droppedAmalgam.amount == 0) {
             return emptyTongs;
         }
 
-        ItemStack droppedBlob = new ItemStack(Amalgam.amalgamBlob, 1);
+        ItemStack droppedBlob = new ItemStack(Config.amalgamBlob, 1);
 
-        ((ItemAmalgamBlob) Amalgam.amalgamBlob).setProperties(droppedBlob, droppedAmalgam.getProperties());
-        ((ItemAmalgamBlob) Amalgam.amalgamBlob).setVolume(droppedBlob, droppedAmalgam.amount);
+        ((ItemAmalgamBlob) Config.amalgamBlob).setProperties(droppedBlob, droppedAmalgam.getProperties());
+        ((ItemAmalgamBlob) Config.amalgamBlob).setVolume(droppedBlob, droppedAmalgam.amount);
 
         if (!world.isRemote) {
             player.entityDropItem(droppedBlob, 1);

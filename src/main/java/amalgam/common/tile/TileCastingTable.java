@@ -13,17 +13,16 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import amalgam.common.Amalgam;
+import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.AmalgamTank;
 import amalgam.common.item.ItemAmalgamBlob;
 import amalgam.common.network.PacketHandler;
-import amalgam.common.network.PacketSyncCastingTank;
 import amalgam.common.properties.PropertyList;
 
 public class TileCastingTable extends TileEntity implements IFluidHandler {
 
-    // TODO custom rendering based on the casting state and amalgam on the table. Show empty and filled casting slots.
+    // FIXME custom rendering based on the casting state and amalgam on the table. Show empty and filled casting slots.
 
     private ItemStack[]         castingItems = new ItemStack[10];
     private int[]               castStates   = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -74,10 +73,8 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
 
     @Override
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-        int r = tank.fill(resource, doFill);
-        PacketHandler.INSTANCE.sendToAll(new PacketSyncCastingTank(this.xCoord, this.yCoord, this.zCoord, (AmalgamStack) this.tank.getFluid()));
+        return tank.fill(resource, doFill);
 
-        return r;
     }
 
     @Override
@@ -85,23 +82,18 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         if (resource == null) {
             return null;
         }
-        FluidStack r = tank.drain(resource.amount, doDrain);
-        PacketHandler.INSTANCE.sendToAll(new PacketSyncCastingTank(this.xCoord, this.yCoord, this.zCoord, (AmalgamStack) this.tank.getFluid()));
+        return tank.drain(resource.amount, doDrain);
 
-        return r;
     }
 
     @Override
     public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-        FluidStack r = tank.drain(maxDrain, doDrain);
-        PacketHandler.INSTANCE.sendToAll(new PacketSyncCastingTank(this.xCoord, this.yCoord, this.zCoord, (AmalgamStack) this.tank.getFluid()));
-
-        return r;
+        return tank.drain(maxDrain, doDrain);
     }
 
     @Override
     public boolean canFill(ForgeDirection from, Fluid fluid) {
-        if (fluid.getID() == Amalgam.fluidAmalgam.getID()) {
+        if (fluid.getID() == Config.fluidAmalgam.getID()) {
             return true;
         }
         return false;
@@ -111,7 +103,7 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
     public boolean canDrain(ForgeDirection from, Fluid fluid) {
         boolean canDrain = false;
 
-        if (fluid.getID() == Amalgam.fluidAmalgam.getID()) {
+        if (fluid.getID() == Config.fluidAmalgam.getID()) {
             canDrain = true;
         }
         return canDrain;
@@ -126,7 +118,7 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         int newCapacity = 0;
 
         for (int i = 0; i < 9; i++) {
-            newCapacity += castStates[i] * Amalgam.INGOT_AMOUNT;
+            newCapacity += castStates[i] * Config.INGOT_AMOUNT;
         }
 
         AmalgamStack extraAmalgam = tank.setCapacity(newCapacity);
@@ -138,10 +130,10 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
 
             if (!this.worldObj.isRemote) {
 
-                ItemStack droppedBlob = new ItemStack(Amalgam.amalgamBlob, 1);
+                ItemStack droppedBlob = new ItemStack(Config.amalgamBlob, 1);
 
-                ((ItemAmalgamBlob) Amalgam.amalgamBlob).setProperties(droppedBlob, extraAmalgam.getProperties());
-                ((ItemAmalgamBlob) Amalgam.amalgamBlob).setVolume(droppedBlob, extraAmalgam.amount);
+                ((ItemAmalgamBlob) Config.amalgamBlob).setProperties(droppedBlob, extraAmalgam.getProperties());
+                ((ItemAmalgamBlob) Config.amalgamBlob).setVolume(droppedBlob, extraAmalgam.amount);
 
                 EntityItem amalgEntity = new EntityItem(this.worldObj, xCoord, yCoord, zCoord, droppedBlob);
                 this.worldObj.spawnEntityInWorld(amalgEntity);
@@ -182,12 +174,12 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
             int amount = tank.getFluidAmount();
             PropertyList p = ((AmalgamStack) tank.getFluid()).getProperties();
             while (amount > 0) {
-                int dropAmount = Math.min(amount, Amalgam.INGOT_AMOUNT);
+                int dropAmount = Math.min(amount, Config.INGOT_AMOUNT);
                 amount -= dropAmount;
-                ItemStack droppedBlob = new ItemStack(Amalgam.amalgamBlob, 1);
+                ItemStack droppedBlob = new ItemStack(Config.amalgamBlob, 1);
 
-                ((ItemAmalgamBlob) Amalgam.amalgamBlob).setProperties(droppedBlob, p);
-                ((ItemAmalgamBlob) Amalgam.amalgamBlob).setVolume(droppedBlob, dropAmount);
+                ((ItemAmalgamBlob) Config.amalgamBlob).setProperties(droppedBlob, p);
+                ((ItemAmalgamBlob) Config.amalgamBlob).setVolume(droppedBlob, dropAmount);
 
                 EntityItem amalgEntity = new EntityItem(this.worldObj, xCoord, yCoord, zCoord, droppedBlob);
                 this.worldObj.spawnEntityInWorld(amalgEntity);

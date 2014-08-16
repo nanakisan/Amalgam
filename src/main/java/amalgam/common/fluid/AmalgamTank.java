@@ -6,7 +6,7 @@ import net.minecraftforge.fluids.FluidEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
-import amalgam.common.Amalgam;
+import amalgam.common.Config;
 
 public class AmalgamTank implements IFluidTank {
 
@@ -82,7 +82,7 @@ public class AmalgamTank implements IFluidTank {
         if (resource == null) {
             return 0;
         }
-        if (resource.fluidID != Amalgam.fluidAmalgam.getID()) {
+        if (resource.fluidID != Config.fluidAmalgam.getID()) {
             return 0;
         }
         if (doFill) {

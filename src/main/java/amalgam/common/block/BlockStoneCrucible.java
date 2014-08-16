@@ -1,16 +1,21 @@
 package amalgam.common.block;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import amalgam.common.Amalgam;
+import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.IAmalgamContainerItem;
 import amalgam.common.properties.PropertyList;
@@ -21,24 +26,97 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockStoneCrucible extends Block implements ITileEntityProvider {
 
+    @SideOnly(Side.CLIENT)
+    private IIcon iconInner;
+    @SideOnly(Side.CLIENT)
+    private IIcon iconTop;
+    @SideOnly(Side.CLIENT)
+    private IIcon iconBottom;
+
     public BlockStoneCrucible() {
-        super(Material.rock);
+        super(Material.iron);
         this.setHardness(3.0F);
         this.setResistance(5.0F);
         this.setStepSound(soundTypeStone);
-        this.setCreativeTab(Amalgam.tab);
+        this.setCreativeTab(Config.tab);
+    }
+
+    /**
+     * Gets the block's texture. Args: side, meta
+     */
+    @SideOnly(Side.CLIENT)
+    @Override
+    public IIcon getIcon(int side, int meta) {
+        return side == 1 ? this.iconTop : side == 0 ? this.iconInner : this.blockIcon;
+    }
+
+    @Override
+    public int getRenderType() {
+        return 100;
     }
 
     @SideOnly(Side.CLIENT)
+    @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
-        this.blockIcon = iconRegister.registerIcon("amalgam:stoneCrucible");
+        this.iconInner = iconRegister.registerIcon("amalgam:stoneCrucibleInner");
+        this.iconTop = iconRegister.registerIcon("amalgam:stoneCrucibleTop");
+        this.iconBottom = iconRegister.registerIcon("amalgam:stoneCrucibleBottom");
+        this.blockIcon = iconRegister.registerIcon("amalgam:stoneCrucibleSide");
+    }
+
+    /**
+     * Adds all intersecting collision boxes to a list. (Be sure to only add boxes to the list if they intersect the
+     * mask.) Parameters: World, X, Y, Z, mask, list, colliding entity
+     */
+    @Override
+    public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB aabb, List list, Entity entity) {
+        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3125F, 1.0F);
+        super.addCollisionBoxesToList(world, x, y, z, aabb, list, entity);
+        float f = 0.125F;
+        this.setBlockBounds(0.0F, 0.0F, 0.0F, f, 1.0F, 1.0F);
+        super.addCollisionBoxesToList(world, x, y, z, aabb, list, entity);
+        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, f);
+        super.addCollisionBoxesToList(world, x, y, z, aabb, list, entity);
+        this.setBlockBounds(1.0F - f, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+        super.addCollisionBoxesToList(world, x, y, z, aabb, list, entity);
+        this.setBlockBounds(0.0F, 0.0F, 1.0F - f, 1.0F, 1.0F, 1.0F);
+        super.addCollisionBoxesToList(world, x, y, z, aabb, list, entity);
+
+        this.setBlockBoundsForItemRender();
+    }
+
+    /**
+     * Sets the block's bounds for rendering it as an item
+     */
+    public void setBlockBoundsForItemRender() {
+        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    /**
+     * Triggered whenever an entity collides with this block (enters into the block). Args: world, x, y, z, entity
+     */
+    public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
+        // if there is heat set entity on fire if it is a mob, add entity to amalgam if it can be added, burn up
+        // otherwise
+    }
+
+    /**
+     * Is this block (a) opaque and (b) a full 1m cube? This determines whether or not to render the shared face of two
+     * adjacent blocks and also whether the player can attach torches, redstone wire, etc to this block.
+     */
+    public boolean isOpaqueCube() {
+        return false;
+    }
+
+    /**
+     * If this block doesn't render as an ordinary block it will return False (examples: signs, buttons, stairs, etc)
+     */
+    public boolean renderAsNormalBlock() {
+        return false;
     }
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-        if (world.isRemote) {
-            return true;
-        }
 
         ItemStack stack = player.inventory.getCurrentItem();
         if (stack == null) {
@@ -54,7 +132,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
         if (stack.getItem() instanceof IAmalgamContainerItem) {
             IAmalgamContainerItem container = (IAmalgamContainerItem) stack.getItem();
             if (player.isSneaking()) {
-                int drainAmount = Math.min(container.getEmptySpace(stack), Amalgam.BASE_AMOUNT);
+                int drainAmount = Math.min(container.getEmptySpace(stack), Config.BASE_AMOUNT);
                 AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, drainAmount, true);
                 if (fluidStack != null) { // see if we drained anything
                     int result = container.fill(stack, fluidStack, true);
@@ -90,7 +168,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
                 AmalgamStack amalg = new AmalgamStack(amount, amalgProperties);
 
                 if (amalgProperties == null) {
-                    Amalgam.LOG.error("No properties!!!!!");
+                    Config.LOG.error("No properties!!!!!");
                 }
 
                 crucible.fill(ForgeDirection.UNKNOWN, amalg, true);

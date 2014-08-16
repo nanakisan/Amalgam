@@ -14,7 +14,6 @@ public final class PacketHandler {
     }
 
     public static void init() {
-        INSTANCE.registerMessage(PacketSyncCastingTank.class, PacketSyncCastingTank.class, 0, Side.CLIENT);
     }
 
 }

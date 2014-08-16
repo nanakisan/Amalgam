@@ -1,7 +1,5 @@
 package amalgam.common.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
@@ -13,9 +11,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import amalgam.common.Amalgam;
+import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.IAmalgamContainerItem;
 import amalgam.common.tile.TileCastingTable;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockCastingTable extends BlockContainer implements ITileEntityProvider {
 
@@ -24,7 +25,7 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
         this.setHardness(3.0F);
         this.setResistance(5.0F);
         this.setStepSound(soundTypeStone);
-        this.setCreativeTab(Amalgam.tab);
+        this.setCreativeTab(Config.tab);
     }
 
     @SideOnly(Side.CLIENT)
@@ -34,13 +35,13 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-        if (world.isRemote) {
-            return true;
-        }
+        // if (world.isRemote) {
+        // return true;
+        // }
 
         ItemStack stack = player.inventory.getCurrentItem();
         if (stack == null) {
-            player.openGui(Amalgam.instance, Amalgam.CASTING_GUI_ID, world, x, y, z);
+            player.openGui(Amalgam.instance, Config.CASTING_GUI_ID, world, x, y, z);
             return true;
         }
 
@@ -48,7 +49,7 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
         if (stack.getItem() instanceof IAmalgamContainerItem) {
             IAmalgamContainerItem container = (IAmalgamContainerItem) stack.getItem();
             if (player.isSneaking()) {
-                int drainAmount = Math.min(container.getEmptySpace(stack), Amalgam.BASE_AMOUNT);
+                int drainAmount = Math.min(container.getEmptySpace(stack), Config.BASE_AMOUNT);
                 AmalgamStack fluidStack = (AmalgamStack) table.drain(ForgeDirection.UNKNOWN, drainAmount, true);
                 if (fluidStack != null) {
                     int result = container.fill(stack, fluidStack, true);
@@ -75,7 +76,7 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
             return true;
         }
 
-        player.openGui(Amalgam.instance, Amalgam.CASTING_GUI_ID, world, x, y, z);
+        player.openGui(Amalgam.instance, Config.CASTING_GUI_ID, world, x, y, z);
         return true;
     }
 

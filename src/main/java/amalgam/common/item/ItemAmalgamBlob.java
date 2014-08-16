@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import amalgam.common.Amalgam;
+import amalgam.common.Config;
 import amalgam.common.fluid.IAmalgableItem;
 import amalgam.common.properties.PropertyList;
 import cpw.mods.fml.relauncher.Side;
@@ -14,7 +14,7 @@ public class ItemAmalgamBlob extends Item implements IAmalgableItem {
 
     public ItemAmalgamBlob() {
         super();
-        this.setCreativeTab(Amalgam.tab);
+        this.setCreativeTab(Config.tab);
     }
 
     @SideOnly(Side.CLIENT)

@@ -14,6 +14,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.ISpecialArmor;
 import amalgam.common.Amalgam;
+import amalgam.common.Config;
 import amalgam.common.casting.ICastItem;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
@@ -59,7 +60,7 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
     }
 
     public String getArmorTexture(ItemStack itemstack, Entity entity, int slot, String type) {
-        if (itemstack.getItem() == Amalgam.amalgamLegs) {
+        if (itemstack.getItem() == Config.amalgamLegs) {
             return Amalgam.MODID + ":textures/models/armor/amalgamLayer2.png";
         }
         return Amalgam.MODID + ":textures/models/armor/amalgamLayer1.png";
