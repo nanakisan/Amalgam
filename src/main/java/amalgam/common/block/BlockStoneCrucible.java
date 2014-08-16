@@ -32,6 +32,10 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
     private IIcon iconTop;
     @SideOnly(Side.CLIENT)
     private IIcon iconBottom;
+    @SideOnly(Side.CLIENT)
+    public IIcon  liquidAmalgam;
+    @SideOnly(Side.CLIENT)
+    public IIcon  solidAmalgam;
 
     public BlockStoneCrucible() {
         super(Material.iron);
@@ -47,7 +51,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-        return side == 1 ? this.iconTop : side == 0 ? this.iconInner : this.blockIcon;
+        return side == 1 ? this.iconTop : side == 0 ? this.iconBottom : side == 2 ? this.iconInner : this.blockIcon;
     }
 
     @Override
@@ -62,6 +66,15 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
         this.iconTop = iconRegister.registerIcon("amalgam:stoneCrucibleTop");
         this.iconBottom = iconRegister.registerIcon("amalgam:stoneCrucibleBottom");
         this.blockIcon = iconRegister.registerIcon("amalgam:stoneCrucibleSide");
+        this.liquidAmalgam = iconRegister.registerIcon("amalgam:amalgamStill");
+        this.solidAmalgam = iconRegister.registerIcon("amalgam:amalgamSolid");
+    }
+
+    public static IIcon getAmalgamIcon(boolean isSolid) {
+        if (isSolid) {
+            return ((BlockStoneCrucible) Config.stoneCrucible).solidAmalgam;
+        }
+        return ((BlockStoneCrucible) Config.stoneCrucible).liquidAmalgam;
     }
 
     /**

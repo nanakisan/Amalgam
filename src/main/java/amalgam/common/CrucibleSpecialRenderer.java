@@ -1,7 +1,6 @@
 package amalgam.common;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -19,8 +18,6 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class CrucibleSpecialRenderer extends TileEntitySpecialRenderer implements ISimpleBlockRenderingHandler {
 
-    // FIXME doesn't render correctly when looked at from below
-
     @Override
     public void renderTileEntityAt(TileEntity te, double x, double y, double z, float f) {
         GL11.glPushMatrix();
@@ -28,7 +25,12 @@ public class CrucibleSpecialRenderer extends TileEntitySpecialRenderer implement
         GL11.glTranslated(x, y + height, z + 1.0D);
         GL11.glRotatef(90.0F, -1.0F, 0.0F, 0.0F);
         if (height - .001 > .3) {
-            IIcon iicon = BlockLiquid.getLiquidIcon("lava_still");
+
+            IIcon iicon = ((BlockStoneCrucible) Config.stoneCrucible).liquidAmalgam;
+
+            if (!((TileStoneCrucible) te).isHot()) {
+                iicon = ((BlockStoneCrucible) Config.stoneCrucible).solidAmalgam;
+            }
 
             Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
@@ -39,8 +41,6 @@ public class CrucibleSpecialRenderer extends TileEntitySpecialRenderer implement
             float f3 = iicon.getMinU();
             float f4 = iicon.getMaxV();
 
-            GL11.glEnable(3042);
-
             tessellator.startDrawingQuads();
             tessellator.setNormal(0.0F, 0.0F, 1.0F);
             tessellator.addVertexWithUV(0.0D, 0.0D, 0.0D, f1, f4);
@@ -48,9 +48,6 @@ public class CrucibleSpecialRenderer extends TileEntitySpecialRenderer implement
             tessellator.addVertexWithUV(1.0D, 1.0D, 0.0D, f3, f2);
             tessellator.addVertexWithUV(0.0D, 1.0D, 0.0D, f1, f2);
             tessellator.draw();
-
-            GL11.glDisable(3042);
-
         }
 
         GL11.glPopMatrix();
@@ -58,7 +55,7 @@ public class CrucibleSpecialRenderer extends TileEntitySpecialRenderer implement
 
     @Override
     public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
-        // TODO Auto-generated method stub
+        // FIXME render the crucible in the inventory
 
     }
 
@@ -69,8 +66,8 @@ public class CrucibleSpecialRenderer extends TileEntitySpecialRenderer implement
         renderer.setRenderBoundsFromBlock(block);
         renderer.renderStandardBlock(block, x, y, z);
 
-        IIcon innerSide = ((BlockStoneCrucible) block).getBlockTextureFromSide(2);
-        IIcon bottom = ((BlockStoneCrucible) block).getBlockTextureFromSide(0);
+        IIcon innerSide = ((BlockStoneCrucible) block).getBlockTextureFromSide(3);
+        IIcon bottom = ((BlockStoneCrucible) block).getBlockTextureFromSide(2);
         float f5 = 0.123F;
 
         renderer.renderFaceXPos(block, x - 1.0F + f5, y, z, innerSide);
@@ -88,6 +85,7 @@ public class CrucibleSpecialRenderer extends TileEntitySpecialRenderer implement
 
     @Override
     public boolean shouldRender3DInInventory(int modelId) {
+        // TODO change this to true once we get the inventory rendering code working
         return false;
     }
 
