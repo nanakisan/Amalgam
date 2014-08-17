@@ -14,7 +14,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 public class Amalgam {
 
     public static final String MODID   = "amalgam";
-    public static final String VERSION = "0.1.0";
+    public static final String VERSION = "0.2.0";
 
     @Instance(MODID)
     public static Amalgam      instance;

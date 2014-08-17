@@ -11,7 +11,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -109,7 +108,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
      * Triggered whenever an entity collides with this block (enters into the block). Args: world, x, y, z, entity
      */
     public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
-        // if there is heat set entity on fire if it is a mob, add entity to amalgam if it can be added, burn up
+        // TODO if there is heat set entity on fire if it is a mob, add entity to amalgam if it can be added, burn up
         // otherwise
     }
 
@@ -138,7 +137,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
 
         TileStoneCrucible crucible = (TileStoneCrucible) world.getTileEntity(x, y, z);
         if (!crucible.isHot()) {
-            player.addChatMessage(new ChatComponentText("The crucible is cold, put a heat source under it."));
+            // player.addChatMessage(new ChatComponentText("The crucible is cold, put a heat source under it."));
             return true;
         }
 
@@ -187,16 +186,18 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
                 crucible.fill(ForgeDirection.UNKNOWN, amalg, true);
 
                 stack.stackSize = stack.stackSize - 1;
-                player.addChatMessage(new ChatComponentText("The item melts into amalgam"));
+                // player.addChatMessage(new ChatComponentText("The item melts into amalgam"));
 
                 return true;
             } else {
-                player.addChatMessage(new ChatComponentText("The crucible is about to overflow, you shouldn't add more."));
+                // player.addChatMessage(new
+                // ChatComponentText("The crucible is about to overflow, you shouldn't add more."));
                 return false;
             }
 
         } else {
-            player.addChatMessage(new ChatComponentText("Adding this item will ruin your amalgam, try using a different material"));
+            // player.addChatMessage(new
+            // ChatComponentText("Adding this item will ruin your amalgam, try using a different material"));
             return false;
         }
     }

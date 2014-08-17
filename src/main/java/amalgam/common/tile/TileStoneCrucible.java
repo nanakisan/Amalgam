@@ -36,7 +36,7 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler {
     private static final String HEAT_TAG      = "heat";
     private boolean             hasHeat;
 
-    private static final int    UPDATE_PERIOD = 100;
+    private static final int    UPDATE_PERIOD = 50;
     private int                 ticksSinceLastUpdate;
 
     @Override

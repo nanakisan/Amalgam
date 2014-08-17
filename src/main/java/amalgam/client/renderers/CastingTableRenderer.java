@@ -1,13 +1,20 @@
 package amalgam.client.renderers;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import amalgam.common.Config;
 import amalgam.common.block.BlockCastingTable;
+import amalgam.common.tile.TileCastingTable;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class CastingTableRenderer extends TileEntitySpecialRenderer implements ISimpleBlockRenderingHandler {
@@ -15,6 +22,7 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
     @Override
     public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
         // FIXME render the casting table in the inventory
+
     }
 
     @Override
@@ -63,6 +71,52 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
     @Override
     public void renderTileEntityAt(TileEntity te, double x, double y, double z, float f) {
         // FIXME render amalgam and items on top of the table
+
+        int amount = ((TileCastingTable) te).getTankAmount();
+        for (int i = 0; i < 9; i++) {
+
+            int row = 2 - i % 3;
+            int col = 2 - i / 3;
+            int castState = ((TileCastingTable) te).getCastState(i);
+
+            if (castState != 0) {
+                if (amount > 0) {
+
+                    EntityItem entityitem = new EntityItem(te.getWorldObj(), 0.0D, 0.0D, 0.0D, new ItemStack(Blocks.lava));
+
+                    entityitem.hoverStart = 0.0F;
+                    GL11.glPushMatrix();
+
+                    GL11.glTranslated(x + 0.2 + 0.3 * row, y + 1.01D, z + 0.1 + 0.3 * col);
+                    GL11.glRotatef(90.0F, 0.0F, 0.0F, 0.0F);
+
+                    GL11.glScalef(0.5F, 0.5F, 0.5F);
+                    RenderManager.instance.renderEntityWithPosYaw(entityitem, 0.0D, 0.0D, 0.0D, 0.0F, 0.0F);
+
+                    GL11.glPopMatrix();
+                    amount -= Config.INGOT_AMOUNT;
+                } else {
+                    // render empty casting slot
+                }
+            } else {
+                ItemStack stack = ((TileCastingTable) te).getStackInSlot(i);
+
+                if (stack != null) {
+                    EntityItem entityitem = new EntityItem(te.getWorldObj(), 0.0D, 0.0D, 0.0D, stack);
+
+                    entityitem.hoverStart = 0.0F;
+                    GL11.glPushMatrix();
+
+                    GL11.glTranslated(x + 0.2 + 0.3 * row, y + 1.01D, z + 0.1 + 0.3 * col);
+                    GL11.glRotatef(90.0F, 0.0F, 0.0F, 0.0F);
+
+                    GL11.glScalef(0.5F, 0.5F, 0.5F);
+                    RenderManager.instance.renderEntityWithPosYaw(entityitem, 0.0D, 0.0D, 0.0D, 0.0F, 0.0F);
+
+                    GL11.glPopMatrix();
+                }
+            }
+        }
     }
 
 }
