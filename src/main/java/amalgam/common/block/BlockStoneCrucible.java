@@ -51,7 +51,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-        return side == 1 ? this.iconTop : side == 0 ? this.iconBottom : side == 2 ? this.iconInner : this.blockIcon;
+        return side == 1 ? this.iconTop : side == 0 ? this.iconBottom : side == 6 ? this.iconInner : this.blockIcon;
     }
 
     @Override

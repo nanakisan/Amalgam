@@ -70,8 +70,8 @@ public class CrucibleRenderer extends TileEntitySpecialRenderer implements ISimp
         renderer.setRenderBoundsFromBlock(block);
         renderer.renderStandardBlock(block, x, y, z);
 
-        IIcon innerSide = ((BlockStoneCrucible) block).getBlockTextureFromSide(3);
-        IIcon bottom = ((BlockStoneCrucible) block).getBlockTextureFromSide(2);
+        IIcon innerSide = ((BlockStoneCrucible) block).getBlockTextureFromSide(2);
+        IIcon bottom = ((BlockStoneCrucible) block).getBlockTextureFromSide(6);
         float f5 = 0.123F;
 
         renderer.renderFaceXPos(block, x - 1.0F + f5, y, z, innerSide);
