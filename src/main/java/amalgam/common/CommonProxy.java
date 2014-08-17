@@ -5,9 +5,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import amalgam.common.container.ContainerCasting;
 import amalgam.common.tile.TileCastingTable;
-import amalgam.common.tile.TileStoneCrucible;
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.network.IGuiHandler;
 
 public class CommonProxy implements IGuiHandler {

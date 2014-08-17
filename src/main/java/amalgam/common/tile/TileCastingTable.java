@@ -17,7 +17,6 @@ import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.AmalgamTank;
 import amalgam.common.item.ItemAmalgamBlob;
-import amalgam.common.network.PacketHandler;
 import amalgam.common.properties.PropertyList;
 
 public class TileCastingTable extends TileEntity implements IFluidHandler {

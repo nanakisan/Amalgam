@@ -55,8 +55,7 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler {
 
     @Override
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-        int amount = tank.fill(resource, doFill);
-        return amount;
+        return tank.fill(resource, doFill);
     }
 
     @Override
@@ -163,4 +162,5 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler {
     public AxisAlignedBB getRenderBoundingBox() {
         return AxisAlignedBB.getBoundingBox(this.xCoord, this.yCoord, this.zCoord, this.xCoord + 1, this.yCoord + 1, this.zCoord + 1);
     }
+
 }

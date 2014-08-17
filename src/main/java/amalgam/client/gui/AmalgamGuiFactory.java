@@ -1,4 +1,4 @@
-package amalgam.common;
+package amalgam.client.gui;
 
 import java.util.Set;
 

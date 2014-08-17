@@ -10,7 +10,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
-@Mod(modid = Amalgam.MODID, version = Amalgam.VERSION, guiFactory = "amalgam.common.AmalgamGuiFactory")
+@Mod(modid = Amalgam.MODID, version = Amalgam.VERSION, guiFactory = "amalgam.client.gui.AmalgamGuiFactory")
 public class Amalgam {
 
     public static final String MODID   = "amalgam";

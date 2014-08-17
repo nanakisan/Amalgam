@@ -1,4 +1,4 @@
-package amalgam.common;
+package amalgam.client.renderers;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -12,12 +12,16 @@ import net.minecraft.world.IBlockAccess;
 
 import org.lwjgl.opengl.GL11;
 
+import amalgam.common.Config;
 import amalgam.common.block.BlockStoneCrucible;
 import amalgam.common.tile.TileStoneCrucible;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
-public class CrucibleSpecialRenderer extends TileEntitySpecialRenderer implements ISimpleBlockRenderingHandler {
+public class CrucibleRenderer extends TileEntitySpecialRenderer implements ISimpleBlockRenderingHandler {
 
+    
+    
+    
     @Override
     public void renderTileEntityAt(TileEntity te, double x, double y, double z, float f) {
         GL11.glPushMatrix();
@@ -91,7 +95,7 @@ public class CrucibleSpecialRenderer extends TileEntitySpecialRenderer implement
 
     @Override
     public int getRenderId() {
-        return 100;
+        return Config.crucibleRID;
     }
 
 }

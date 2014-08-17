@@ -56,7 +56,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
 
     @Override
     public int getRenderType() {
-        return 100;
+        return Config.crucibleRID;
     }
 
     @SideOnly(Side.CLIENT)

@@ -4,9 +4,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import amalgam.client.gui.GuiCasting;
+import amalgam.client.renderers.CrucibleRenderer;
 import amalgam.common.CommonProxy;
 import amalgam.common.Config;
-import amalgam.common.CrucibleSpecialRenderer;
 import amalgam.common.container.ContainerCasting;
 import amalgam.common.tile.TileCastingTable;
 import amalgam.common.tile.TileStoneCrucible;
@@ -33,8 +33,12 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void registerRenderers() {
-        CrucibleSpecialRenderer r = new CrucibleSpecialRenderer();
-        ClientRegistry.bindTileEntitySpecialRenderer(TileStoneCrucible.class, r);
-        RenderingRegistry.registerBlockHandler(100, r);
+        Config.castingTableRID = RenderingRegistry.getNextAvailableRenderId();
+        Config.crucibleRID = RenderingRegistry.getNextAvailableRenderId();
+
+        CrucibleRenderer crucibleRenderer = new CrucibleRenderer();
+        ClientRegistry.bindTileEntitySpecialRenderer(TileStoneCrucible.class, crucibleRenderer);
+        RenderingRegistry.registerBlockHandler(crucibleRenderer);
+
     }
 }

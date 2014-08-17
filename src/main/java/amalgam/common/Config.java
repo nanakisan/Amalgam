@@ -1,5 +1,17 @@
 package amalgam.common;
 
+import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.Item.ToolMaterial;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,17 +31,6 @@ import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
 import amalgam.common.tile.TileCastingTable;
 import amalgam.common.tile.TileStoneCrucible;
-import net.minecraft.block.Block;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Item.ToolMaterial;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -41,14 +42,14 @@ public class Config {
 
     public static Configuration configFile;
 
-    public static final Logger  LOG             = LogManager.getLogger(Amalgam.MODID);
-    public static final int     CASTING_GUI_ID  = 1;
+    public static final Logger  LOG                   = LogManager.getLogger(Amalgam.MODID);
+    public static final int     CASTING_GUI_ID        = 1;
 
-    public static boolean       VANILLA_RECIPES = true;
-    public static int           BASE_VOLUME     = 10;
-    public static final int     BASE_AMOUNT     = 1;
-    public static final int     INGOT_AMOUNT    = BASE_AMOUNT * 9;
-    public static final int     BLOCK_AMOUNT    = INGOT_AMOUNT * 9;
+    public static boolean       disableVanillaRecipes = true;
+    public static int           baseVolume            = 10;
+    public static final int     BASE_AMOUNT           = 1;
+    public static final int     INGOT_AMOUNT          = BASE_AMOUNT * 9;
+    public static final int     BLOCK_AMOUNT          = INGOT_AMOUNT * 9;
 
     public static Fluid         fluidAmalgam;
 
@@ -71,6 +72,9 @@ public class Config {
 
     public static CreativeTabs  tab;
 
+    public static int           castingTableRID       = -1;
+    public static int           crucibleRID           = -1;
+
     public static void init(FMLPreInitializationEvent event) {
         tab = new CreativeTabs("Amalgam") {
             @SideOnly(Side.CLIENT)
@@ -84,11 +88,11 @@ public class Config {
     }
 
     public static void syncConfig() {
-        BASE_VOLUME = configFile.getInt("Base amalgam volume (mB)", Configuration.CATEGORY_GENERAL, BASE_VOLUME, 1, Integer.MAX_VALUE,
+        baseVolume = configFile.getInt("Base amalgam volume (mB)", Configuration.CATEGORY_GENERAL, baseVolume, 1, Integer.MAX_VALUE,
                 "The volume of the smallest bit of amalgam (mB)");
 
         // TODO turn vanilla recipes off
-        VANILLA_RECIPES = configFile.getBoolean("Disable vanilla recipes", Configuration.CATEGORY_GENERAL, VANILLA_RECIPES,
+        disableVanillaRecipes = configFile.getBoolean("Disable vanilla recipes", Configuration.CATEGORY_GENERAL, disableVanillaRecipes,
                 "Disable vanilla recipes for swords, tools and armor");
 
         // TODO allow override of material properties,look at mod override code for the forge config gui

@@ -1,5 +1,6 @@
-package amalgam.common;
+package amalgam.client.gui;
 
+import amalgam.common.Config;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
