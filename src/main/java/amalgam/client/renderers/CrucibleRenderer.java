@@ -19,9 +19,6 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class CrucibleRenderer extends TileEntitySpecialRenderer implements ISimpleBlockRenderingHandler {
 
-    
-    
-    
     @Override
     public void renderTileEntityAt(TileEntity te, double x, double y, double z, float f) {
         GL11.glPushMatrix();

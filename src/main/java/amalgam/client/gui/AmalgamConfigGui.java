@@ -8,7 +8,7 @@ import cpw.mods.fml.client.config.GuiConfig;
 
 public class AmalgamConfigGui extends GuiConfig {
     public AmalgamConfigGui(GuiScreen parent) {
-        super(parent, new ConfigElement(Config.configFile.getCategory(Configuration.CATEGORY_GENERAL)).getChildElements(), "Amalgam", false, false,
-                GuiConfig.getAbridgedConfigPath(Config.configFile.toString()));
+        super(parent, new ConfigElement<Object>(Config.configFile.getCategory(Configuration.CATEGORY_GENERAL)).getChildElements(), "Amalgam", false,
+                false, GuiConfig.getAbridgedConfigPath(Config.configFile.toString()));
     }
 }

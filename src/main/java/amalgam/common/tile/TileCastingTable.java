@@ -21,8 +21,6 @@ import amalgam.common.properties.PropertyList;
 
 public class TileCastingTable extends TileEntity implements IFluidHandler {
 
-    // FIXME custom rendering based on the casting state and amalgam on the table. Show empty and filled casting slots.
-
     private ItemStack[]         castingItems = new ItemStack[10];
     private int[]               castStates   = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     private final AmalgamTank   tank         = new AmalgamTank(0);

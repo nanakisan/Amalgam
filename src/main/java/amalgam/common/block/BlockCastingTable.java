@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import amalgam.common.Amalgam;
@@ -20,6 +21,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockCastingTable extends BlockContainer implements ITileEntityProvider {
 
+    private IIcon iconBottomSide;
+    private IIcon iconBottom;
+    private IIcon iconTop;
+    private IIcon iconNeck;
+
     public BlockCastingTable() {
         super(Material.rock);
         this.setHardness(3.0F);
@@ -29,15 +35,26 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
     }
 
     @SideOnly(Side.CLIENT)
+    @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
-        this.blockIcon = iconRegister.registerIcon("amalgam:castingTable");
+        this.iconNeck = iconRegister.registerIcon("amalgam:castingTableNeck");
+        this.iconTop = iconRegister.registerIcon("amalgam:castingTableTop");
+        this.iconBottom = iconRegister.registerIcon("amalgam:castingTableBase");
+        this.iconBottomSide = iconRegister.registerIcon("amalgam:castingTableBaseSide");
+        this.blockIcon = iconRegister.registerIcon("amalgam:castingTableSide");
+    }
+
+    /**
+     * Gets the block's texture. Args: side, meta
+     */
+    @SideOnly(Side.CLIENT)
+    @Override
+    public IIcon getIcon(int side, int meta) {
+        return side == 1 ? this.iconTop : side == 0 ? this.iconBottom : side == 6 ? this.iconNeck : side == 7 ? this.iconBottomSide : this.blockIcon;
     }
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-        // if (world.isRemote) {
-        // return true;
-        // }
 
         ItemStack stack = player.inventory.getCurrentItem();
         if (stack == null) {
@@ -103,4 +120,32 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
 
         return false;
     }
+
+    @Override
+    public int getRenderType() {
+        return Config.castingTableRID;
+    }
+
+    /**
+     * Is this block (a) opaque and (b) a full 1m cube? This determines whether or not to render the shared face of two
+     * adjacent blocks and also whether the player can attach torches, redstone wire, etc to this block.
+     */
+    public boolean isOpaqueCube() {
+        return false;
+    }
+
+    /**
+     * If this block doesn't render as an ordinary block it will return False (examples: signs, buttons, stairs, etc)
+     */
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
+
+    /**
+     * Sets the block's bounds for rendering it as an item
+     */
+    public void setBlockBoundsForItemRender() {
+        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+    }
+
 }

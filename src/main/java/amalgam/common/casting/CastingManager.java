@@ -44,8 +44,8 @@ public final class CastingManager {
                 s = s + s2;
             }
         }
-        HashMap hashmap;
-        for (hashmap = new HashMap(); i < inputList.length; i += 2) {
+        HashMap<Character, ItemStack> hashmap;
+        for (hashmap = new HashMap<Character, ItemStack>(); i < inputList.length; i += 2) {
             Character character = (Character) inputList[i];
             ItemStack itemstack1 = null;
             if (inputList[i + 1] instanceof Item) {
