@@ -123,8 +123,6 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         dataList.add(EnumChatFormatting.BLUE + "+" + (int) getDamageVsEntity(stack) + " Attack Damage");
     }
 
-    // TODO revisit algorithms for generating tool properties
-
     @Override
     public ItemStack generateStackWithProperties(PropertyList pList, int stackSize) {
         if (pList == null) {
@@ -140,10 +138,10 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
 
         NBTTagCompound toolTag = new NBTTagCompound();
 
-        toolTag.setInteger(HARVEST_TAG, (int) (hardness - 0.5));
+        toolTag.setInteger(HARVEST_TAG, (int) Math.ceil(hardness));
         toolTag.setInteger(ENCHANTABILITY_TAG, (int) (luster));
         toolTag.setInteger(EFFICIENCY_TAG, (int) ((3 * luster * luster + 1.5 * density * density) / 120.0) + 1);
-        int maxDurability = (int) ((density * density) * hardness);
+        int maxDurability = (int) ((density * density) * (hardness + 1));
         toolTag.setInteger(DURABILITY_TAG, maxDurability);
         toolTag.setFloat(DAMAGE_TAG, maliability + this.damageMod);
 

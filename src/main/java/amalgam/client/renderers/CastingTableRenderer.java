@@ -115,7 +115,7 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
     @Override
     public void renderTileEntityAt(TileEntity te, double x, double y, double z, float f) {
 
-        if (Config.advancedRendering == false) {
+        if (!Config.advancedRendering) {
             return;
         }
 

@@ -6,9 +6,9 @@ import net.minecraft.item.ItemStack;
 
 public class InventoryCastResult implements IInventory {
 
-    private ItemStack[]      stackResult = new ItemStack[1];
-    public boolean           castComplete;
-    private ContainerCasting table;
+    private ItemStack[]            stackResult = new ItemStack[1];
+    public boolean                 castComplete;
+    private final ContainerCasting table;
 
     public InventoryCastResult(ContainerCasting containerCasting) {
         this.table = containerCasting;

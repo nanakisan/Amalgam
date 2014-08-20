@@ -80,8 +80,6 @@ public class ItemAmalgamSword extends ItemSword implements ICastItem {
         return HashMultimap.create();
     }
 
-    // TODO revisit algorithms for generating sword properties
-
     @Override
     public ItemStack generateStackWithProperties(PropertyList pList, int stackSize) {
         if (pList == null) {
@@ -98,10 +96,10 @@ public class ItemAmalgamSword extends ItemSword implements ICastItem {
         NBTTagCompound toolTag = new NBTTagCompound();
 
         toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (luster));
-        int maxDurability = (int) ((density * density) * hardness);
+        int maxDurability = (int) ((density * density) * (hardness + 1));
 
         toolTag.setInteger(ItemAmalgamTool.DURABILITY_TAG, maxDurability);
-        float damage = maliability + 4.0F;
+        float damage = maliability + 4;
         toolTag.setFloat(ItemAmalgamTool.DAMAGE_TAG, damage);
 
         returnStack.setTagCompound(toolTag);

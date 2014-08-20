@@ -63,7 +63,7 @@ public class ItemAmalgamHoe extends ItemHoe implements ICastItem {
         NBTTagCompound toolTag = new NBTTagCompound();
 
         toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (luster));
-        int maxDurability = (int) ((density * density) * hardness);
+        int maxDurability = (int) ((density * density) * (hardness + 1));
         toolTag.setInteger(ItemAmalgamTool.DURABILITY_TAG, maxDurability);
 
         returnStack.setTagCompound(toolTag);

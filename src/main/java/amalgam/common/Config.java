@@ -47,9 +47,10 @@ public class Config {
     public static final Logger  LOG                   = LogManager.getLogger(Amalgam.MODID);
     public static final int     CASTING_GUI_ID        = 1;
 
-    public static boolean       advancedRendering     = false;
+    public static boolean       advancedRendering;
     public static boolean       disableVanillaRecipes = true;
     public static int           baseVolume            = 10;
+
     public static final int     BASE_AMOUNT           = 1;
     public static final int     INGOT_AMOUNT          = BASE_AMOUNT * 9;
     public static final int     BLOCK_AMOUNT          = INGOT_AMOUNT * 9;
@@ -199,6 +200,6 @@ public class Config {
 
         GameRegistry.addRecipe(new ItemStack(stoneTongs), " ss", " s ", "ss ", 's', Blocks.cobblestone);
         GameRegistry.addRecipe(new ItemStack(stoneCrucible), "s s", "s s", "sss", 's', Blocks.cobblestone);
-        GameRegistry.addRecipe(new ItemStack(castingTable), "sss", "sws", "www", 's', Blocks.cobblestone, 'w', Blocks.planks);
+        GameRegistry.addRecipe(new ItemStack(castingTable), "sss", " s ", "sss", 's', Blocks.cobblestone);
     }
 }

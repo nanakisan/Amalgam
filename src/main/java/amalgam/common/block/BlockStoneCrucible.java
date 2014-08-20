@@ -108,8 +108,13 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
      * Triggered whenever an entity collides with this block (enters into the block). Args: world, x, y, z, entity
      */
     public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
-        // TODO if there is heat set entity on fire if it is a mob, add entity to amalgam if it can be added, burn up
-        // otherwise
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (te instanceof TileStoneCrucible) {
+            TileStoneCrucible cruc = (TileStoneCrucible) te;
+            if (cruc.isHot() && cruc.getFluidHeight() > .301) {
+                entity.setFire(3);
+            }
+        }
     }
 
     /**

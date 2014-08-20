@@ -143,7 +143,7 @@ public class ContainerCasting extends Container {
             pList = new PropertyList();
         }
 
-        castResult.setInventorySlotContents(0, recipe.getCastingResult(castingMatrix, castingTable.getAmalgamPropertyList()));
+        castResult.setInventorySlotContents(0, recipe.getCastingResult(castingMatrix, pList));
 
     }
 

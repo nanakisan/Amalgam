@@ -71,6 +71,7 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
     public void addInformation(ItemStack stack, EntityPlayer player, List dataList, boolean b) {
         dataList.add((getMaxDamage(stack) - getDamage(stack)) + "/" + getMaxDamage(stack));
         dataList.add(EnumChatFormatting.DARK_GREEN + "+" + getItemEnchantability(stack) + " Enchantability");
+        dataList.add(EnumChatFormatting.DARK_GREEN + "+" + getArmorDisplay(player, stack, 1) + " Armor");
     }
 
     @Override
@@ -105,15 +106,46 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
         NBTTagCompound toolTag = new NBTTagCompound();
 
         toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (luster));
-        int maxDurability = (int) ((density * density) * hardness);
-        toolTag.setInteger(ItemAmalgamTool.DURABILITY_TAG, maxDurability);
-        toolTag.setInteger(ABSORB_TAG, (int) (maliability / 2.0));
+        float armorTypeFactor = 1.0F;
+        switch (this.armorType) {
+            case 0:
+                armorTypeFactor = 11.0F / 16F;
+                break;
+            case 1:
+                armorTypeFactor = 1.0F;
+                break;
+            case 2:
+                armorTypeFactor = 15.0F / 16.0F;
+                break;
+            default:
+                armorTypeFactor = 13.0F / 16.0F;
+                break;
+        }
 
+        int maxDurability = (int) (density * 26 * armorTypeFactor);
+        toolTag.setInteger(ItemAmalgamTool.DURABILITY_TAG, maxDurability);
+
+        switch (this.armorType) {
+            case 0:
+                armorTypeFactor = 3.0F / 8.0F;
+                break;
+            case 1:
+                armorTypeFactor = 1.0F;
+                break;
+            case 2:
+                armorTypeFactor = 6.0F / 8.0F;
+                break;
+            default:
+                armorTypeFactor = 3.0F / 8.0F;
+                break;
+        }
+
+        toolTag.setInteger(ABSORB_TAG, (int) Math.ceil((maliability + hardness + 3.0) * armorTypeFactor));
+
+        Config.LOG.info("absorb: " + (maliability + hardness + 3.0) * armorTypeFactor);
         returnStack.setTagCompound(toolTag);
         return returnStack;
     }
-
-    // TODO revisit algorithms for generating armor properties
 
     @Override
     public ArmorProperties getProperties(EntityLivingBase player, ItemStack armor, DamageSource source, double damage, int slot) {
@@ -125,6 +157,9 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
 
     @Override
     public int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot) {
+        if (armor.getTagCompound() == null) {
+            return 1;
+        }
         return armor.getTagCompound().getInteger(ABSORB_TAG);
     }
 

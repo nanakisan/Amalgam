@@ -46,28 +46,24 @@ public final class PropertyManager {
 
     public static PropertyList generatePropertiesFromToolMaterial(ToolMaterial mat) {
 
-        // TODO go through the math for generating amalgam properties from tool materials
-
         PropertyList list = new PropertyList();
 
         list.add(DENSITY, (float) Math.sqrt(mat.getMaxUses() / (mat.getHarvestLevel() + 1)));
-        list.add(HARDNESS, mat.getHarvestLevel() + 1);
+        list.add(HARDNESS, mat.getHarvestLevel());
         list.add(LUSTER, mat.getEnchantability());
-        list.add(MALIABILITY, mat.getDamageVsEntity() + 4);
+        list.add(MALIABILITY, mat.getDamageVsEntity());
 
         return list;
     }
 
     public static PropertyList generatePropertiesFromArmorMaterial(ArmorMaterial mat) {
 
-        // TODO go through the math for generating amalgam properties from armor materials
-
         PropertyList list = new PropertyList();
 
-        list.add(DENSITY, mat.getDurability(1) / 11);
-        list.add(HARDNESS, mat.getDamageReductionAmount(1) / 2);
+        list.add(DENSITY, mat.getDurability(1) / 27);
+        list.add(HARDNESS, mat.getDamageReductionAmount(1) / 2 - 1);
         list.add(LUSTER, mat.getEnchantability());
-        list.add(MALIABILITY, mat.getDamageReductionAmount(1));
+        list.add(MALIABILITY, mat.getDamageReductionAmount(1) / 2 - 1);
 
         return list;
     }
