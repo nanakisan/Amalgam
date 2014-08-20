@@ -156,6 +156,18 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setIntArray(CAST_KEY, this.castStates);
         tank.writeToNBT(tag);
+        NBTTagList nbttaglist = new NBTTagList();
+
+        for (int i = 0; i < this.castingItems.length; ++i) {
+            if (this.castingItems[i] != null) {
+                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+                nbttagcompound1.setByte(SLOT_KEY, (byte) i);
+                this.castingItems[i].writeToNBT(nbttagcompound1);
+                nbttaglist.appendTag(nbttagcompound1);
+            }
+        }
+
+        tag.setTag(ITEMS_KEY, nbttaglist);
         return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, this.blockMetadata, tag);
     }
 
@@ -164,6 +176,17 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         NBTTagCompound tag = pkt.func_148857_g();
         this.castStates = tag.getIntArray(CAST_KEY);
         this.tank.readFromNBT(tag);
+        NBTTagList nbttaglist = tag.getTagList(ITEMS_KEY, 10);
+        this.castingItems = new ItemStack[10];
+
+        for (int i = 0; i < nbttaglist.tagCount(); ++i) {
+            NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
+            byte b0 = nbttagcompound1.getByte(SLOT_KEY);
+
+            if (b0 >= 0 && b0 < this.castingItems.length) {
+                this.castingItems[b0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+            }
+        }
     }
 
     public void emptyTank() {
