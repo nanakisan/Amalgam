@@ -6,7 +6,13 @@ import net.minecraft.item.ItemStack;
 
 public class InventoryCastResult implements IInventory {
 
-    private ItemStack[] stackResult = new ItemStack[1];
+    private ItemStack[]      stackResult = new ItemStack[1];
+    public boolean           castComplete;
+    private ContainerCasting table;
+
+    public InventoryCastResult(ContainerCasting containerCasting) {
+        this.table = containerCasting;
+    }
 
     public int getSizeInventory() {
         return 1;
@@ -48,6 +54,7 @@ public class InventoryCastResult implements IInventory {
 
     public void setInventorySlotContents(int slotNum, ItemStack stack) {
         this.stackResult[0] = stack;
+        table.castingTable.setStackInSlot(9, stack);
     }
 
     public int getInventoryStackLimit() {
@@ -58,7 +65,7 @@ public class InventoryCastResult implements IInventory {
     }
 
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return true;
+        return castComplete;
     }
 
     public void openInventory() {

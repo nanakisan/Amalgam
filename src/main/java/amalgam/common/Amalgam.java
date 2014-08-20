@@ -1,6 +1,7 @@
 package amalgam.common;
 
 import amalgam.common.network.PacketHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -32,12 +33,13 @@ public class Amalgam {
         Config.registerFluids();
 
         PacketHandler.init();
+
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
         NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy);
-
+        FMLCommonHandler.instance().bus().register(Config.instance);
         Config.registerAmalgamProperties();
         Config.registerRecipes();
     }

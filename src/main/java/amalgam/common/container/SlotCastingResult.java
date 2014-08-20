@@ -19,6 +19,10 @@ public class SlotCastingResult extends Slot {
         this.player = player;
     }
 
+    public boolean canTakeStack(EntityPlayer player) {
+        return this.castingMatrix.castComplete();
+    }
+
     public boolean isItemValid(ItemStack stack) {
         return false;
     }

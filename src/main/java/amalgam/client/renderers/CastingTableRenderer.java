@@ -22,11 +22,52 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class CastingTableRenderer extends TileEntitySpecialRenderer implements ISimpleBlockRenderingHandler {
 
-    // FIXME add a way to change orientation of the casting table (shift click with a stick?)
-
     @Override
     public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
-        // FIXME render the casting table in the inventory
+        block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+        renderer.setRenderBoundsFromBlock(block);
+
+        IIcon top = ((BlockCastingTable) block).getBlockTextureFromSide(1);
+        IIcon side = ((BlockCastingTable) block).getBlockTextureFromSide(2);
+        IIcon base = ((BlockCastingTable) block).getBlockTextureFromSide(0);
+        IIcon baseSide = ((BlockCastingTable) block).getBlockTextureFromSide(7);
+        IIcon neck = ((BlockCastingTable) block).getBlockTextureFromSide(6);
+
+        Tessellator t = Tessellator.instance;
+        GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+
+        t.startDrawingQuads();
+        t.setNormal(0.0F, -1.0F, 0.0F);
+        renderer.renderFaceYNeg(block, 0.0D, 0.0D, 0.0D, base);
+        renderer.renderFaceYNeg(block, 0.0D, +1.0F - 0.375F, 0.0D, top);
+
+        t.setNormal(0.0F, 1.0F, 0.0F);
+        renderer.renderFaceYPos(block, 0.0D, 0.0D, 0.0D, top);
+        renderer.renderFaceYPos(block, 0.0D, -1.0F + 0.25F, 0.0D, base);
+
+        t.setNormal(0.0F, 0.0F, 1.0F);
+        renderer.renderFaceXNeg(block, 0.0D, 0.0D, 0.0D, side);
+        renderer.renderFaceXNeg(block, 1.0F - .875, 0.0D, 0.0D, baseSide);
+        renderer.renderFaceXNeg(block, 0 + 1.0F - .6875, 0, 0, neck);
+
+        t.setNormal(0.0F, 0.0F, -1.0F);
+        renderer.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, side);
+        renderer.renderFaceXPos(block, -1.0F + .875, 0.0, 0.0, baseSide);
+        renderer.renderFaceXPos(block, -1.0F + .6875, 0, 0, neck);
+
+        t.setNormal(1.0F, 0.0F, 0.0F);
+        renderer.renderFaceZNeg(block, 0.0D, 0.0D, 0.0D, side);
+        renderer.renderFaceZNeg(block, 0.0D, 0.0D, 1.0F - .875, baseSide);
+        renderer.renderFaceZNeg(block, 0, 0, +1.0F - .6875, neck);
+
+        t.setNormal(-1.0F, 0.0F, 0.0F);
+        renderer.renderFaceZPos(block, 0.0D, 0.0D, 0.0D, side);
+        renderer.renderFaceZPos(block, 0, 0, -1.0F + .875, baseSide);
+        renderer.renderFaceZPos(block, 0, 0, -1.0F + .6875, neck);
+
+        t.draw();
+
+        GL11.glTranslatef(0.5F, 0.5F, 0.5F);
     }
 
     @Override
@@ -63,8 +104,7 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
 
     @Override
     public boolean shouldRender3DInInventory(int modelId) {
-        // TODO change to true after renderInventoryBlock is implemented
-        return false;
+        return true;
     }
 
     @Override
@@ -74,66 +114,50 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
 
     @Override
     public void renderTileEntityAt(TileEntity te, double x, double y, double z, float f) {
-        int amount = ((TileCastingTable) te).getTankAmount();
 
-        // FIXME rendering is incorrect for fast graphics
-
-        for (int i = 0; i < 9; i++) {
-
-            int row = 2 - i % 3;
-            int col = 2 - i / 3;
-            int castState = ((TileCastingTable) te).getCastState(i);
-
-            if (castState != 0) {
-                if (amount > 0) {
-
-                    // EntityItem entityitem = new EntityItem(te.getWorldObj(), 0.0D, 0.0D, 0.0D, new
-                    // ItemStack(Blocks.lava));
-                    //
-                    // entityitem.hoverStart = 0.0F;
-                    GL11.glPushMatrix();
-
-                    GL11.glTranslated(x + 0.2 + 0.3 * row, y + 1.01D, z + 0.1 + 0.3 * col);
-                    GL11.glRotatef(90.0F, 0.0F, 0.0F, 0.0F);
-
-                    GL11.glScalef(0.5F, 0.5F, 0.5F);
-                    // RenderManager.instance.renderEntityWithPosYaw(entityitem, 0.0D, 0.0D, 0.0D, 0.0F, 0.0F);
-
-                    GL11.glPopMatrix();
-                    amount -= Config.INGOT_AMOUNT;
-                } else {
-                    // render empty casting slot
-                }
-            } else {
-                ItemStack stack = ((TileCastingTable) te).getStackInSlot(i);
-
-                if (stack != null) {
-                    // EntityItem entityitem = new EntityItem(te.getWorldObj(), 0.0D, 0.0D, 0.0D, stack);
-                    // entityitem.hoverStart = 0.0F;
-                    GL11.glPushMatrix();
-
-                    GL11.glTranslated(x + 0.1 + 0.3 * row, y + 1.0D, z + 0.1 + 0.3 * col);
-                    GL11.glRotatef(90.0F, 0.0F, 0.0F, 0.0F);
-
-                    GL11.glScalef(0.25F, 0.25F, 0.25F);
-                    if (Block.getBlockFromItem(stack.getItem()) == Blocks.air) {
-                        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationItemsTexture);
-                    } else {
-                        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
-                    }
-                    IIcon iicon = stack.getIconIndex();
-
-                    float f1 = iicon.getMaxU();
-                    float f2 = iicon.getMinV();
-                    float f3 = iicon.getMinU();
-                    float f4 = iicon.getMaxV();
-
-                    ItemRenderer.renderItemIn2D(Tessellator.instance, f1, f2, f3, f4, iicon.getIconWidth(), iicon.getIconHeight(), 0.1F);
-
-                    GL11.glPopMatrix();
-                }
-            }
+        if (Config.advancedRendering == false) {
+            return;
         }
+
+        TileCastingTable table = (TileCastingTable) te;
+
+        ItemStack stack = table.getStackInSlot(9);
+        if (stack == null) {
+            return;
+        }
+
+        IIcon icon = stack.getItem().getIcon(stack, 0);
+        GL11.glPushMatrix();
+        long time = te.getWorldObj().getWorldTime();
+        GL11.glTranslated(x + 0.5, y + 1.1D, z + 0.5);
+        GL11.glRotatef(time * 1.5F, 0.0F, 90.0F, 0.0F);
+        GL11.glScalef(0.75F, 0.75F, 0.75F);
+
+        if (!table.tankIsFull()) {
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_DST_ALPHA);
+        }
+
+        if (Block.getBlockFromItem(stack.getItem()) == Blocks.air) {
+            GL11.glTranslated(-0.465F, 0.0F, +0.035F);
+            Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationItemsTexture);
+
+            float f1 = icon.getMinU();
+            float f2 = icon.getMaxU();
+            float f3 = icon.getMinV();
+            float f4 = icon.getMaxV();
+
+            ItemRenderer.renderItemIn2D(Tessellator.instance, f2, f3, f1, f4, icon.getIconWidth(), icon.getIconHeight(), 0.07F);
+
+        } else {
+            GL11.glTranslated(0.0F, 0.5F, 0.0F);
+            Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+            RenderBlocks.getInstance().renderBlockAsItem(Block.getBlockFromItem(stack.getItem()), 0, 1.0F);
+        }
+
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glPopMatrix();
+
     }
 
 }

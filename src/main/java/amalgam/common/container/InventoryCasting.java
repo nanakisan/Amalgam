@@ -167,4 +167,8 @@ public class InventoryCasting implements IInventory, ISidedInventory {
         this.table.castingTable.setTankFluid(null);
         this.table.onCraftMatrixChanged(this);
     }
+
+    public boolean castComplete() {
+        return this.table.castingTable.tankIsFull();
+    }
 }

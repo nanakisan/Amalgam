@@ -138,7 +138,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
         TileStoneCrucible crucible = (TileStoneCrucible) world.getTileEntity(x, y, z);
         if (!crucible.isHot()) {
             // player.addChatMessage(new ChatComponentText("The crucible is cold, put a heat source under it."));
-            return true;
+            return false;
         }
 
         if (stack.getItem() instanceof IAmalgamContainerItem) {
@@ -184,20 +184,14 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
                 }
 
                 crucible.fill(ForgeDirection.UNKNOWN, amalg, true);
-
                 stack.stackSize = stack.stackSize - 1;
-                // player.addChatMessage(new ChatComponentText("The item melts into amalgam"));
 
                 return true;
             } else {
-                // player.addChatMessage(new
-                // ChatComponentText("The crucible is about to overflow, you shouldn't add more."));
                 return false;
             }
 
         } else {
-            // player.addChatMessage(new
-            // ChatComponentText("Adding this item will ruin your amalgam, try using a different material"));
             return false;
         }
     }

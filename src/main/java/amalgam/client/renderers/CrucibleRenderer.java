@@ -25,7 +25,7 @@ public class CrucibleRenderer extends TileEntitySpecialRenderer implements ISimp
         float height = ((TileStoneCrucible) te).getFluidHeight();
         GL11.glTranslated(x, y + height, z + 1.0D);
         GL11.glRotatef(90.0F, -1.0F, 0.0F, 0.0F);
-        if (height - .001 > .3) {
+        if (height > .299) {
 
             IIcon iicon = ((BlockStoneCrucible) Config.stoneCrucible).liquidAmalgam;
 
@@ -56,7 +56,40 @@ public class CrucibleRenderer extends TileEntitySpecialRenderer implements ISimp
 
     @Override
     public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
-        // FIXME render the crucible in the inventory
+        block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+        renderer.setRenderBoundsFromBlock(block);
+
+        IIcon side = ((BlockStoneCrucible) block).getBlockTextureFromSide(2);
+        IIcon bottom = ((BlockStoneCrucible) block).getBlockTextureFromSide(6);
+        Tessellator t = Tessellator.instance;
+        GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+
+        t.startDrawingQuads();
+        t.setNormal(0.0F, -1.0F, 0.0F);
+        renderer.renderFaceYNeg(block, 0.0D, 1.0F - 0.75F, 0.0D, bottom);
+
+        t.setNormal(0.0F, 1.0F, 0.0F);
+        renderer.renderFaceYPos(block, 0.0D, -1.0F + 0.25F, 0.0D, bottom);
+
+        t.setNormal(0.0F, 0.0F, 1.0F);
+        renderer.renderFaceXNeg(block, 0.0D, 0.0D, 0.0D, side);
+        renderer.renderFaceXNeg(block, 1.0D, 0.0D, 0.0D, side);
+
+        t.setNormal(0.0F, 0.0F, -1.0F);
+        renderer.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, side);
+        renderer.renderFaceXPos(block, -1.0D, 0.0D, 0.0D, side);
+
+        t.setNormal(1.0F, 0.0F, 0.0F);
+        renderer.renderFaceZNeg(block, 0.0D, 0.0D, 0.0D, side);
+        renderer.renderFaceZNeg(block, 0.0D, 0.0D, 1.0D, side);
+
+        t.setNormal(-1.0F, 0.0F, 0.0F);
+        renderer.renderFaceZPos(block, 0.0D, 0.0D, 0.0D, side);
+        renderer.renderFaceZPos(block, 0.0D, 0.0D, -1.0D, side);
+
+        t.draw();
+
+        GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 
     }
 
@@ -86,8 +119,7 @@ public class CrucibleRenderer extends TileEntitySpecialRenderer implements ISimp
 
     @Override
     public boolean shouldRender3DInInventory(int modelId) {
-        // TODO change this to true once we get the inventory rendering code working
-        return false;
+        return true;
     }
 
     @Override

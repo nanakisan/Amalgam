@@ -40,11 +40,14 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class Config {
 
+    public static Config        instance              = new Config();
+
     public static Configuration configFile;
 
     public static final Logger  LOG                   = LogManager.getLogger(Amalgam.MODID);
     public static final int     CASTING_GUI_ID        = 1;
 
+    public static boolean       advancedRendering     = false;
     public static boolean       disableVanillaRecipes = true;
     public static int           baseVolume            = 10;
     public static final int     BASE_AMOUNT           = 1;
@@ -84,10 +87,17 @@ public class Config {
         };
 
         configFile = new Configuration(event.getSuggestedConfigurationFile());
+
         syncConfig();
     }
 
     public static void syncConfig() {
+
+        Config.LOG.info("syncing config");
+        advancedRendering = configFile.getBoolean("Advanced rendering", Configuration.CATEGORY_GENERAL, advancedRendering,
+                "Allows for rendering of items on casting tables");
+
+        Config.LOG.info("advanced rendering: " + advancedRendering);
         baseVolume = configFile.getInt("Base amalgam volume (mB)", Configuration.CATEGORY_GENERAL, baseVolume, 1, Integer.MAX_VALUE,
                 "The volume of the smallest bit of amalgam (mB)");
 
@@ -104,6 +114,7 @@ public class Config {
 
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent eventArgs) {
+        Config.LOG.info("on config changed: " + eventArgs.modID);
         if (eventArgs.modID.equals(Amalgam.MODID)) {
             syncConfig();
         }

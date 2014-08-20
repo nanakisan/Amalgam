@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import amalgam.common.Config;
 import amalgam.common.casting.CastingManager;
 import amalgam.common.casting.ICastingRecipe;
+import amalgam.common.properties.PropertyList;
 import amalgam.common.tile.TileCastingTable;
 
 public class ContainerCasting extends Container {
@@ -23,7 +24,7 @@ public class ContainerCasting extends Container {
         this.castingTable = te;
 
         castingMatrix = new InventoryCasting(this, 3, 3);
-        castResult = new InventoryCastResult();
+        castResult = new InventoryCastResult(this);
 
         int rowNum;
         int colNum;
@@ -132,11 +133,18 @@ public class ContainerCasting extends Container {
         super.onCraftMatrixChanged(inv);
         this.updateAmalgamDistribution();
         ICastingRecipe recipe = CastingManager.findMatchingRecipe(castingMatrix, castingTable.getWorldObj());
-        if (recipe == null || !this.castingTable.tankIsFull()) {
+        if (recipe == null) {
             castResult.setInventorySlotContents(0, null);
             return;
         }
+
+        PropertyList pList = castingTable.getAmalgamPropertyList();
+        if (pList == null) {
+            pList = new PropertyList();
+        }
+
         castResult.setInventorySlotContents(0, recipe.getCastingResult(castingMatrix, castingTable.getAmalgamPropertyList()));
+
     }
 
     @Override
