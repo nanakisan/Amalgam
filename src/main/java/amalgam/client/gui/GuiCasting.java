@@ -1,5 +1,6 @@
 package amalgam.client.gui;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
@@ -40,6 +41,15 @@ public class GuiCasting extends GuiContainer {
                     this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 178, 1, 16, 16);
                 }
             }
+        }
+        if (!table.castingTable.tankIsFull() && table.castingTable.getStackInSlot(9) != null) {
+            float red = (float) Math.pow(Math.sin(Minecraft.getMinecraft().theWorld.getWorldTime() * 0.1), 2);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glColor4f(red, 0.0F, 0.0F, 0.3F);
+            this.drawTexturedModalRect(xPos + 120, yPos + 31, 178, 37, 24, 24);
+            GL11.glDisable(GL11.GL_BLEND);
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
         }
     }
 }
