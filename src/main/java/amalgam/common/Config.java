@@ -47,7 +47,7 @@ public class Config {
     public static final Logger  LOG                   = LogManager.getLogger(Amalgam.MODID);
     public static final int     CASTING_GUI_ID        = 1;
 
-    public static boolean       advancedRendering;
+    public static boolean       advancedRendering     = true;
     public static boolean       disableVanillaRecipes = true;
     public static int           baseVolume            = 10;
 
@@ -94,11 +94,9 @@ public class Config {
 
     public static void syncConfig() {
 
-        Config.LOG.info("syncing config");
         advancedRendering = configFile.getBoolean("Advanced rendering", Configuration.CATEGORY_GENERAL, advancedRendering,
                 "Allows for rendering of items on casting tables");
 
-        Config.LOG.info("advanced rendering: " + advancedRendering);
         baseVolume = configFile.getInt("Base amalgam volume (mB)", Configuration.CATEGORY_GENERAL, baseVolume, 1, Integer.MAX_VALUE,
                 "The volume of the smallest bit of amalgam (mB)");
 

@@ -137,10 +137,9 @@ public class ContainerCasting extends Container {
             castResult.setInventorySlotContents(0, null);
             return;
         }
-
         PropertyList pList = castingTable.getAmalgamPropertyList();
-        if (pList == null) {
-            pList = new PropertyList();
+        if(castingTable.getTankAmount() == 0){
+            pList = null;
         }
 
         castResult.setInventorySlotContents(0, recipe.getCastingResult(castingMatrix, pList));

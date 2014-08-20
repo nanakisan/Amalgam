@@ -92,8 +92,10 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
 
     @Override
     public ItemStack generateStackWithProperties(PropertyList pList, int stackSize) {
+        ItemStack returnStack = new ItemStack(this, stackSize);
+
         if (pList == null) {
-            return null;
+            return returnStack;
         }
 
         float luster = pList.getValue(PropertyManager.LUSTER);
@@ -101,7 +103,6 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
         float hardness = pList.getValue(PropertyManager.HARDNESS);
         float maliability = pList.getValue(PropertyManager.MALIABILITY);
 
-        ItemStack returnStack = new ItemStack(this, stackSize);
 
         NBTTagCompound toolTag = new NBTTagCompound();
 

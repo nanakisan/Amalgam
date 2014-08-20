@@ -27,6 +27,7 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
     public ItemStoneTongs() {
         super();
         this.setCreativeTab(Config.tab);
+        this.maxStackSize = 1;
     }
 
     @SideOnly(Side.CLIENT)
