@@ -6,7 +6,7 @@ import java.util.Map;
 public class Property {
 
     public enum ComboType {
-        MAX, MIN, AVERAGE, QUADAVERAGE
+        MAX, MIN, AVERAGE, QUADAVERAGE, COLOR
     }
 
     private static Map<String, Property> properties = new HashMap<String, Property>();

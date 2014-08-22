@@ -23,6 +23,8 @@ public final class PropertyManager {
     public static final Property                 LUSTER      = new Property("Luster", 10, ComboType.QUADAVERAGE);
     public static final Property                 HARDNESS    = new Property("Hardness", 1, ComboType.QUADAVERAGE);
 
+    public static final Property                 COLOR       = new Property("Color", 200 * 255 * 255 + 200 * 255 + 200, ComboType.COLOR);
+
     private PropertyManager() {
     }
 

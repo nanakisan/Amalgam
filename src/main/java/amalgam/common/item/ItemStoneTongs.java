@@ -30,6 +30,7 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
         this.maxStackSize = 1;
     }
 
+    // FIXME multiple rendering passes to render colored amalgam 
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister iconRegister) {
         this.emptyIcon = iconRegister.registerIcon("amalgam:stoneTongs");

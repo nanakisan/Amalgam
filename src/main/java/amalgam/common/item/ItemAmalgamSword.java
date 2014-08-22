@@ -93,7 +93,6 @@ public class ItemAmalgamSword extends ItemSword implements ICastItem {
         float hardness = pList.getValue(PropertyManager.HARDNESS);
         float maliability = pList.getValue(PropertyManager.MALIABILITY);
 
-
         NBTTagCompound toolTag = new NBTTagCompound();
 
         toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (luster));

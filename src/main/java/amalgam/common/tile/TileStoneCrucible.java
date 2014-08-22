@@ -163,4 +163,8 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler {
         return AxisAlignedBB.getBoundingBox(this.xCoord, this.yCoord, this.zCoord, this.xCoord + 1, this.yCoord + 1, this.zCoord + 1);
     }
 
+    public PropertyList getAmalgamProperties() {
+        return ((AmalgamStack) tank.getFluid()).getProperties();
+    }
+
 }

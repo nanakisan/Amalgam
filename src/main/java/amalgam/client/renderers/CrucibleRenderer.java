@@ -1,5 +1,7 @@
 package amalgam.client.renderers;
 
+import java.awt.Color;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -14,6 +16,8 @@ import org.lwjgl.opengl.GL11;
 
 import amalgam.common.Config;
 import amalgam.common.block.BlockStoneCrucible;
+import amalgam.common.properties.PropertyList;
+import amalgam.common.properties.PropertyManager;
 import amalgam.common.tile.TileStoneCrucible;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
@@ -25,9 +29,17 @@ public class CrucibleRenderer extends TileEntitySpecialRenderer implements ISimp
         float height = ((TileStoneCrucible) te).getFluidHeight();
         GL11.glTranslated(x, y + height, z + 1.0D);
         GL11.glRotatef(90.0F, -1.0F, 0.0F, 0.0F);
+        PropertyList p = ((TileStoneCrucible) te).getAmalgamProperties();
+
+        Color color = new Color((int) p.getValue(PropertyManager.COLOR));
+
+        GL11.glColor3f(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F);
+        // Config.LOG.info("color: " + color.getRed());
+
         if (height > .301) {
 
             IIcon iicon = ((BlockStoneCrucible) Config.stoneCrucible).liquidAmalgam;
+            // IIcon iicon = ((BlockStoneCrucible) Config.stoneCrucible).solidAmalgam;
 
             if (!((TileStoneCrucible) te).isHot()) {
                 iicon = ((BlockStoneCrucible) Config.stoneCrucible).solidAmalgam;
@@ -51,6 +63,7 @@ public class CrucibleRenderer extends TileEntitySpecialRenderer implements ISimp
             tessellator.draw();
         }
 
+        GL11.glColor3f(1.0F, 1.0F, 1.0F);
         GL11.glPopMatrix();
     }
 

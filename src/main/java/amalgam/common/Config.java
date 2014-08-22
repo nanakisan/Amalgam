@@ -40,6 +40,14 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class Config {
 
+    // TODO add option to display unfinished/finished casting product directly on the table instead of rotating above it
+    // TODO consider shift clicking casting table with an empty hand removes the item from the table (just need to
+    // remove the item from the itemstack array and remove all amalgam from the tank)
+    // TODO consider adding a 'pouring' mechanic to move amalgam directly from the crucible to the casting table
+    // TODO waila integration!
+    // TODO possibly add overlay to casting table and crucible showing the properties of the amalgam/cast item in them
+    // (waila integration could handle this!)
+
     public static Config        instance              = new Config();
 
     public static Configuration configFile;
@@ -48,6 +56,7 @@ public class Config {
     public static final int     CASTING_GUI_ID        = 1;
 
     public static boolean       advancedRendering     = true;
+    public static boolean       floatingCastResult    = true;
     public static boolean       disableVanillaRecipes = true;
     public static int           baseVolume            = 10;
 
@@ -97,15 +106,14 @@ public class Config {
         advancedRendering = configFile.getBoolean("Advanced rendering", Configuration.CATEGORY_GENERAL, advancedRendering,
                 "Allows for rendering of items on casting tables");
 
+        floatingCastResult = configFile.getBoolean("Floating Cast Result", Configuration.CATEGORY_GENERAL, floatingCastResult,
+                "Does the cast result float, or is it rendered flat");
+
         baseVolume = configFile.getInt("Base amalgam volume (mB)", Configuration.CATEGORY_GENERAL, baseVolume, 1, Integer.MAX_VALUE,
                 "The volume of the smallest bit of amalgam (mB)");
 
-        // TODO turn vanilla recipes off
-        disableVanillaRecipes = configFile.getBoolean("Disable vanilla recipes", Configuration.CATEGORY_GENERAL, disableVanillaRecipes,
-                "Disable vanilla recipes for swords, tools and armor");
-
-        // TODO allow override of material properties,look at mod override code for the forge config gui
-
+        // FIXME add config option to prevent materials from causing amalgam coloration. When the color property is looked up always return the default color!
+        
         if (configFile.hasChanged()) {
             configFile.save();
         }
@@ -166,9 +174,15 @@ public class Config {
     }
 
     public static void registerAmalgamProperties() {
+        // FIXME refine colors and amalgam textures!
         PropertyList ironProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.IRON);
+        ironProp.add(PropertyManager.COLOR, 14211288);
+
         PropertyList goldProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.GOLD);
+        goldProp.add(PropertyManager.COLOR, 16776960);
+
         PropertyList diamondProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.EMERALD);
+        diamondProp.add(PropertyManager.COLOR, 9232630);
 
         PropertyManager.registerItemProperties(new ItemStack(Items.iron_ingot), ironProp, Config.INGOT_AMOUNT);
         PropertyManager.registerItemProperties(new ItemStack(Items.gold_ingot), goldProp, Config.INGOT_AMOUNT);

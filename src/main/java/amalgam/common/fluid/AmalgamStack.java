@@ -1,5 +1,7 @@
 package amalgam.common.fluid;
 
+import java.awt.Color;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 import amalgam.common.Config;
@@ -47,11 +49,39 @@ public class AmalgamStack extends FluidStack {
                 case MIN:
                     result = Math.min(aValue, bValue);
                     break;
+                case COLOR: // convert to HSL space, average, convert back to RGB
+
+                    Color aColor = new Color((int) aValue);
+                    Color bColor = new Color((int) bValue);
+
+                    float[] aHSV = new float[3];
+                    float[] bHSV = new float[3];
+
+                    Color.RGBtoHSB(aColor.getRed(), aColor.getGreen(), aColor.getBlue(), aHSV);
+                    Color.RGBtoHSB(bColor.getRed(), bColor.getGreen(), bColor.getBlue(), bHSV);
+
+                    float[] rHSV = new float[3];
+
+                    if (Math.abs(aHSV[0] - bHSV[0]) > 0.5F) {
+                        rHSV[0] = (aHSV[0] * stackA.amount - (1 - bHSV[0]) * stackB.amount) / (stackA.amount + stackB.amount);
+                        if (rHSV[0] < 0)
+                            rHSV[0] += 1.0;
+                    } else {
+                        rHSV[0] = (aHSV[0] * stackA.amount + bHSV[0] * stackB.amount) / (stackA.amount + stackB.amount);
+
+                    }
+                    for (int i = 1; i < 3; i++) {
+                        rHSV[i] = (aHSV[i] * stackA.amount + bHSV[i] * stackB.amount) / (stackA.amount + stackB.amount);
+                    }
+                    result = Color.HSBtoRGB(rHSV[0], rHSV[1], rHSV[2]);
+                    break;
                 default:
                     result = (aValue * stackA.amount + bValue * stackB.amount) / (stackA.amount + stackB.amount);
                     break;
             }
+
             newList.add(p, result);
+
         }
 
         return new AmalgamStack(stackA.amount + stackB.amount, newList);

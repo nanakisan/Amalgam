@@ -33,6 +33,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
     public static final String      EFFICIENCY_TAG     = "efficiency";
     public static final String      HARVEST_TAG        = "harvest level";
     public static final String      ENCHANTABILITY_TAG = "enchantability";
+    public static final String      COLOR_TAG = "color";
 
     public static final String      TOOL_CLASS_PICK    = "pickaxe";
     public static final String      TOOL_CLASS_AXE     = "axe";
@@ -45,6 +46,16 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         super(damageMod, toolMatAmalgam, blocks);
         this.toolClass = toolClass;
         this.damageMod = damageMod;
+    }
+
+    // FIXME in order to have only the head of tools change color we will need to do multiple rendering passes
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getColorFromItemStack(ItemStack stack, int pass) {
+        if(stack.getTagCompound() != null){
+            return stack.getTagCompound().getInteger(COLOR_TAG);
+        }
+        return -1;
     }
 
     @Override
@@ -134,9 +145,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         float density = pList.getValue(PropertyManager.DENSITY);
         float hardness = pList.getValue(PropertyManager.HARDNESS);
         float maliability = pList.getValue(PropertyManager.MALIABILITY);
-
-        
-
+        int color = (int)pList.getValue(PropertyManager.COLOR);
         NBTTagCompound toolTag = new NBTTagCompound();
 
         toolTag.setInteger(HARVEST_TAG, (int) Math.ceil(hardness));
@@ -146,6 +155,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         toolTag.setInteger(DURABILITY_TAG, maxDurability);
         toolTag.setFloat(DAMAGE_TAG, maliability + this.damageMod);
 
+        toolTag.setInteger(COLOR_TAG, color);
         returnStack.setTagCompound(toolTag);
         return returnStack;
     }

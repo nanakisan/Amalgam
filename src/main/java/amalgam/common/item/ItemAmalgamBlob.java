@@ -17,6 +17,8 @@ public class ItemAmalgamBlob extends Item implements IAmalgableItem {
         this.setCreativeTab(Config.tab);
     }
 
+    // FIXME color should be determined by the amalgam it contains
+    
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister iconRegister) {
         this.itemIcon = iconRegister.registerIcon("amalgam:amalgamBlob");
