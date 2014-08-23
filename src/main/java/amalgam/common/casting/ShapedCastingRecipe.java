@@ -86,12 +86,22 @@ public class ShapedCastingRecipe implements ICastingRecipe {
 
     @Override
     public ItemStack getRecipeOutput() {
-        return this.recipeOutput.generateStackWithProperties(null, amount);
+        return this.recipeOutput.generateStackWithProperties(null, null, amount);
     }
 
     @Override
     public ItemStack getCastingResult(InventoryCasting inv, PropertyList list) {
-        return this.recipeOutput.generateStackWithProperties(list, this.amount);
+        ItemStack temp[] = new ItemStack[recipeItems.length];
+
+        int currentIndex = 0;
+        for (int i = 0; i < inv.getSizeInventory(); i++) {
+            ItemStack s = inv.getStackInSlot(i);
+            if (s != null) {
+                temp[currentIndex] = s;
+                currentIndex++;
+            }
+        }
+        return this.recipeOutput.generateStackWithProperties(list, temp, this.amount);
     }
 
 }

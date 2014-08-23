@@ -91,7 +91,7 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
     }
 
     @Override
-    public ItemStack generateStackWithProperties(PropertyList pList, int stackSize) {
+    public ItemStack generateStackWithProperties(PropertyList pList, ItemStack[] materials, int stackSize) {
         ItemStack returnStack = new ItemStack(this, stackSize);
         NBTTagCompound toolTag = new NBTTagCompound();
 

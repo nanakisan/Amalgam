@@ -16,16 +16,16 @@ import amalgam.common.properties.Property.ComboType;
 
 public final class PropertyManager {
 
-    private static final PropertyManager         INSTANCE    = new PropertyManager();
-    private static final Map<Item, List<Object>> ITEM_REGISTRY    = new HashMap<Item, List<Object>>();
-    private static final Map<Integer, List<Object>> ORE_DICT_REGISTRY    = new HashMap<Integer, List<Object>>();
+    private static final PropertyManager            INSTANCE          = new PropertyManager();
+    private static final Map<Item, List<Object>>    ITEM_REGISTRY     = new HashMap<Item, List<Object>>();
+    private static final Map<Integer, List<Object>> ORE_DICT_REGISTRY = new HashMap<Integer, List<Object>>();
 
-    public static final Property                 MALIABILITY = new Property("Maliability", 1, ComboType.QUADAVERAGE);
-    public static final Property                 DENSITY     = new Property("Density", 6, ComboType.QUADAVERAGE);
-    public static final Property                 LUSTER      = new Property("Luster", 10, ComboType.QUADAVERAGE);
-    public static final Property                 HARDNESS    = new Property("Hardness", 1, ComboType.QUADAVERAGE);
+    public static final Property                    MALIABILITY       = new Property("Maliability", 1, ComboType.QUADAVERAGE);
+    public static final Property                    DENSITY           = new Property("Density", 6, ComboType.QUADAVERAGE);
+    public static final Property                    LUSTER            = new Property("Luster", 10, ComboType.QUADAVERAGE);
+    public static final Property                    HARDNESS          = new Property("Hardness", 1, ComboType.QUADAVERAGE);
 
-    public static final Property                 COLOR       = new Property("Color", 200 * 256 * 256 + 200 * 256 + 200, ComboType.COLOR);
+    public static final Property                    COLOR             = new Property("Color", 200 * 256 * 256 + 200 * 256 + 200, ComboType.COLOR);
 
     private PropertyManager() {
     }
@@ -45,14 +45,13 @@ public final class PropertyManager {
             Config.LOG.error("Trying to register an amalgable item with improper values or not implementing IAmalgableItem");
         }
     }
-    
-    
+
     public static void registerOreDictProperties(String dictName, PropertyList list, int volume) {
-        if("Unkown".equals(dictName)){
+        if ("Unkown".equals(dictName)) {
             Config.LOG.error("can't register 'Unkown'");
             return;
         }
-        
+
         int id = OreDictionary.getOreID(dictName);
         if (list != null && volume > 0) {
             List<Object> blob = Arrays.asList(new Object[] { list, Integer.valueOf(volume) });
@@ -61,13 +60,13 @@ public final class PropertyManager {
             Config.LOG.error("Trying to register an ore dictionary entry with improper values");
         }
     }
-    
+
     public static void registerOreDictProperties(int oreDictID, PropertyList list, int volume) {
-        if(oreDictID == -1){
+        if (oreDictID == -1) {
             Config.LOG.error("can't register ore id: -1");
             return;
         }
-        
+
         if (list != null && volume > 0) {
             List<Object> blob = Arrays.asList(new Object[] { list, Integer.valueOf(volume) });
             ORE_DICT_REGISTRY.put(oreDictID, blob);
@@ -76,7 +75,6 @@ public final class PropertyManager {
         }
     }
 
-    
     public static PropertyList generatePropertiesFromToolMaterial(ToolMaterial mat) {
 
         PropertyList list = new PropertyList();
@@ -103,7 +101,7 @@ public final class PropertyManager {
 
     public static PropertyList getProperties(ItemStack stack) {
         Item item = stack.getItem();
-        
+
         // First we check the item registry, then we fall back on the ore dict registry if we find no entry.
         if (ITEM_REGISTRY.containsKey(item)) {
             List<Object> blob = (List<Object>) ITEM_REGISTRY.get(item);
@@ -114,25 +112,25 @@ public final class PropertyManager {
 
             return (PropertyList) blob.get(0);
         }
-        
+
         int ids[] = OreDictionary.getOreIDs(stack);
-        for(int i=0; i< ids.length; i++){
-            
-            if(ORE_DICT_REGISTRY.containsKey(ids[i])){
+        for (int i = 0; i < ids.length; i++) {
+
+            if (ORE_DICT_REGISTRY.containsKey(ids[i])) {
                 List<Object> blob = ORE_DICT_REGISTRY.get(ids[i]);
                 return (PropertyList) blob.get(0);
             }
         }
-        
+
         return null;
-       
+
     }
 
     public static int getVolume(ItemStack stack) {
         Item item = stack.getItem();
-        
-     // First we check the item registry, then we fall back on the ore dict registry if we find no entry.
-        
+
+        // First we check the item registry, then we fall back on the ore dict registry if we find no entry.
+
         if (ITEM_REGISTRY.containsKey(item)) {
             List<Object> blob = (List<Object>) ITEM_REGISTRY.get(item);
 
@@ -142,35 +140,35 @@ public final class PropertyManager {
 
             return (Integer) blob.get(1);
         }
-        
+
         int ids[] = OreDictionary.getOreIDs(stack);
-        for(int i=0; i< ids.length; i++){
-            
-            if(ORE_DICT_REGISTRY.containsKey(ids[i])){
+        for (int i = 0; i < ids.length; i++) {
+
+            if (ORE_DICT_REGISTRY.containsKey(ids[i])) {
                 List<Object> blob = ORE_DICT_REGISTRY.get(ids[i]);
                 return (Integer) blob.get(1);
             }
         }
-        
+
         return 0;
     }
 
     public static boolean itemIsAmalgable(ItemStack stack) {
         Item item = stack.getItem();
-        
-     // First we check the item registry, then we fall back on the ore dict registry if we find no entry.
-        
+
+        // First we check the item registry, then we fall back on the ore dict registry if we find no entry.
+
         if (ITEM_REGISTRY.containsKey(item)) {
             return true;
         }
         int ids[] = OreDictionary.getOreIDs(stack);
-        for(int i=0; i< ids.length; i++){
-            
-            if(ORE_DICT_REGISTRY.containsKey(ids[i])){
+        for (int i = 0; i < ids.length; i++) {
+
+            if (ORE_DICT_REGISTRY.containsKey(ids[i])) {
                 return true;
             }
         }
-        
+
         return false;
     }
 }

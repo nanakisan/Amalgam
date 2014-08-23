@@ -18,8 +18,6 @@ public class ItemAmalgamBlob extends Item implements IAmalgableItem {
         this.setCreativeTab(Config.tab);
     }
 
-    // FIXME color should be determined by the amalgam it contains
-
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister iconRegister) {
         this.itemIcon = iconRegister.registerIcon("amalgam:amalgamBlob");
@@ -64,14 +62,14 @@ public class ItemAmalgamBlob extends Item implements IAmalgableItem {
 
         return 0;
     }
-    
+
     @Override
     @SideOnly(Side.CLIENT)
     public int getColorFromItemStack(ItemStack stack, int pass) {
         if (stack.getTagCompound() != null) {
-            if(Config.coloredAmalgam){
+            if (Config.coloredAmalgam) {
                 return (int) this.getProperties(stack).getValue(PropertyManager.COLOR);
-            }else{
+            } else {
                 return (int) PropertyManager.COLOR.getDefaultValue();
             }
         }

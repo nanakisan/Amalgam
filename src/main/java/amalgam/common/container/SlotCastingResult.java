@@ -45,7 +45,7 @@ public class SlotCastingResult extends Slot {
         this.amountCrafted = 0;
     }
 
-    private void consumeStackInSlot(ItemStack stack, int slot){
+    private void consumeStackInSlot(ItemStack stack, int slot) {
         this.castingMatrix.decrStackSize(slot, 1);
 
         if (stack.getItem().hasContainerItem(stack)) {
@@ -56,8 +56,7 @@ public class SlotCastingResult extends Slot {
                 return;
             }
 
-            if (!stack.getItem().doesContainerItemLeaveCraftingGrid(stack)
-                    || !this.player.inventory.addItemStackToInventory(itemstack2)) {
+            if (!stack.getItem().doesContainerItemLeaveCraftingGrid(stack) || !this.player.inventory.addItemStackToInventory(itemstack2)) {
                 if (this.castingMatrix.getStackInSlot(slot) == null) {
                     this.castingMatrix.setInventorySlotContents(slot, itemstack2);
                 } else {
@@ -66,7 +65,7 @@ public class SlotCastingResult extends Slot {
             }
         }
     }
-    
+
     public void onPickupFromSlot(EntityPlayer player, ItemStack stack) {
         FMLCommonHandler.instance().firePlayerCraftingEvent(player, stack, castingMatrix);
         this.onCrafting(stack);
@@ -80,6 +79,6 @@ public class SlotCastingResult extends Slot {
                 consumeStackInSlot(itemstack1, i);
             }
         }
-        
+
     }
 }

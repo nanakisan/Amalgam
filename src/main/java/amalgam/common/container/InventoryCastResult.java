@@ -3,7 +3,6 @@ package amalgam.common.container;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import amalgam.common.Config;
 
 public class InventoryCastResult implements IInventory {
 

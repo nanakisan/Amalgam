@@ -12,9 +12,4 @@ public class AmalgamConfigGui extends GuiConfig {
         super(parent, new ConfigElement<Object>(Config.configFile.getCategory(Configuration.CATEGORY_GENERAL)).getChildElements(), Amalgam.MODID,
                 false, false, GuiConfig.getAbridgedConfigPath(Config.configFile.toString()));
     }
-
-    @Override
-    public void onGuiClosed() {
-        super.onGuiClosed();
-    }
 }

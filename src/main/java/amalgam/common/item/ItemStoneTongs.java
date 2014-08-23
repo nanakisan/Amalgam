@@ -192,7 +192,6 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
     }
 
     public double getDurabilityForDisplay(ItemStack stack) {
-
         return 1.0 - (float) this.getFluidAmount(stack) / (float) CAPACITY;
     }
 }

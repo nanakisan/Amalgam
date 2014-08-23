@@ -64,7 +64,7 @@ public class AmalgamStack extends FluidStack {
 
                     if (Math.abs(aHSV[0] - bHSV[0]) > 0.5F) {
                         rHSV[0] = (aHSV[0] * stackA.amount - (1 - bHSV[0]) * stackB.amount) / (stackA.amount + stackB.amount);
-                        if (rHSV[0] < 0){
+                        if (rHSV[0] < 0) {
                             rHSV[0] += 1.0;
                         }
                     } else {

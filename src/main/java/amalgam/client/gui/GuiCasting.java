@@ -8,7 +8,6 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import amalgam.common.Amalgam;
-import amalgam.common.Config;
 import amalgam.common.container.ContainerCasting;
 import amalgam.common.container.SlotCasting;
 
@@ -43,7 +42,7 @@ public class GuiCasting extends GuiContainer {
                 }
             }
         }
-        
+
         if (!table.castingTable.tankIsFull() && table.castingTable.getStackInSlot(9) != null) {
             float red = (float) Math.pow(Math.sin(Minecraft.getMinecraft().theWorld.getWorldTime() * 0.1), 2);
             GL11.glEnable(GL11.GL_BLEND);

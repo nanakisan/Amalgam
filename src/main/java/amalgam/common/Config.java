@@ -181,6 +181,7 @@ public class Config {
             goldProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.GOLD);
             diamondProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.EMERALD);
         } else {
+            // TODO choose some properties for the vanilla metals
             ironProp = new PropertyList().add(PropertyManager.DENSITY, 10).add(PropertyManager.HARDNESS, 10).add(PropertyManager.LUSTER, 10)
                     .add(PropertyManager.MALIABILITY, 10);
 
@@ -190,7 +191,7 @@ public class Config {
             diamondProp = new PropertyList().add(PropertyManager.DENSITY, 10).add(PropertyManager.HARDNESS, 10).add(PropertyManager.LUSTER, 10)
                     .add(PropertyManager.MALIABILITY, 10);
         }
-        
+
         ironProp.add(PropertyManager.COLOR, 14211288);
         goldProp.add(PropertyManager.COLOR, 16776960);
         diamondProp.add(PropertyManager.COLOR, 9232630);

@@ -81,7 +81,7 @@ public class ItemAmalgamSword extends ItemSword implements ICastItem {
     }
 
     @Override
-    public ItemStack generateStackWithProperties(PropertyList pList, int stackSize) {
+    public ItemStack generateStackWithProperties(PropertyList pList, ItemStack[] materials, int stackSize) {
         ItemStack returnStack = new ItemStack(this, stackSize);
         NBTTagCompound toolTag = new NBTTagCompound();
 

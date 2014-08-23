@@ -5,8 +5,6 @@ import amalgam.common.properties.PropertyList;
 
 public interface ICastItem {
 
-    // FIXME make this depend on the non-amalgam materials used to create the item. Will allow NBT data from
-    // other components to affect the outcome
-    ItemStack generateStackWithProperties(PropertyList pList, int stackSize);
+    ItemStack generateStackWithProperties(PropertyList pList, ItemStack[] items, int stackSize);
 
 }

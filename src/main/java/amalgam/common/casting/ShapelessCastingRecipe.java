@@ -23,7 +23,7 @@ public class ShapelessCastingRecipe implements ICastingRecipe {
     }
 
     public ItemStack getRecipeOutput() {
-        return this.recipeOutput.generateStackWithProperties(null, amount);
+        return this.recipeOutput.generateStackWithProperties(null, null, amount);
     }
 
     public boolean matches(InventoryCasting inv, World world) {
@@ -71,7 +71,17 @@ public class ShapelessCastingRecipe implements ICastingRecipe {
 
     @Override
     public ItemStack getCastingResult(InventoryCasting inv, PropertyList list) {
-        return this.recipeOutput.generateStackWithProperties(list, this.amount);
+        ItemStack temp[] = new ItemStack[recipeItems.size()];
+
+        int currentIndex = 0;
+        for (int i = 0; i < inv.getSizeInventory(); i++) {
+            ItemStack s = inv.getStackInSlot(i);
+            if (s != null) {
+                temp[currentIndex] = s;
+                currentIndex++;
+            }
+        }
+        return this.recipeOutput.generateStackWithProperties(list, temp, this.amount);
     }
 
 }

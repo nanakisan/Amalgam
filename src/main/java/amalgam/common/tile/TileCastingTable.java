@@ -1,5 +1,8 @@
 package amalgam.common.tile;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -73,8 +76,9 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
         int fillAmount = tank.fill(resource, doFill);
         ItemStack s = castingItems[9];
+
         if (fillAmount > 0 && doFill && s != null && s.hasTagCompound()) {
-            castingItems[9] = ((ICastItem) s.getItem()).generateStackWithProperties(this.getAmalgamPropertyList(), s.stackSize);
+            updateCastResult(s);
         }
         return fillAmount;
 
@@ -89,7 +93,7 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
 
         FluidStack returnStack = tank.drain(resource.amount, doDrain);
         if (returnStack != null && s != null && s.hasTagCompound()) {
-            castingItems[9] = ((ICastItem) s.getItem()).generateStackWithProperties(this.getAmalgamPropertyList(), s.stackSize);
+            updateCastResult(s);
         }
         return returnStack;
 
@@ -101,10 +105,25 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
 
         FluidStack returnStack = tank.drain(maxDrain, doDrain);
         if (returnStack != null && s != null && s.hasTagCompound()) {
-            castingItems[9] = ((ICastItem) s.getItem()).generateStackWithProperties(this.getAmalgamPropertyList(), s.stackSize);
-
+            updateCastResult(s);
         }
         return returnStack;
+    }
+
+    private void updateCastResult(ItemStack result) {
+        ItemStack temp;
+        Set<ItemStack> items = new HashSet<ItemStack>();
+        for (int i = 0; i < 9; i++) {
+            temp = castingItems[i];
+            if (temp != null) {
+                items.add(temp);
+            }
+        }
+
+        ItemStack[] materials = items.toArray(new ItemStack[items.size()]);
+
+        castingItems[9] = ((ICastItem) result.getItem()).generateStackWithProperties(this.getAmalgamPropertyList(), materials, result.stackSize);
+
     }
 
     @Override
