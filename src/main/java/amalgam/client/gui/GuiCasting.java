@@ -8,6 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import amalgam.common.Amalgam;
+import amalgam.common.Config;
 import amalgam.common.container.ContainerCasting;
 import amalgam.common.container.SlotCasting;
 
@@ -42,6 +43,7 @@ public class GuiCasting extends GuiContainer {
                 }
             }
         }
+        
         if (!table.castingTable.tankIsFull() && table.castingTable.getStackInSlot(9) != null) {
             float red = (float) Math.pow(Math.sin(Minecraft.getMinecraft().theWorld.getWorldTime() * 0.1), 2);
             GL11.glEnable(GL11.GL_BLEND);
@@ -49,7 +51,6 @@ public class GuiCasting extends GuiContainer {
             this.drawTexturedModalRect(xPos + 120, yPos + 31, 178, 37, 24, 24);
             GL11.glDisable(GL11.GL_BLEND);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-
         }
     }
 }

@@ -33,7 +33,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
     public static final String      EFFICIENCY_TAG     = "efficiency";
     public static final String      HARVEST_TAG        = "harvest level";
     public static final String      ENCHANTABILITY_TAG = "enchantability";
-    public static final String      COLOR_TAG = "color";
+    public static final String      COLOR_TAG          = "color";
 
     public static final String      TOOL_CLASS_PICK    = "pickaxe";
     public static final String      TOOL_CLASS_AXE     = "axe";
@@ -52,7 +52,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
     @Override
     @SideOnly(Side.CLIENT)
     public int getColorFromItemStack(ItemStack stack, int pass) {
-        if(stack.getTagCompound() != null){
+        if (stack.getTagCompound() != null) {
             return stack.getTagCompound().getInteger(COLOR_TAG);
         }
         return -1;
@@ -137,7 +137,11 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
     @Override
     public ItemStack generateStackWithProperties(PropertyList pList, int stackSize) {
         ItemStack returnStack = new ItemStack(this, stackSize);
+        NBTTagCompound toolTag = new NBTTagCompound();
+
         if (pList == null) {
+            toolTag.setInteger(COLOR_TAG, (int) PropertyManager.COLOR.getDefaultValue());
+            returnStack.setTagCompound(toolTag);
             return returnStack;
         }
 
@@ -145,8 +149,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         float density = pList.getValue(PropertyManager.DENSITY);
         float hardness = pList.getValue(PropertyManager.HARDNESS);
         float maliability = pList.getValue(PropertyManager.MALIABILITY);
-        int color = (int)pList.getValue(PropertyManager.COLOR);
-        NBTTagCompound toolTag = new NBTTagCompound();
+        int color = (int) pList.getValue(PropertyManager.COLOR);
 
         toolTag.setInteger(HARVEST_TAG, (int) Math.ceil(hardness));
         toolTag.setInteger(ENCHANTABILITY_TAG, (int) (luster));

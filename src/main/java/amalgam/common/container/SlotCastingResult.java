@@ -45,6 +45,28 @@ public class SlotCastingResult extends Slot {
         this.amountCrafted = 0;
     }
 
+    private void consumeStackInSlot(ItemStack stack, int slot){
+        this.castingMatrix.decrStackSize(slot, 1);
+
+        if (stack.getItem().hasContainerItem(stack)) {
+            ItemStack itemstack2 = stack.getItem().getContainerItem(stack);
+
+            if (itemstack2 != null && itemstack2.isItemStackDamageable() && itemstack2.getItemDamage() > itemstack2.getMaxDamage()) {
+                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, itemstack2));
+                return;
+            }
+
+            if (!stack.getItem().doesContainerItemLeaveCraftingGrid(stack)
+                    || !this.player.inventory.addItemStackToInventory(itemstack2)) {
+                if (this.castingMatrix.getStackInSlot(slot) == null) {
+                    this.castingMatrix.setInventorySlotContents(slot, itemstack2);
+                } else {
+                    this.player.dropPlayerItemWithRandomChoice(itemstack2, false);
+                }
+            }
+        }
+    }
+    
     public void onPickupFromSlot(EntityPlayer player, ItemStack stack) {
         FMLCommonHandler.instance().firePlayerCraftingEvent(player, stack, castingMatrix);
         this.onCrafting(stack);
@@ -55,26 +77,9 @@ public class SlotCastingResult extends Slot {
             ItemStack itemstack1 = this.castingMatrix.getStackInSlot(i);
 
             if (itemstack1 != null) {
-                this.castingMatrix.decrStackSize(i, 1);
-
-                if (itemstack1.getItem().hasContainerItem(itemstack1)) {
-                    ItemStack itemstack2 = itemstack1.getItem().getContainerItem(itemstack1);
-
-                    if (itemstack2 != null && itemstack2.isItemStackDamageable() && itemstack2.getItemDamage() > itemstack2.getMaxDamage()) {
-                        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, itemstack2));
-                        continue;
-                    }
-
-                    if (!itemstack1.getItem().doesContainerItemLeaveCraftingGrid(itemstack1)
-                            || !this.player.inventory.addItemStackToInventory(itemstack2)) {
-                        if (this.castingMatrix.getStackInSlot(i) == null) {
-                            this.castingMatrix.setInventorySlotContents(i, itemstack2);
-                        } else {
-                            this.player.dropPlayerItemWithRandomChoice(itemstack2, false);
-                        }
-                    }
-                }
+                consumeStackInSlot(itemstack1, i);
             }
         }
+        
     }
 }

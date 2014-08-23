@@ -40,29 +40,24 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class Config {
 
-    // TODO add option to display unfinished/finished casting product directly on the table instead of rotating above it
-    // TODO consider shift clicking casting table with an empty hand removes the item from the table (just need to
-    // remove the item from the itemstack array and remove all amalgam from the tank)
-    // TODO consider adding a 'pouring' mechanic to move amalgam directly from the crucible to the casting table
-    // TODO waila integration!
-    // TODO possibly add overlay to casting table and crucible showing the properties of the amalgam/cast item in them
-    // (waila integration could handle this!)
+    // FIXME waila integration!
 
-    public static Config        instance              = new Config();
+    public static Config        instance                   = new Config();
 
     public static Configuration configFile;
 
-    public static final Logger  LOG                   = LogManager.getLogger(Amalgam.MODID);
-    public static final int     CASTING_GUI_ID        = 1;
+    public static final Logger  LOG                        = LogManager.getLogger(Amalgam.MODID);
+    public static final int     CASTING_GUI_ID             = 1;
 
-    public static boolean       advancedRendering     = true;
-    public static boolean       floatingCastResult    = true;
-    public static boolean       disableVanillaRecipes = true;
-    public static int           baseVolume            = 10;
+    public static boolean       replicateVanillaProperties = true;
+    public static boolean       advancedRendering          = true;
+    public static boolean       floatingCastResult         = true;
+    public static boolean       coloredAmalgam             = true;
+    public static int           baseVolume                 = 10;
 
-    public static final int     BASE_AMOUNT           = 1;
-    public static final int     INGOT_AMOUNT          = BASE_AMOUNT * 9;
-    public static final int     BLOCK_AMOUNT          = INGOT_AMOUNT * 9;
+    public static final int     BASE_AMOUNT                = 1;
+    public static final int     INGOT_AMOUNT               = BASE_AMOUNT * 9;
+    public static final int     BLOCK_AMOUNT               = INGOT_AMOUNT * 9;
 
     public static Fluid         fluidAmalgam;
 
@@ -85,8 +80,8 @@ public class Config {
 
     public static CreativeTabs  tab;
 
-    public static int           castingTableRID       = -1;
-    public static int           crucibleRID           = -1;
+    public static int           castingTableRID            = -1;
+    public static int           crucibleRID                = -1;
 
     public static void init(FMLPreInitializationEvent event) {
         tab = new CreativeTabs("Amalgam") {
@@ -103,17 +98,21 @@ public class Config {
 
     public static void syncConfig() {
 
+        replicateVanillaProperties = configFile.getBoolean("Replicate Vanilla Properties", Configuration.CATEGORY_GENERAL,
+                replicateVanillaProperties, "True: Use vanilla properties for vanilla ores. Fasle: Use new properties for vanilla ores");
+
         advancedRendering = configFile.getBoolean("Advanced rendering", Configuration.CATEGORY_GENERAL, advancedRendering,
                 "Allows for rendering of items on casting tables");
 
         floatingCastResult = configFile.getBoolean("Floating Cast Result", Configuration.CATEGORY_GENERAL, floatingCastResult,
                 "Does the cast result float, or is it rendered flat");
 
+        coloredAmalgam = configFile.getBoolean("Allow colored amalgam", Configuration.CATEGORY_GENERAL, coloredAmalgam,
+                "Allow amalgam color to be determined by material properties");
+
         baseVolume = configFile.getInt("Base amalgam volume (mB)", Configuration.CATEGORY_GENERAL, baseVolume, 1, Integer.MAX_VALUE,
                 "The volume of the smallest bit of amalgam (mB)");
 
-        // FIXME add config option to prevent materials from causing amalgam coloration. When the color property is looked up always return the default color!
-        
         if (configFile.hasChanged()) {
             configFile.save();
         }
@@ -121,7 +120,6 @@ public class Config {
 
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent eventArgs) {
-        Config.LOG.info("on config changed: " + eventArgs.modID);
         if (eventArgs.modID.equals(Amalgam.MODID)) {
             syncConfig();
         }
@@ -174,28 +172,42 @@ public class Config {
     }
 
     public static void registerAmalgamProperties() {
-        // FIXME refine colors and amalgam textures!
-        PropertyList ironProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.IRON);
+        PropertyList ironProp;
+        PropertyList goldProp;
+        PropertyList diamondProp;
+
+        if (Config.replicateVanillaProperties) {
+            ironProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.IRON);
+            goldProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.GOLD);
+            diamondProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.EMERALD);
+        } else {
+            ironProp = new PropertyList().add(PropertyManager.DENSITY, 10).add(PropertyManager.HARDNESS, 10).add(PropertyManager.LUSTER, 10)
+                    .add(PropertyManager.MALIABILITY, 10);
+
+            goldProp = new PropertyList().add(PropertyManager.DENSITY, 10).add(PropertyManager.HARDNESS, 10).add(PropertyManager.LUSTER, 10)
+                    .add(PropertyManager.MALIABILITY, 10);
+
+            diamondProp = new PropertyList().add(PropertyManager.DENSITY, 10).add(PropertyManager.HARDNESS, 10).add(PropertyManager.LUSTER, 10)
+                    .add(PropertyManager.MALIABILITY, 10);
+        }
+        
         ironProp.add(PropertyManager.COLOR, 14211288);
-
-        PropertyList goldProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.GOLD);
         goldProp.add(PropertyManager.COLOR, 16776960);
-
-        PropertyList diamondProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.EMERALD);
         diamondProp.add(PropertyManager.COLOR, 9232630);
 
-        PropertyManager.registerItemProperties(new ItemStack(Items.iron_ingot), ironProp, Config.INGOT_AMOUNT);
-        PropertyManager.registerItemProperties(new ItemStack(Items.gold_ingot), goldProp, Config.INGOT_AMOUNT);
-        PropertyManager.registerItemProperties(new ItemStack(Items.diamond), diamondProp, Config.INGOT_AMOUNT);
-        PropertyManager.registerItemProperties(new ItemStack(Blocks.iron_block), ironProp, Config.BLOCK_AMOUNT);
-        PropertyManager.registerItemProperties(new ItemStack(Blocks.gold_block), goldProp, Config.BLOCK_AMOUNT);
-        PropertyManager.registerItemProperties(new ItemStack(Blocks.diamond_block), diamondProp, Config.BLOCK_AMOUNT);
-        PropertyManager.registerItemProperties(new ItemStack(Items.gold_nugget), goldProp, Config.BASE_AMOUNT);
+        PropertyManager.registerOreDictProperties("ingotIron", ironProp, Config.INGOT_AMOUNT);
+        PropertyManager.registerOreDictProperties("ingotGold", goldProp, Config.INGOT_AMOUNT);
+        PropertyManager.registerOreDictProperties("gemDiamond", diamondProp, Config.INGOT_AMOUNT);
+        PropertyManager.registerOreDictProperties("blockIron", ironProp, Config.BLOCK_AMOUNT);
+        PropertyManager.registerOreDictProperties("blockGold", goldProp, Config.BLOCK_AMOUNT);
+        PropertyManager.registerOreDictProperties("blockDiamond", diamondProp, Config.BLOCK_AMOUNT);
+        PropertyManager.registerOreDictProperties("nuggetGold", goldProp, Config.BASE_AMOUNT);
 
         PropertyManager.registerItemProperties(new ItemStack(amalgamBlob), null, 0);
     }
 
     public static void registerRecipes() {
+        // TODO register a block casting recipe and see if it renders correctly
         CastingManager.addShapelessRecipe((ICastItem) amalgamSword, 1, "Amalgam", Blocks.stone);
         CastingManager.addRecipe((ICastItem) amalgamSword, 1, "a", "a", "s", 's', Items.stick);
         CastingManager.addRecipe((ICastItem) amalgamPick, 1, "aaa", " s ", " s ", 's', Items.stick);

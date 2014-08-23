@@ -14,6 +14,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import amalgam.common.Config;
+import amalgam.common.casting.ICastItem;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.AmalgamTank;
 import amalgam.common.item.ItemAmalgamBlob;
@@ -70,7 +71,12 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
 
     @Override
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-        return tank.fill(resource, doFill);
+        int fillAmount = tank.fill(resource, doFill);
+        ItemStack s = castingItems[9];
+        if (fillAmount > 0 && doFill && s != null && s.hasTagCompound()) {
+            castingItems[9] = ((ICastItem) s.getItem()).generateStackWithProperties(this.getAmalgamPropertyList(), s.stackSize);
+        }
+        return fillAmount;
 
     }
 
@@ -79,13 +85,26 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         if (resource == null) {
             return null;
         }
-        return tank.drain(resource.amount, doDrain);
+        ItemStack s = castingItems[9];
+
+        FluidStack returnStack = tank.drain(resource.amount, doDrain);
+        if (returnStack != null && s != null && s.hasTagCompound()) {
+            castingItems[9] = ((ICastItem) s.getItem()).generateStackWithProperties(this.getAmalgamPropertyList(), s.stackSize);
+        }
+        return returnStack;
 
     }
 
     @Override
     public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-        return tank.drain(maxDrain, doDrain);
+        ItemStack s = castingItems[9];
+
+        FluidStack returnStack = tank.drain(maxDrain, doDrain);
+        if (returnStack != null && s != null && s.hasTagCompound()) {
+            castingItems[9] = ((ICastItem) s.getItem()).generateStackWithProperties(this.getAmalgamPropertyList(), s.stackSize);
+
+        }
+        return returnStack;
     }
 
     @Override

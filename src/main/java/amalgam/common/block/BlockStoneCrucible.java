@@ -132,6 +132,36 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
         return false;
     }
 
+    private boolean interactWithAmalgamContainerItem(TileEntity te, IAmalgamContainerItem container, ItemStack stack, EntityPlayer player) {
+        TileStoneCrucible crucible = (TileStoneCrucible) te;
+        if (player.isSneaking()) {
+            int drainAmount = Math.min(container.getEmptySpace(stack), Config.BASE_AMOUNT);
+            AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, drainAmount, true);
+            if (fluidStack != null) { // see if we drained anything
+                int result = container.fill(stack, fluidStack, true);
+                fluidStack.amount -= result;
+                if (fluidStack.amount > 0) {
+                    crucible.fill(ForgeDirection.UNKNOWN, fluidStack, true);
+                }
+            }
+        } else if (container.getFluid(stack).amount == 0) {
+            AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, container.getEmptySpace(stack), true);
+            if (fluidStack != null) {
+                int result = container.fill(stack, fluidStack, true);
+                fluidStack.amount -= result;
+                if (fluidStack.amount > 0) {
+                    crucible.fill(ForgeDirection.UNKNOWN, fluidStack, true);
+                }
+            }
+        } else {
+            AmalgamStack newStack = (AmalgamStack) container.drain(stack, container.getCapacity(stack), true);
+            int filled = crucible.fill(ForgeDirection.UNKNOWN, newStack, true);
+            newStack.amount -= filled;
+            container.fill(stack, newStack, true);
+        }
+        return true;
+    }
+
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
 
@@ -141,39 +171,13 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
         }
 
         TileStoneCrucible crucible = (TileStoneCrucible) world.getTileEntity(x, y, z);
+
         if (!crucible.isHot()) {
-            // player.addChatMessage(new ChatComponentText("The crucible is cold, put a heat source under it."));
             return false;
         }
 
         if (stack.getItem() instanceof IAmalgamContainerItem) {
-            IAmalgamContainerItem container = (IAmalgamContainerItem) stack.getItem();
-            if (player.isSneaking()) {
-                int drainAmount = Math.min(container.getEmptySpace(stack), Config.BASE_AMOUNT);
-                AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, drainAmount, true);
-                if (fluidStack != null) { // see if we drained anything
-                    int result = container.fill(stack, fluidStack, true);
-                    fluidStack.amount -= result;
-                    if (fluidStack.amount > 0) {
-                        crucible.fill(ForgeDirection.UNKNOWN, fluidStack, true);
-                    }
-                }
-            } else if (container.getFluid(stack).amount == 0) {
-                AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, container.getEmptySpace(stack), true);
-                if (fluidStack != null) {
-                    int result = container.fill(stack, fluidStack, true);
-                    fluidStack.amount -= result;
-                    if (fluidStack.amount > 0) {
-                        crucible.fill(ForgeDirection.UNKNOWN, fluidStack, true);
-                    }
-                }
-            } else {
-                AmalgamStack newStack = (AmalgamStack) container.drain(stack, container.getCapacity(stack), true);
-                int filled = crucible.fill(ForgeDirection.UNKNOWN, newStack, true);
-                newStack.amount -= filled;
-                container.fill(stack, newStack, true);
-            }
-            return true;
+            return interactWithAmalgamContainerItem(crucible, (IAmalgamContainerItem) stack.getItem(), stack, player);
         }
 
         if (PropertyManager.itemIsAmalgable(stack)) {

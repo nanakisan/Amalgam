@@ -14,6 +14,8 @@ import amalgam.common.tile.TileCastingTable;
 
 public class ContainerCasting extends Container {
 
+    // FIXME Armor recipe is not being found immediately after armor is picked up from the cast result slot.
+
     public TileCastingTable    castingTable;
     public InventoryCasting    castingMatrix;
     public InventoryCastResult castResult;
@@ -142,7 +144,7 @@ public class ContainerCasting extends Container {
         if (castingTable.getTankAmount() == 0) {
             pList = null;
         }
-
+        
         castResult.setInventorySlotContents(0, recipe.getCastingResult(castingMatrix, pList));
 
     }

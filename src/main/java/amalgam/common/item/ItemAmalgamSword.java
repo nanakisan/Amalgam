@@ -83,8 +83,10 @@ public class ItemAmalgamSword extends ItemSword implements ICastItem {
     @Override
     public ItemStack generateStackWithProperties(PropertyList pList, int stackSize) {
         ItemStack returnStack = new ItemStack(this, stackSize);
+        NBTTagCompound toolTag = new NBTTagCompound();
 
         if (pList == null) {
+            returnStack.setTagCompound(toolTag);
             return returnStack;
         }
 
@@ -92,8 +94,6 @@ public class ItemAmalgamSword extends ItemSword implements ICastItem {
         float density = pList.getValue(PropertyManager.DENSITY);
         float hardness = pList.getValue(PropertyManager.HARDNESS);
         float maliability = pList.getValue(PropertyManager.MALIABILITY);
-
-        NBTTagCompound toolTag = new NBTTagCompound();
 
         toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (luster));
         int maxDurability = (int) ((density * density) * (hardness + 1));

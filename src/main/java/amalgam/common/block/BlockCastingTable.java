@@ -53,44 +53,58 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
         return side == 1 ? this.iconTop : side == 0 ? this.iconBottom : side == 6 ? this.iconNeck : side == 7 ? this.iconBottomSide : this.blockIcon;
     }
 
+    private boolean interactWithAmalgamContainerItem(TileEntity te, IAmalgamContainerItem container, ItemStack stack, EntityPlayer player) {
+        TileCastingTable crucible = (TileCastingTable) te;
+        if (player.isSneaking()) {
+            int drainAmount = Math.min(container.getEmptySpace(stack), Config.BASE_AMOUNT);
+            AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, drainAmount, true);
+            if (fluidStack != null) { // see if we drained anything
+                int result = container.fill(stack, fluidStack, true);
+                fluidStack.amount -= result;
+                if (fluidStack.amount > 0) {
+                    crucible.fill(ForgeDirection.UNKNOWN, fluidStack, true);
+                }
+            }
+        } else if (container.getFluid(stack).amount == 0) {
+            AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, container.getEmptySpace(stack), true);
+            if (fluidStack != null) {
+                int result = container.fill(stack, fluidStack, true);
+                fluidStack.amount -= result;
+                if (fluidStack.amount > 0) {
+                    crucible.fill(ForgeDirection.UNKNOWN, fluidStack, true);
+                }
+            }
+        } else {
+            AmalgamStack newStack = (AmalgamStack) container.drain(stack, container.getCapacity(stack), true);
+            int filled = crucible.fill(ForgeDirection.UNKNOWN, newStack, true);
+            newStack.amount -= filled;
+            container.fill(stack, newStack, true);
+        }
+        return true;
+    }
+
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
 
         ItemStack stack = player.inventory.getCurrentItem();
+
+        TileCastingTable table = (TileCastingTable) world.getTileEntity(x, y, z);
         if (stack == null) {
+            if (player.isSneaking()) {
+                ItemStack resultStack = table.getStackInSlot(9);
+                if (resultStack != null && table.tankIsFull()) {
+                    table.setTankFluid(null);
+                    player.setCurrentItemOrArmor(0, resultStack);
+                }
+
+                return false;
+            }
             player.openGui(Amalgam.instance, Config.CASTING_GUI_ID, world, x, y, z);
             return true;
         }
 
-        TileCastingTable table = (TileCastingTable) world.getTileEntity(x, y, z);
         if (stack.getItem() instanceof IAmalgamContainerItem) {
-            IAmalgamContainerItem container = (IAmalgamContainerItem) stack.getItem();
-            if (player.isSneaking()) {
-                int drainAmount = Math.min(container.getEmptySpace(stack), Config.BASE_AMOUNT);
-                AmalgamStack fluidStack = (AmalgamStack) table.drain(ForgeDirection.UNKNOWN, drainAmount, true);
-                if (fluidStack != null) {
-                    int result = container.fill(stack, fluidStack, true);
-                    fluidStack.amount -= result;
-                    if (fluidStack.amount > 0) {
-                        table.fill(ForgeDirection.UNKNOWN, fluidStack, true);
-                    }
-                }
-            } else if (container.getFluid(stack).amount == 0) {
-                AmalgamStack fluidStack = (AmalgamStack) table.drain(ForgeDirection.UNKNOWN, container.getEmptySpace(stack), true);
-                if (fluidStack != null) {
-                    int result = container.fill(stack, fluidStack, true);
-                    fluidStack.amount -= result;
-                    if (fluidStack.amount > 0) {
-                        table.fill(ForgeDirection.UNKNOWN, fluidStack, true);
-                    }
-                }
-            } else {
-                AmalgamStack newStack = (AmalgamStack) container.drain(stack, container.getCapacity(stack), true);
-                int filled = table.fill(ForgeDirection.UNKNOWN, newStack, true);
-                newStack.amount -= filled;
-                container.fill(stack, newStack, true);
-            }
-            return true;
+            return interactWithAmalgamContainerItem(table, (IAmalgamContainerItem) stack.getItem(), stack, player);
         }
 
         player.openGui(Amalgam.instance, Config.CASTING_GUI_ID, world, x, y, z);

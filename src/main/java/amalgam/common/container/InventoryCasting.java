@@ -5,6 +5,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import amalgam.common.Config;
 
 public class InventoryCasting implements IInventory, ISidedInventory {
 

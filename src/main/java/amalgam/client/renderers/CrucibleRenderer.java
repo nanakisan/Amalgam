@@ -31,18 +31,21 @@ public class CrucibleRenderer extends TileEntitySpecialRenderer implements ISimp
         GL11.glRotatef(90.0F, -1.0F, 0.0F, 0.0F);
         PropertyList p = ((TileStoneCrucible) te).getAmalgamProperties();
 
-        Color color = new Color((int) p.getValue(PropertyManager.COLOR));
+        Color color;
+
+        if (Config.coloredAmalgam) {
+            color = new Color((int) p.getValue(PropertyManager.COLOR));
+        } else {
+            color = new Color((int) PropertyManager.COLOR.getDefaultValue());
+        }
 
         GL11.glColor3f(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F);
-        // Config.LOG.info("color: " + color.getRed());
-
         if (height > .301) {
 
-            IIcon iicon = ((BlockStoneCrucible) Config.stoneCrucible).liquidAmalgam;
-            // IIcon iicon = ((BlockStoneCrucible) Config.stoneCrucible).solidAmalgam;
+            IIcon iicon = ((BlockStoneCrucible) Config.stoneCrucible).solidAmalgam;
 
-            if (!((TileStoneCrucible) te).isHot()) {
-                iicon = ((BlockStoneCrucible) Config.stoneCrucible).solidAmalgam;
+            if (((TileStoneCrucible) te).isHot()) {
+                iicon = ((BlockStoneCrucible) Config.stoneCrucible).liquidAmalgam;
             }
 
             Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);

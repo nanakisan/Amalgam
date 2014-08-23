@@ -32,6 +32,7 @@ public class PropertyList {
         if (this.properties.get(a) == null || this.properties.get(a).isNaN()) {
             return a.getDefaultValue();
         }
+
         return ((Float) this.properties.get(a)).floatValue();
     }
 

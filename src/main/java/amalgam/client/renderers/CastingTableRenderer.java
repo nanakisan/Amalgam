@@ -2,13 +2,11 @@ package amalgam.client.renderers;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -130,67 +128,35 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
         }
 
         GL11.glPushMatrix();
-        // FIXME THIS NEEDS TO BE RECODED, the only part that should be in an if statement are the initial rotate and scale calls I beleive
-        // all rendering can be done with the renderEntityWithPosYaw, I don't remember why I stopped using it
-        if(Config.floatingCastResult){
-            IIcon icon = stack.getItem().getIcon(stack, 0);
-            
+
+        if (Config.floatingCastResult) {
             long time = te.getWorldObj().getWorldTime();
             GL11.glTranslated(x + 0.5, y + 1.1D, z + 0.5);
             GL11.glRotatef(time * 1.5F, 0.0F, 90.0F, 0.0F);
-            GL11.glScalef(0.75F, 0.75F, 0.75F);
-
-            if (!table.tankIsFull()) {
-                GL11.glEnable(GL11.GL_BLEND);
-                GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_DST_ALPHA);
-            }
-    
-            if (Block.getBlockFromItem(stack.getItem()) == Blocks.air) {
-                GL11.glTranslated(-0.465F, 0.0F, +0.035F);
-                Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationItemsTexture);
-    
-                float f1 = icon.getMinU();
-                float f2 = icon.getMaxU();
-                float f3 = icon.getMinV();
-                float f4 = icon.getMaxV();
-    
-                //ItemRenderer.renderItemIn2D(Tessellator.instance, f2, f3, f1, f4, icon.getIconWidth(), icon.getIconHeight(), 0.07F);
-                EntityItem itemEntity = new EntityItem(te.getWorldObj(), te.xCoord, te.yCoord +1.2, te.zCoord, stack);
-                itemEntity.hoverStart = 0.0F;
-                RenderManager.instance.renderEntityWithPosYaw(itemEntity, 0.0, 0.0, 0.0, 0.0F, 0.0F);
-                
-            } else {
-                GL11.glTranslated(0.0F, 0.5F, 0.0F);
-                Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
-                RenderBlocks.getInstance().renderBlockAsItem(Block.getBlockFromItem(stack.getItem()), 0, 1.0F);
-            }
-
-        }else{
-           
-            GL11.glTranslated(x +0.5F, y + 1.06D, z +0.25);
+        } else {
+            GL11.glTranslated(x + 0.5F, y + 1.05D, z + 0.25);
             GL11.glRotatef(90.0F, 90.0F, 0.0F, 0.0F);
-            GL11.glScalef(1.25F, 1.25F, 1.25F);
-    
-            if (!table.tankIsFull()) {
-                GL11.glEnable(GL11.GL_BLEND);
-                GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_DST_ALPHA);
-            }
-    
-            if (Block.getBlockFromItem(stack.getItem()) == Blocks.air) {
-                EntityItem itemEntity = new EntityItem(te.getWorldObj(), te.xCoord, te.yCoord +1.2, te.zCoord, stack);
-                itemEntity.hoverStart = 0.0F;
-                RenderManager.instance.renderEntityWithPosYaw(itemEntity, 0.0, 0.0, 0.0, 0.0F, 0.0F);
-                
-                
-            } else {
-                GL11.glTranslated(0.0F, 0.5F, 0.0F);
-                Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
-                RenderBlocks.getInstance().renderBlockAsItem(Block.getBlockFromItem(stack.getItem()), 0, 1.0F);
-            }
-
         }
-        
-        
+
+        GL11.glScalef(1.25F, 1.25F, 1.25F);
+
+        if (!table.tankIsFull()) {
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_DST_ALPHA);
+        }
+
+        if (Block.getBlockFromItem(stack.getItem()) == Blocks.air) {
+
+            EntityItem itemEntity = new EntityItem(te.getWorldObj(), te.xCoord, te.yCoord + 1.2, te.zCoord, stack);
+            itemEntity.hoverStart = 0.0F;
+            RenderManager.instance.renderEntityWithPosYaw(itemEntity, 0.0, 0.0, 0.0, 0.0F, 0.0F);
+
+        } else {
+            GL11.glTranslated(0.0F, 0.5F, 0.0F);
+            Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+            RenderBlocks.getInstance().renderBlockAsItem(Block.getBlockFromItem(stack.getItem()), 0, 1.0F);
+        }
+
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopMatrix();
 

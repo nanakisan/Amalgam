@@ -93,8 +93,10 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
     @Override
     public ItemStack generateStackWithProperties(PropertyList pList, int stackSize) {
         ItemStack returnStack = new ItemStack(this, stackSize);
+        NBTTagCompound toolTag = new NBTTagCompound();
 
         if (pList == null) {
+            returnStack.setTagCompound(toolTag);
             return returnStack;
         }
 
@@ -102,8 +104,6 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
         float density = pList.getValue(PropertyManager.DENSITY);
         float hardness = pList.getValue(PropertyManager.HARDNESS);
         float maliability = pList.getValue(PropertyManager.MALIABILITY);
-
-        NBTTagCompound toolTag = new NBTTagCompound();
 
         toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (luster));
         float armorTypeFactor = 1.0F;
@@ -142,7 +142,6 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
 
         toolTag.setInteger(ABSORB_TAG, (int) Math.ceil((maliability + hardness + 3.0) * armorTypeFactor));
 
-        Config.LOG.info("absorb: " + (maliability + hardness + 3.0) * armorTypeFactor);
         returnStack.setTagCompound(toolTag);
         return returnStack;
     }

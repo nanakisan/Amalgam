@@ -50,17 +50,17 @@ public class ItemAmalgamHoe extends ItemHoe implements ICastItem {
 
     @Override
     public ItemStack generateStackWithProperties(PropertyList pList, int stackSize) {
+        ItemStack returnStack = new ItemStack(this, stackSize);
+        NBTTagCompound toolTag = new NBTTagCompound();
+
         if (pList == null) {
-            return null;
+            returnStack.setTagCompound(toolTag);
+            return returnStack;
         }
 
         float luster = pList.getValue(PropertyManager.LUSTER);
         float density = pList.getValue(PropertyManager.DENSITY);
         float hardness = pList.getValue(PropertyManager.HARDNESS);
-
-        ItemStack returnStack = new ItemStack(this, stackSize);
-
-        NBTTagCompound toolTag = new NBTTagCompound();
 
         toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (luster));
         int maxDurability = (int) ((density * density) * (hardness + 1));

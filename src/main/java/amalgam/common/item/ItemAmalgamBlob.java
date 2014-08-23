@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import amalgam.common.Config;
 import amalgam.common.fluid.IAmalgableItem;
 import amalgam.common.properties.PropertyList;
+import amalgam.common.properties.PropertyManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -18,7 +19,7 @@ public class ItemAmalgamBlob extends Item implements IAmalgableItem {
     }
 
     // FIXME color should be determined by the amalgam it contains
-    
+
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister iconRegister) {
         this.itemIcon = iconRegister.registerIcon("amalgam:amalgamBlob");
@@ -62,5 +63,18 @@ public class ItemAmalgamBlob extends Item implements IAmalgableItem {
         }
 
         return 0;
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getColorFromItemStack(ItemStack stack, int pass) {
+        if (stack.getTagCompound() != null) {
+            if(Config.coloredAmalgam){
+                return (int) this.getProperties(stack).getValue(PropertyManager.COLOR);
+            }else{
+                return (int) PropertyManager.COLOR.getDefaultValue();
+            }
+        }
+        return -1;
     }
 }

@@ -16,6 +16,5 @@ public class AmalgamConfigGui extends GuiConfig {
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
-        Config.LOG.info("gui closed");
     }
 }
