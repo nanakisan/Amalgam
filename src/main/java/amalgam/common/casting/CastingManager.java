@@ -28,8 +28,10 @@ public final class CastingManager {
         int i = 0;
         int j = 0;
         int k = 0;
+
         if (inputList[i] instanceof String[]) {
             String[] astring = (String[]) ((String[]) inputList[i++]);
+
             for (int l = 0; l < astring.length; ++l) {
                 String s1 = astring[l];
                 ++k;
@@ -48,6 +50,7 @@ public final class CastingManager {
         for (hashmap = new HashMap<Character, ItemStack>(); i < inputList.length; i += 2) {
             Character character = (Character) inputList[i];
             ItemStack itemstack1 = null;
+
             if (inputList[i + 1] instanceof Item) {
                 itemstack1 = new ItemStack((Item) inputList[i + 1]);
             } else if (inputList[i + 1] instanceof Block) {
@@ -55,11 +58,15 @@ public final class CastingManager {
             } else if (inputList[i + 1] instanceof ItemStack) {
                 itemstack1 = (ItemStack) inputList[i + 1];
             }
+
             hashmap.put(character, itemstack1);
         }
+
         ItemStack[] aitemstack = new ItemStack[j * k];
+
         for (int i1 = 0; i1 < j * k; ++i1) {
             char c0 = s.charAt(i1);
+
             if (hashmap.containsKey(Character.valueOf(c0))) {
                 aitemstack[i1] = ((ItemStack) hashmap.get(Character.valueOf(c0))).copy();
             } else if (c0 == 'a' || c0 == 'A') {
@@ -68,8 +75,10 @@ public final class CastingManager {
                 aitemstack[i1] = null;
             }
         }
+
         ShapedCastingRecipe shapedrecipe = new ShapedCastingRecipe(j, k, aitemstack, output, amount);
         recipes.add(shapedrecipe);
+
         return shapedrecipe;
     }
 

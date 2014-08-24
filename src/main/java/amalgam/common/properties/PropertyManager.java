@@ -25,7 +25,7 @@ public final class PropertyManager {
     public static final Property                    LUSTER            = new Property("Luster", 10, ComboType.QUADAVERAGE);
     public static final Property                    HARDNESS          = new Property("Hardness", 1, ComboType.QUADAVERAGE);
 
-    public static final Property                    COLOR             = new Property("Color", 200 * 256 * 256 + 200 * 256 + 200, ComboType.COLOR);
+    public static final Property                    COLOR             = new Property("Color", 0x999999, ComboType.COLOR);
 
     private PropertyManager() {
     }
@@ -36,6 +36,7 @@ public final class PropertyManager {
 
     public static void registerItemProperties(ItemStack stack, PropertyList list, int volume) {
         Item item = stack.getItem();
+
         if (list != null && volume > 0) {
             List<Object> blob = Arrays.asList(new Object[] { list, Integer.valueOf(volume) });
             ITEM_REGISTRY.put(item, blob);
@@ -53,6 +54,7 @@ public final class PropertyManager {
         }
 
         int id = OreDictionary.getOreID(dictName);
+
         if (list != null && volume > 0) {
             List<Object> blob = Arrays.asList(new Object[] { list, Integer.valueOf(volume) });
             ORE_DICT_REGISTRY.put(id, blob);
@@ -79,9 +81,9 @@ public final class PropertyManager {
 
         PropertyList list = new PropertyList();
 
-        list.add(DENSITY, (float) Math.sqrt(mat.getMaxUses() / (mat.getHarvestLevel() + 1)));
+        list.add(DENSITY, (float) Math.sqrt(mat.getMaxUses() / (mat.getHarvestLevel() + 1)) / 5.0F);
         list.add(HARDNESS, mat.getHarvestLevel());
-        list.add(LUSTER, mat.getEnchantability());
+        list.add(LUSTER, mat.getEnchantability() / 5.0F);
         list.add(MALIABILITY, mat.getDamageVsEntity());
 
         return list;
@@ -91,9 +93,9 @@ public final class PropertyManager {
 
         PropertyList list = new PropertyList();
 
-        list.add(DENSITY, mat.getDurability(1) / 27);
+        list.add(DENSITY, mat.getDurability(1) / (27 * 5.0F));
         list.add(HARDNESS, mat.getDamageReductionAmount(1) / 2 - 1);
-        list.add(LUSTER, mat.getEnchantability());
+        list.add(LUSTER, mat.getEnchantability() / 5.0F);
         list.add(MALIABILITY, mat.getDamageReductionAmount(1) / 2 - 1);
 
         return list;
@@ -114,8 +116,8 @@ public final class PropertyManager {
         }
 
         int ids[] = OreDictionary.getOreIDs(stack);
-        for (int i = 0; i < ids.length; i++) {
 
+        for (int i = 0; i < ids.length; i++) {
             if (ORE_DICT_REGISTRY.containsKey(ids[i])) {
                 List<Object> blob = ORE_DICT_REGISTRY.get(ids[i]);
                 return (PropertyList) blob.get(0);
@@ -123,14 +125,12 @@ public final class PropertyManager {
         }
 
         return null;
-
     }
 
     public static int getVolume(ItemStack stack) {
         Item item = stack.getItem();
 
         // First we check the item registry, then we fall back on the ore dict registry if we find no entry.
-
         if (ITEM_REGISTRY.containsKey(item)) {
             List<Object> blob = (List<Object>) ITEM_REGISTRY.get(item);
 
@@ -142,8 +142,8 @@ public final class PropertyManager {
         }
 
         int ids[] = OreDictionary.getOreIDs(stack);
-        for (int i = 0; i < ids.length; i++) {
 
+        for (int i = 0; i < ids.length; i++) {
             if (ORE_DICT_REGISTRY.containsKey(ids[i])) {
                 List<Object> blob = ORE_DICT_REGISTRY.get(ids[i]);
                 return (Integer) blob.get(1);
@@ -157,13 +157,13 @@ public final class PropertyManager {
         Item item = stack.getItem();
 
         // First we check the item registry, then we fall back on the ore dict registry if we find no entry.
-
         if (ITEM_REGISTRY.containsKey(item)) {
             return true;
         }
-        int ids[] = OreDictionary.getOreIDs(stack);
-        for (int i = 0; i < ids.length; i++) {
 
+        int ids[] = OreDictionary.getOreIDs(stack);
+
+        for (int i = 0; i < ids.length; i++) {
             if (ORE_DICT_REGISTRY.containsKey(ids[i])) {
                 return true;
             }

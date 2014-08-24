@@ -28,10 +28,11 @@ public class GuiCasting extends GuiContainer {
         this.drawTexturedModalRect(xPos, yPos, 0, 0, this.xSize, this.ySize);
 
         ContainerCasting table = (ContainerCasting) this.inventorySlots;
+
         for (int i = 0; i < 9; i++) {
             SlotCasting slot = (SlotCasting) table.getSlot(i);
-            if (slot.getCastState() != 0) {
 
+            if (slot.getCastState() != 0) {
                 int rowNum = i / 3;
                 int colNum = i % 3;
 

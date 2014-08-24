@@ -57,7 +57,6 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         super.writeToNBT(tag);
         tank.writeToNBT(tag);
         tag.setIntArray(CAST_KEY, this.castStates);
-
         NBTTagList nbttaglist = new NBTTagList();
 
         for (int i = 0; i < this.castingItems.length; ++i) {
@@ -80,8 +79,8 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         if (fillAmount > 0 && doFill && s != null && s.hasTagCompound()) {
             updateCastResult(s);
         }
-        return fillAmount;
 
+        return fillAmount;
     }
 
     @Override
@@ -89,30 +88,33 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         if (resource == null) {
             return null;
         }
-        ItemStack s = castingItems[9];
 
+        ItemStack s = castingItems[9];
         FluidStack returnStack = tank.drain(resource.amount, doDrain);
+
         if (returnStack != null && s != null && s.hasTagCompound()) {
             updateCastResult(s);
         }
-        return returnStack;
 
+        return returnStack;
     }
 
     @Override
     public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
         ItemStack s = castingItems[9];
-
         FluidStack returnStack = tank.drain(maxDrain, doDrain);
+
         if (returnStack != null && s != null && s.hasTagCompound()) {
             updateCastResult(s);
         }
+
         return returnStack;
     }
 
     private void updateCastResult(ItemStack result) {
         ItemStack temp;
         Set<ItemStack> items = new HashSet<ItemStack>();
+
         for (int i = 0; i < 9; i++) {
             temp = castingItems[i];
             if (temp != null) {
@@ -121,9 +123,7 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         }
 
         ItemStack[] materials = items.toArray(new ItemStack[items.size()]);
-
         castingItems[9] = ((ICastItem) result.getItem()).generateStackWithProperties(this.getAmalgamPropertyList(), materials, result.stackSize);
-
     }
 
     @Override
@@ -131,6 +131,7 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         if (fluid.getID() == Config.fluidAmalgam.getID()) {
             return true;
         }
+
         return false;
     }
 
@@ -141,6 +142,7 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         if (fluid.getID() == Config.fluidAmalgam.getID()) {
             canDrain = true;
         }
+
         return canDrain;
     }
 
@@ -164,12 +166,9 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
             }
 
             if (!this.worldObj.isRemote) {
-
                 ItemStack droppedBlob = new ItemStack(Config.amalgamBlob, 1);
-
                 ((ItemAmalgamBlob) Config.amalgamBlob).setProperties(droppedBlob, extraAmalgam.getProperties());
                 ((ItemAmalgamBlob) Config.amalgamBlob).setVolume(droppedBlob, extraAmalgam.amount);
-
                 EntityItem amalgEntity = new EntityItem(this.worldObj, xCoord, yCoord, zCoord, droppedBlob);
                 this.worldObj.spawnEntityInWorld(amalgEntity);
             }
@@ -231,6 +230,7 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         if (!this.worldObj.isRemote) {
             int amount = tank.getFluidAmount();
             PropertyList p = ((AmalgamStack) tank.getFluid()).getProperties();
+
             while (amount > 0) {
                 int dropAmount = Math.min(amount, Config.INGOT_AMOUNT);
                 amount -= dropAmount;
@@ -263,5 +263,31 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
 
     public PropertyList getAmalgamPropertyList() {
         return ((AmalgamStack) tank.getFluid()).getProperties();
+    }
+
+    public boolean decrStackSize(int slot, int decNum) {
+        if (castStates[slot] != 0) {
+            return true;
+        }
+
+        if (castingItems[slot] != null) {
+            ItemStack itemstack;
+
+            if (castingItems[slot].stackSize <= decNum) {
+                itemstack = castingItems[slot];
+                this.setStackInSlot(slot, null);
+                return false;
+            } else {
+                itemstack = castingItems[slot].splitStack(decNum);
+
+                if (castingItems[slot].stackSize == 0) {
+                    this.setStackInSlot(slot, itemstack);
+                }
+
+                return true;
+            }
+        } else {
+            return true;
+        }
     }
 }

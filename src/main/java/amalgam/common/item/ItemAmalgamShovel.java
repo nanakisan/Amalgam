@@ -19,12 +19,12 @@ public class ItemAmalgamShovel extends ItemAmalgamTool implements ICastItem {
 
     public ItemAmalgamShovel() {
         super(1.0F, ItemAmalgamTool.TOOL_CLASS_SHOVEL, USABLE_BLOCKS);
-        // this makes the item of the pickaxe toolClass
         this.setHarvestLevel(ItemAmalgamTool.TOOL_CLASS_SHOVEL, 0);
     }
 
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister iconRegister) {
-        this.itemIcon = iconRegister.registerIcon("amalgam:amalgamShovel");
+        this.itemIcon = iconRegister.registerIcon("amalgam:amalgamShovelBlade");
+        this.hilt = iconRegister.registerIcon("amalgam:amalgamShovelHilt");
     }
 }

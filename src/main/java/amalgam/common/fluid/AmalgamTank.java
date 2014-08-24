@@ -26,7 +26,9 @@ public class AmalgamTank implements IFluidTank {
         if (!nbt.hasKey(EMPTY_KEY)) {
             this.fluid = AmalgamStack.loadAmalgamStackFromNBT(nbt);
         }
+
         this.capacity = nbt.getInteger(CAPACITY_KEY);
+
         return this;
     }
 
@@ -36,7 +38,9 @@ public class AmalgamTank implements IFluidTank {
         } else {
             fluid.writeToNBT(nbt);
         }
+
         nbt.setInteger(CAPACITY_KEY, this.capacity);
+
         return nbt;
     }
 
@@ -45,6 +49,7 @@ public class AmalgamTank implements IFluidTank {
         if (fluid == null) {
             fluid = new AmalgamStack(0, null);
         }
+
         return fluid;
     }
 
@@ -53,6 +58,7 @@ public class AmalgamTank implements IFluidTank {
         if (fluid == null) {
             return 0;
         }
+
         return fluid.amount;
     }
 
@@ -63,11 +69,14 @@ public class AmalgamTank implements IFluidTank {
 
     public AmalgamStack setCapacity(int newCapacity) {
         this.capacity = newCapacity;
+
         if (this.capacity < this.getFluidAmount()) {
             int extra = this.fluid.amount - this.capacity;
             this.fluid.amount = this.capacity;
+
             return new AmalgamStack(extra, ((AmalgamStack) this.fluid).getProperties());
         }
+
         return null;
     }
 
@@ -78,24 +87,28 @@ public class AmalgamTank implements IFluidTank {
 
     @Override
     public int fill(FluidStack resource, boolean doFill) {
-
         if (resource == null) {
             return 0;
         }
+
         if (resource.fluidID != Config.fluidAmalgam.getID()) {
             return 0;
         }
+
         if (doFill) {
             if (fluid == null) {
                 fluid = new AmalgamStack((AmalgamStack) resource, Math.min(capacity, resource.amount));
+
                 if (tile != null) {
                     FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fluid, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord, this,
                             fluid.amount));
                 }
+
                 return fluid.amount;
             }
 
             int filled = capacity - fluid.amount;
+
             if (resource.amount < filled) {
                 fluid = AmalgamStack.combine(fluid, (AmalgamStack) resource);
                 filled = resource.amount;
@@ -107,11 +120,13 @@ public class AmalgamTank implements IFluidTank {
                 FluidEvent
                         .fireEvent(new FluidEvent.FluidFillingEvent(fluid, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord, this, filled));
             }
+
             return filled;
         } else {
             if (fluid == null) {
                 return Math.min(capacity, resource.amount);
             }
+
             return Math.min(capacity - fluid.amount, resource.amount);
         }
     }
@@ -129,23 +144,29 @@ public class AmalgamTank implements IFluidTank {
         }
 
         AmalgamStack stack = new AmalgamStack(fluid, drained);
+
         if (doDrain) {
             fluid.amount -= drained;
+
             if (fluid.amount <= 0) {
                 fluid = null;
             }
+
             if (tile != null) {
                 FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(fluid, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord, this,
                         drained));
             }
         }
+
         return stack;
     }
 
     public String toString() {
+
         if (fluid == null) {
             return "Empty!";
         }
+
         return "Capacity: " + this.getCapacity() + " Amount: " + this.getFluidAmount() + " Space Left: "
                 + (this.getCapacity() - this.getFluidAmount()) + " Properties: " + fluid.getProperties().toString();
     }

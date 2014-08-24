@@ -49,6 +49,7 @@ public class InventoryCasting implements IInventory, ISidedInventory {
     @Override
     public ItemStack getStackInSlot(int slot) {
         Slot s = table.getSlot(slot);
+
         if (s instanceof SlotCasting && ((SlotCasting) s).getCastState() == 1) {
             return null;
         }
@@ -59,6 +60,7 @@ public class InventoryCasting implements IInventory, ISidedInventory {
     @Override
     public ItemStack decrStackSize(int slot, int decNum) {
         Slot s = table.getSlot(slot);
+
         if (s instanceof SlotCasting && ((SlotCasting) s).getCastState() != 0) {
             return null;
         }
@@ -70,6 +72,7 @@ public class InventoryCasting implements IInventory, ISidedInventory {
                 itemstack = stackList[slot];
                 this.setInventorySlotContents(slot, null);
                 this.table.onCraftMatrixChanged(this);
+
                 return itemstack;
             } else {
                 itemstack = stackList[slot].splitStack(decNum);
@@ -79,12 +82,12 @@ public class InventoryCasting implements IInventory, ISidedInventory {
 
                 }
                 this.table.onCraftMatrixChanged(this);
+
                 return itemstack;
             }
         } else {
             return null;
         }
-
     }
 
     @Override
@@ -95,6 +98,7 @@ public class InventoryCasting implements IInventory, ISidedInventory {
     @Override
     public void setInventorySlotContents(int slot, ItemStack stack) {
         Slot s = table.getSlot(slot);
+
         if (s instanceof SlotCasting && ((SlotCasting) s).getCastState() != 0) {
             return;
         }
@@ -136,15 +140,18 @@ public class InventoryCasting implements IInventory, ISidedInventory {
     public boolean isItemValidForSlot(int slot, ItemStack stack) {
 
         Slot s = table.getSlot(slot);
+
         if (s instanceof SlotCasting && ((SlotCasting) s).getCastState() != 0) {
             return true;
         }
+
         return false;
     }
 
     public ItemStack getStackInRowAndColumn(int row, int col) {
         if (row >= 0 && col < this.inventoryWidth) {
             int slotNum = row + col * this.inventoryWidth;
+
             return stackList[slotNum];
         } else {
             return null;

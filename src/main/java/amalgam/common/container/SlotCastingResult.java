@@ -79,6 +79,5 @@ public class SlotCastingResult extends Slot {
                 consumeStackInSlot(itemstack1, i);
             }
         }
-
     }
 }

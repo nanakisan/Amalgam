@@ -10,7 +10,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import amalgam.common.Amalgam;
 import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
@@ -44,9 +46,6 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
         this.blockIcon = iconRegister.registerIcon("amalgam:castingTableSide");
     }
 
-    /**
-     * Gets the block's texture. Args: side, meta
-     */
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
@@ -55,21 +54,26 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
 
     private boolean interactWithAmalgamContainerItem(TileEntity te, IAmalgamContainerItem container, ItemStack stack, EntityPlayer player) {
         TileCastingTable crucible = (TileCastingTable) te;
+
         if (player.isSneaking()) {
             int drainAmount = Math.min(container.getEmptySpace(stack), Config.BASE_AMOUNT);
             AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, drainAmount, true);
-            if (fluidStack != null) { // see if we drained anything
+
+            if (fluidStack != null) {
                 int result = container.fill(stack, fluidStack, true);
                 fluidStack.amount -= result;
+
                 if (fluidStack.amount > 0) {
                     crucible.fill(ForgeDirection.UNKNOWN, fluidStack, true);
                 }
             }
         } else if (container.getFluid(stack).amount == 0) {
             AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, container.getEmptySpace(stack), true);
+
             if (fluidStack != null) {
                 int result = container.fill(stack, fluidStack, true);
                 fluidStack.amount -= result;
+
                 if (fluidStack.amount > 0) {
                     crucible.fill(ForgeDirection.UNKNOWN, fluidStack, true);
                 }
@@ -80,26 +84,63 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
             newStack.amount -= filled;
             container.fill(stack, newStack, true);
         }
+
         return true;
+    }
+
+    private boolean onCastPickup(TileCastingTable table, EntityPlayer player) {
+        table.setTankFluid(null);
+        boolean matsRemain = true;
+
+        for (int slot = 0; slot < 9; slot++) {
+            ItemStack stack = table.getStackInSlot(slot);
+
+            if (stack != null) {
+                matsRemain = table.decrStackSize(slot, 1);
+
+                if (stack.getItem().hasContainerItem(stack)) {
+                    ItemStack itemstack2 = stack.getItem().getContainerItem(stack);
+
+                    if (itemstack2 != null && itemstack2.isItemStackDamageable() && itemstack2.getItemDamage() > itemstack2.getMaxDamage()) {
+                        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, itemstack2));
+                        continue;
+                    }
+
+                    if (!stack.getItem().doesContainerItemLeaveCraftingGrid(stack) || !player.inventory.addItemStackToInventory(itemstack2)) {
+                        if (table.getStackInSlot(slot) == null) {
+                            table.setStackInSlot(slot, itemstack2);
+                        } else {
+                            player.dropPlayerItemWithRandomChoice(itemstack2, false);
+                        }
+                    }
+                }
+            }
+        }
+
+        return matsRemain;
     }
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-
         ItemStack stack = player.inventory.getCurrentItem();
-
         TileCastingTable table = (TileCastingTable) world.getTileEntity(x, y, z);
+
         if (stack == null) {
             if (player.isSneaking()) {
                 ItemStack resultStack = table.getStackInSlot(9);
+
                 if (resultStack != null && table.tankIsFull()) {
-                    table.setTankFluid(null);
+                    if (!onCastPickup(table, player)) {
+                        table.setStackInSlot(9, null);
+                    }
                     player.setCurrentItemOrArmor(0, resultStack);
                 }
 
                 return false;
             }
+
             player.openGui(Amalgam.instance, Config.CASTING_GUI_ID, world, x, y, z);
+
             return true;
         }
 
@@ -119,9 +160,11 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int metaData) {
         TileCastingTable table = (TileCastingTable) world.getTileEntity(x, y, z);
+
         if (table != null) {
             table.emptyTank();
         }
+
         super.breakBlock(world, x, y, z, block, metaData);
         world.removeTileEntity(x, y, z);
     }
@@ -140,26 +183,15 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
         return Config.castingTableRID;
     }
 
-    /**
-     * Is this block (a) opaque and (b) a full 1m cube? This determines whether or not to render the shared face of two
-     * adjacent blocks and also whether the player can attach torches, redstone wire, etc to this block.
-     */
     public boolean isOpaqueCube() {
         return false;
     }
 
-    /**
-     * If this block doesn't render as an ordinary block it will return False (examples: signs, buttons, stairs, etc)
-     */
     public boolean renderAsNormalBlock() {
         return false;
     }
 
-    /**
-     * Sets the block's bounds for rendering it as an item
-     */
     public void setBlockBoundsForItemRender() {
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
     }
-
 }

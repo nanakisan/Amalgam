@@ -19,11 +19,11 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public Object getClientGuiElement(int guiID, EntityPlayer player, World world, int x, int y, int z) {
-
         if (guiID == Config.CASTING_GUI_ID) {
             TileEntity tileEntity = world.getTileEntity(x, y, z);
             return new GuiCasting(new ContainerCasting(player.inventory, (TileCastingTable) tileEntity));
         }
+
         return null;
     }
 
@@ -43,6 +43,5 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileCastingTable.class, castingTableRenderer);
         RenderingRegistry.registerBlockHandler(crucibleRenderer);
         RenderingRegistry.registerBlockHandler(castingTableRenderer);
-
     }
 }

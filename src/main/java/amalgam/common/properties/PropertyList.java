@@ -16,6 +16,7 @@ public class PropertyList {
 
     public PropertyList(ItemStack stack) {
         PropertyList temp = PropertyManager.getProperties(stack);
+
         if (temp != null) {
             for (Property a : temp.getProperties()) {
                 add(a, temp.getValue(a));
@@ -38,19 +39,23 @@ public class PropertyList {
 
     public PropertyList add(Property a, float value) {
         this.properties.put(a, value);
+
         return this;
     }
 
     public PropertyList remove(Property a) {
         this.properties.remove(a);
+
         return this;
     }
 
     public void readFromNBT(NBTTagCompound nbtComp) {
         this.properties.clear();
         NBTTagList list = nbtComp.getTagList("AmalgamProperties", 10);
+
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound attr = list.getCompoundTagAt(i);
+
             if (attr.hasKey("name")) {
                 add(Property.getProperty(attr.getString("name")), attr.getFloat("value"));
             }
@@ -60,6 +65,7 @@ public class PropertyList {
     public void writeToNBT(NBTTagCompound nbtComp) {
         NBTTagList list = new NBTTagList();
         nbtComp.setTag("AmalgamProperties", list);
+
         for (Property attr : getProperties()) {
             if (attr != null) {
                 NBTTagCompound attrComp = new NBTTagCompound();
@@ -72,11 +78,13 @@ public class PropertyList {
 
     public String toString() {
         StringBuffer returnString = new StringBuffer();
+
         for (Property attr : getProperties()) {
             if (attr != null) {
                 returnString.append(attr.getName()).append(": ").append(this.getValue(attr)).append('\n');
             }
         }
+
         return returnString.toString();
     }
 }

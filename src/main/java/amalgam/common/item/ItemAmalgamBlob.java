@@ -73,6 +73,7 @@ public class ItemAmalgamBlob extends Item implements IAmalgableItem {
                 return (int) PropertyManager.COLOR.getDefaultValue();
             }
         }
+
         return -1;
     }
 }

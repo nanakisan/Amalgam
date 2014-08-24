@@ -30,7 +30,6 @@ public class CrucibleRenderer extends TileEntitySpecialRenderer implements ISimp
         GL11.glTranslated(x, y + height, z + 1.0D);
         GL11.glRotatef(90.0F, -1.0F, 0.0F, 0.0F);
         PropertyList p = ((TileStoneCrucible) te).getAmalgamProperties();
-
         Color color;
 
         if (Config.coloredAmalgam) {
@@ -40,8 +39,8 @@ public class CrucibleRenderer extends TileEntitySpecialRenderer implements ISimp
         }
 
         GL11.glColor3f(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F);
-        if (height > .301) {
 
+        if (height > .301) {
             IIcon iicon = ((BlockStoneCrucible) Config.stoneCrucible).solidAmalgam;
 
             if (((TileStoneCrucible) te).isHot()) {
@@ -49,7 +48,6 @@ public class CrucibleRenderer extends TileEntitySpecialRenderer implements ISimp
             }
 
             Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
-
             Tessellator tessellator = Tessellator.instance;
 
             float f1 = iicon.getMaxU();
@@ -142,5 +140,4 @@ public class CrucibleRenderer extends TileEntitySpecialRenderer implements ISimp
     public int getRenderId() {
         return Config.crucibleRID;
     }
-
 }

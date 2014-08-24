@@ -33,6 +33,7 @@ public class ShapelessCastingRecipe implements ICastingRecipe {
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
                 ItemStack itemstack = inv.getStackInRowAndColumn(j, i);
+
                 if (itemstack == null && inv.getCastState(j + i * 3) != 0) {
                     itemstack = new ItemStack(Blocks.fire);
                 }
@@ -58,6 +59,7 @@ public class ShapelessCastingRecipe implements ICastingRecipe {
                 }
             }
         }
+
         return arraylist.isEmpty();
     }
 
@@ -72,8 +74,8 @@ public class ShapelessCastingRecipe implements ICastingRecipe {
     @Override
     public ItemStack getCastingResult(InventoryCasting inv, PropertyList list) {
         ItemStack temp[] = new ItemStack[recipeItems.size()];
-
         int currentIndex = 0;
+
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack s = inv.getStackInSlot(i);
             if (s != null) {
@@ -81,7 +83,7 @@ public class ShapelessCastingRecipe implements ICastingRecipe {
                 currentIndex++;
             }
         }
+
         return this.recipeOutput.generateStackWithProperties(list, temp, this.amount);
     }
-
 }

@@ -40,8 +40,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class Config {
 
-    // FIXME waila integration!
-
     public static Config        instance                   = new Config();
 
     public static Configuration configFile;
@@ -181,20 +179,19 @@ public class Config {
             goldProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.GOLD);
             diamondProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.EMERALD);
         } else {
-            // TODO choose some properties for the vanilla metals
-            ironProp = new PropertyList().add(PropertyManager.DENSITY, 10).add(PropertyManager.HARDNESS, 10).add(PropertyManager.LUSTER, 10)
-                    .add(PropertyManager.MALIABILITY, 10);
+            ironProp = new PropertyList().add(PropertyManager.DENSITY, 2.5F).add(PropertyManager.HARDNESS, 2).add(PropertyManager.LUSTER, 2.0F)
+                    .add(PropertyManager.MALIABILITY, 3.5F);
 
-            goldProp = new PropertyList().add(PropertyManager.DENSITY, 10).add(PropertyManager.HARDNESS, 10).add(PropertyManager.LUSTER, 10)
-                    .add(PropertyManager.MALIABILITY, 10);
+            goldProp = new PropertyList().add(PropertyManager.DENSITY, 1.0F).add(PropertyManager.HARDNESS, 0.75F).add(PropertyManager.LUSTER, 5.0F)
+                    .add(PropertyManager.MALIABILITY, 1.5F);
 
-            diamondProp = new PropertyList().add(PropertyManager.DENSITY, 10).add(PropertyManager.HARDNESS, 10).add(PropertyManager.LUSTER, 10)
-                    .add(PropertyManager.MALIABILITY, 10);
+            diamondProp = new PropertyList().add(PropertyManager.DENSITY, 5.0F).add(PropertyManager.HARDNESS, 3.25F)
+                    .add(PropertyManager.LUSTER, 1.0F).add(PropertyManager.MALIABILITY, 0.5F);
         }
 
-        ironProp.add(PropertyManager.COLOR, 14211288);
-        goldProp.add(PropertyManager.COLOR, 16776960);
-        diamondProp.add(PropertyManager.COLOR, 9232630);
+        ironProp.add(PropertyManager.COLOR, 0xFFFFFF);
+        goldProp.add(PropertyManager.COLOR, 0xEAEE57);
+        diamondProp.add(PropertyManager.COLOR, 0x33EBCB);
 
         PropertyManager.registerOreDictProperties("ingotIron", ironProp, Config.INGOT_AMOUNT);
         PropertyManager.registerOreDictProperties("ingotGold", goldProp, Config.INGOT_AMOUNT);
@@ -208,7 +205,6 @@ public class Config {
     }
 
     public static void registerRecipes() {
-        // TODO register a block casting recipe and see if it renders correctly
         CastingManager.addShapelessRecipe((ICastItem) amalgamSword, 1, "Amalgam", Blocks.stone);
         CastingManager.addRecipe((ICastItem) amalgamSword, 1, "a", "a", "s", 's', Items.stick);
         CastingManager.addRecipe((ICastItem) amalgamPick, 1, "aaa", " s ", " s ", 's', Items.stick);
@@ -223,8 +219,8 @@ public class Config {
         CastingManager.addRecipe((ICastItem) amalgamLegs, 1, "aaa", "a a", "a a");
         CastingManager.addRecipe((ICastItem) amalgamBoots, 1, "a a", "a a");
 
-        GameRegistry.addRecipe(new ItemStack(stoneTongs), " ss", " s ", "ss ", 's', Blocks.cobblestone);
+        GameRegistry.addRecipe(new ItemStack(stoneTongs), "s s", " s ", " s ", 's', Blocks.cobblestone);
         GameRegistry.addRecipe(new ItemStack(stoneCrucible), "s s", "s s", "sss", 's', Blocks.cobblestone);
-        GameRegistry.addRecipe(new ItemStack(castingTable), "sss", " s ", "sss", 's', Blocks.cobblestone);
+        GameRegistry.addRecipe(new ItemStack(castingTable), "sss", "sws", "sss", 's', Blocks.cobblestone, 'w', Blocks.crafting_table);
     }
 }

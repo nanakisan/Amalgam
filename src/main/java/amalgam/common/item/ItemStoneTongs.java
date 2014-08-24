@@ -12,6 +12,7 @@ import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.IAmalgamContainerItem;
 import amalgam.common.properties.PropertyList;
+import amalgam.common.properties.PropertyManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -21,8 +22,8 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
     private static final String AMOUNT_KEY  = "Amount";
     public static final int     CAPACITY    = Config.INGOT_AMOUNT;
 
-    private IIcon               fullIcon;
-    private IIcon               emptyIcon;
+    private IIcon               amalgamOverlay;
+    private IIcon               emptyOverlay;
 
     public ItemStoneTongs() {
         super();
@@ -30,22 +31,49 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
         this.maxStackSize = 1;
     }
 
-    // FIXME multiple rendering passes to render colored amalgam
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister iconRegister) {
-        this.emptyIcon = iconRegister.registerIcon("amalgam:stoneTongs");
-        this.fullIcon = iconRegister.registerIcon("amalgam:stoneTongsFull");
-
-        this.itemIcon = this.emptyIcon;
-
+        this.itemIcon = iconRegister.registerIcon("amalgam:stoneTongs");
+        this.amalgamOverlay = iconRegister.registerIcon("amalgam:stoneTongsOverlay");
+        this.emptyOverlay = iconRegister.registerIcon("amalgam:stoneTongsEmpty");
     }
 
     @Override
     public IIcon getIcon(ItemStack stack, int pass) {
-        if (this.getFluidAmount(stack) > 0) {
-            return fullIcon;
+        if (pass == 0) {
+            return itemIcon;
         }
-        return emptyIcon;
+        if (this.getFluidAmount(stack) > 0) {
+            return amalgamOverlay;
+        }
+
+        return emptyOverlay;
+    }
+
+    @Override
+    public int getRenderPasses(int metadata) {
+        return 2;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getColorFromItemStack(ItemStack stack, int renderPass) {
+        if (renderPass == 1) {
+            if (stack.getTagCompound() != null) {
+                if (Config.coloredAmalgam) {
+                    return (int) this.getFluid(stack).getProperties().getValue(PropertyManager.COLOR);
+                } else {
+                    return (int) PropertyManager.COLOR.getDefaultValue();
+                }
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean requiresMultipleRenderPasses() {
+        return true;
     }
 
     public int getFluidAmount(ItemStack container) {
@@ -102,6 +130,7 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
             container.stackTagCompound.setTag(AMALGAM_KEY, amalgamTag);
             return resource.amount;
         }
+
         NBTTagCompound amalgamTag = container.stackTagCompound.getCompoundTag(AMALGAM_KEY);
         AmalgamStack stack = AmalgamStack.loadAmalgamStackFromNBT(amalgamTag);
 
@@ -110,6 +139,7 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
         }
 
         int filled = CAPACITY - stack.amount;
+
         if (resource.amount < filled) {
             stack = AmalgamStack.combine(stack, (AmalgamStack) resource);
             filled = resource.amount;
@@ -142,7 +172,6 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
 
             NBTTagCompound amalgamTag = container.stackTagCompound.getCompoundTag(AMALGAM_KEY);
             amalgamTag.setInteger(AMOUNT_KEY, amalgamTag.getInteger(AMOUNT_KEY) - maxDrain);
-
             container.stackTagCompound.setTag(AMALGAM_KEY, amalgamTag);
         }
 
@@ -172,7 +201,6 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
         }
 
         ItemStack droppedBlob = new ItemStack(Config.amalgamBlob, 1);
-
         ((ItemAmalgamBlob) Config.amalgamBlob).setProperties(droppedBlob, droppedAmalgam.getProperties());
         ((ItemAmalgamBlob) Config.amalgamBlob).setVolume(droppedBlob, droppedAmalgam.amount);
 
@@ -194,4 +222,5 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
     public double getDurabilityForDisplay(ItemStack stack) {
         return 1.0 - (float) this.getFluidAmount(stack) / (float) CAPACITY;
     }
+
 }

@@ -22,10 +22,12 @@ public class SlotCasting extends Slot {
 
     public int toggleCastState() {
         castState = castState + 1;
+
         if (castState > MAX_STATE) {
             castState = 0;
             hasAmalgam = false;
         }
+
         return castState;
     }
 

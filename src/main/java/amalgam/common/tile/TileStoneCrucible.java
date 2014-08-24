@@ -63,6 +63,7 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler {
         if (resource == null) {
             return null;
         }
+
         return tank.drain(resource.amount, doDrain);
     }
 
@@ -76,6 +77,7 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler {
         if (fluid.getID() == Config.fluidAmalgam.getID()) {
             return true;
         }
+
         return false;
     }
 
@@ -97,6 +99,7 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler {
         if (!this.worldObj.isRemote) {
             int amount = tank.getFluidAmount();
             PropertyList p = ((AmalgamStack) tank.getFluid()).getProperties();
+
             while (amount > 0) {
                 int dropAmount = Math.min(amount, Config.INGOT_AMOUNT);
                 amount -= dropAmount;
@@ -117,8 +120,8 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler {
 
         if (ticksSinceLastUpdate > UPDATE_PERIOD) {
             ticksSinceLastUpdate = 0;
-
             Block test = this.worldObj.getBlock(this.xCoord, this.yCoord - 1, this.zCoord);
+
             if (TileStoneCrucible.heatSources.contains(test)) {
                 this.hasHeat = true;
             } else {
@@ -141,7 +144,6 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler {
 
     public float getFluidHeight() {
         return 0.3F + 0.7F * ((float) this.tank.getFluidAmount() / (float) this.tank.getCapacity());
-
     }
 
     @Override

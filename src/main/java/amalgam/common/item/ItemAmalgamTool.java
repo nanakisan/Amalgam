@@ -12,8 +12,10 @@ import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IIcon;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.EnumHelper;
+import amalgam.common.Config;
 import amalgam.common.casting.ICastItem;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
@@ -42,20 +44,12 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
     private final String            toolClass;
     private final float             damageMod;
 
+    protected IIcon                 hilt;
+
     protected ItemAmalgamTool(float damageMod, String toolClass, Set<Block> blocks) {
         super(damageMod, toolMatAmalgam, blocks);
         this.toolClass = toolClass;
         this.damageMod = damageMod;
-    }
-
-    // FIXME in order to have only the head of tools change color we will need to do multiple rendering passes
-    @Override
-    @SideOnly(Side.CLIENT)
-    public int getColorFromItemStack(ItemStack stack, int pass) {
-        if (stack.getTagCompound() != null) {
-            return stack.getTagCompound().getInteger(COLOR_TAG);
-        }
-        return -1;
     }
 
     @Override
@@ -73,6 +67,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         if (ForgeHooks.isToolEffective(stack, block, meta)) {
             return getEfficiency(stack);
         }
+
         return super.getDigSpeed(stack, block, meta);
     }
 
@@ -82,6 +77,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
             if (stack.getTagCompound() == null) {
                 return 0;
             }
+
             return stack.getTagCompound().getInteger(HARVEST_TAG);
         } else {
             return super.getHarvestLevel(stack, toolClass);
@@ -93,6 +89,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         if (stack.getTagCompound() == null) {
             return 1;
         }
+
         return stack.getTagCompound().getInteger(DURABILITY_TAG);
     }
 
@@ -101,6 +98,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         if (stack.getTagCompound() == null) {
             return 0;
         }
+
         return stack.getTagCompound().getInteger(ENCHANTABILITY_TAG);
     }
 
@@ -108,6 +106,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         if (stack.getTagCompound() == null) {
             return 0.0F;
         }
+
         return stack.getTagCompound().getInteger(ItemAmalgamTool.DAMAGE_TAG);
     }
 
@@ -115,6 +114,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         if (stack.getTagCompound() == null) {
             return 1.0F;
         }
+
         return stack.getTagCompound().getInteger(ItemAmalgamTool.EFFICIENCY_TAG);
     }
 
@@ -126,7 +126,6 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer player, List dataList, boolean b) {
-
         dataList.add((getMaxDamage(stack) - getDamage(stack)) + "/" + getMaxDamage(stack));
         dataList.add(EnumChatFormatting.DARK_GREEN + "+" + getItemEnchantability(stack) + " Enchantability");
         dataList.add(EnumChatFormatting.DARK_GREEN + "+" + (int) getEfficiency(stack) + " Efficiency");
@@ -145,8 +144,8 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
             return returnStack;
         }
 
-        float luster = pList.getValue(PropertyManager.LUSTER);
-        float density = pList.getValue(PropertyManager.DENSITY);
+        float luster = pList.getValue(PropertyManager.LUSTER) * 5.0F;
+        float density = pList.getValue(PropertyManager.DENSITY) * 5.0F;
         float hardness = pList.getValue(PropertyManager.HARDNESS);
         float maliability = pList.getValue(PropertyManager.MALIABILITY);
         int color = (int) pList.getValue(PropertyManager.COLOR);
@@ -157,9 +156,47 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         int maxDurability = (int) ((density * density) * (hardness + 1));
         toolTag.setInteger(DURABILITY_TAG, maxDurability);
         toolTag.setFloat(DAMAGE_TAG, maliability + this.damageMod);
-
         toolTag.setInteger(COLOR_TAG, color);
         returnStack.setTagCompound(toolTag);
+
         return returnStack;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean requiresMultipleRenderPasses() {
+        return true;
+    }
+
+    @Override
+    public int getRenderPasses(int metadata) {
+        return 2;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getColorFromItemStack(ItemStack stack, int renderPass) {
+        if (renderPass == 1) {
+            if (!Config.coloredAmalgam) {
+                return (int) PropertyManager.COLOR.getDefaultValue();
+            }
+
+            if (stack.hasTagCompound() && stack.stackTagCompound.hasKey("color")) {
+                return stack.stackTagCompound.getInteger("color");
+            }
+
+            return 0xFFFFFF;
+        }
+
+        return -1;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public IIcon getIcon(ItemStack stack, int renderPass) {
+        if (renderPass == 1) {
+            return this.itemIcon;
+        }
+
+        return this.hilt;
     }
 }

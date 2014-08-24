@@ -20,12 +20,12 @@ public class ItemAmalgamPick extends ItemAmalgamTool {
 
     public ItemAmalgamPick() {
         super(2.0F, ItemAmalgamTool.TOOL_CLASS_PICK, USABLE_BLOCKS);
-        // this makes the item of the pickaxe toolClass
         this.setHarvestLevel(ItemAmalgamTool.TOOL_CLASS_PICK, 0);
     }
 
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister iconRegister) {
-        this.itemIcon = iconRegister.registerIcon("amalgam:amalgamPick");
+        this.itemIcon = iconRegister.registerIcon("amalgam:amalgamPickBlade");
+        this.hilt = iconRegister.registerIcon("amalgam:amalgamPickHilt");
     }
 }

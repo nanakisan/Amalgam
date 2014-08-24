@@ -16,6 +16,7 @@ public class AmalgamStack extends FluidStack {
     public AmalgamStack(int amount, PropertyList pList) {
         super(Config.fluidAmalgam.getID(), amount, null);
         this.tag = new NBTTagCompound();
+
         if (pList == null) {
             new PropertyList().writeToNBT(this.tag);
         } else {
@@ -32,10 +33,12 @@ public class AmalgamStack extends FluidStack {
         PropertyList aList = stackA.getProperties();
         PropertyList bList = stackB.getProperties();
         PropertyList newList = new PropertyList();
+
         for (Property p : allProperties) {
             float aValue = aList.getValue(p);
             float bValue = bList.getValue(p);
             float result = 0;
+
             switch (p.getComboType()) {
                 case AVERAGE:
                     result = (aValue * stackA.amount + bValue * stackB.amount) / (stackA.amount + stackB.amount);
@@ -82,7 +85,6 @@ public class AmalgamStack extends FluidStack {
             }
 
             newList.add(p, result);
-
         }
 
         return new AmalgamStack(stackA.amount + stackB.amount, newList);
@@ -91,6 +93,7 @@ public class AmalgamStack extends FluidStack {
     public PropertyList getProperties() {
         PropertyList pList = new PropertyList();
         pList.readFromNBT(this.tag);
+
         return pList;
     }
 
@@ -98,7 +101,7 @@ public class AmalgamStack extends FluidStack {
         int amount = nbtComp.getInteger(AMOUNT_KEY);
         PropertyList pList = new PropertyList();
         pList.readFromNBT(nbtComp.getCompoundTag(PROPERTY_KEY));
+
         return new AmalgamStack(amount, pList);
     }
-
 }

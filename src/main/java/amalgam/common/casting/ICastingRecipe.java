@@ -14,4 +14,5 @@ public interface ICastingRecipe {
     int getRecipeSize();
 
     ItemStack getRecipeOutput();
+
 }

@@ -100,7 +100,6 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
         renderer.setRenderBoundsFromBlock(block);
         renderer.renderStandardBlock(block, x, y, z);
         return true;
-
     }
 
     @Override
@@ -115,14 +114,13 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
 
     @Override
     public void renderTileEntityAt(TileEntity te, double x, double y, double z, float f) {
-
         if (!Config.advancedRendering) {
             return;
         }
 
         TileCastingTable table = (TileCastingTable) te;
-
         ItemStack stack = table.getStackInSlot(9);
+
         if (stack == null) {
             return;
         }
@@ -146,11 +144,9 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
         }
 
         if (Block.getBlockFromItem(stack.getItem()) == Blocks.air) {
-
             EntityItem itemEntity = new EntityItem(te.getWorldObj(), te.xCoord, te.yCoord + 1.2, te.zCoord, stack);
             itemEntity.hoverStart = 0.0F;
             RenderManager.instance.renderEntityWithPosYaw(itemEntity, 0.0, 0.0, 0.0, 0.0F, 0.0F);
-
         } else {
             GL11.glTranslated(0.0F, 0.5F, 0.0F);
             Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
@@ -159,7 +155,5 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
 
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopMatrix();
-
     }
-
 }

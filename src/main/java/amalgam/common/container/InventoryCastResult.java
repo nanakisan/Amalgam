@@ -34,9 +34,9 @@ public class InventoryCastResult implements IInventory {
         if (this.stackResult[0] == null) {
             return null;
         } else {
-
             ItemStack itemstack = this.stackResult[0];
             this.stackResult[0] = null;
+
             return itemstack;
         }
     }
@@ -45,9 +45,9 @@ public class InventoryCastResult implements IInventory {
         if (this.stackResult[0] == null) {
             return null;
         } else {
-
             ItemStack itemstack = this.stackResult[0];
             this.stackResult[0] = null;
+
             return itemstack;
         }
     }

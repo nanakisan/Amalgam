@@ -19,12 +19,12 @@ public class ItemAmalgamAxe extends ItemAmalgamTool implements ICastItem {
 
     public ItemAmalgamAxe() {
         super(3.0F, ItemAmalgamTool.TOOL_CLASS_AXE, USABLE_BLOCKS);
-        // this makes the item of the pickaxe toolClass
         this.setHarvestLevel(ItemAmalgamTool.TOOL_CLASS_AXE, 0);
     }
 
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister iconRegister) {
-        this.itemIcon = iconRegister.registerIcon("amalgam:amalgamAxe");
+        this.itemIcon = iconRegister.registerIcon("amalgam:amalgamAxeBlade");
+        this.hilt = iconRegister.registerIcon("amalgam:amalgamAxeHilt");
     }
 }

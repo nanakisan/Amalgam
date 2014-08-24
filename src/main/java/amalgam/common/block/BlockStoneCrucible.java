@@ -44,9 +44,6 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
         this.setCreativeTab(Config.tab);
     }
 
-    /**
-     * Gets the block's texture. Args: side, meta
-     */
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
@@ -73,13 +70,10 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
         if (isSolid) {
             return ((BlockStoneCrucible) Config.stoneCrucible).solidAmalgam;
         }
+
         return ((BlockStoneCrucible) Config.stoneCrucible).liquidAmalgam;
     }
 
-    /**
-     * Adds all intersecting collision boxes to a list. (Be sure to only add boxes to the list if they intersect the
-     * mask.) Parameters: World, X, Y, Z, mask, list, colliding entity
-     */
     @Override
     public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB aabb, List list, Entity entity) {
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3125F, 1.0F);
@@ -97,58 +91,52 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
         this.setBlockBoundsForItemRender();
     }
 
-    /**
-     * Sets the block's bounds for rendering it as an item
-     */
     public void setBlockBoundsForItemRender() {
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
     }
 
-    /**
-     * Triggered whenever an entity collides with this block (enters into the block). Args: world, x, y, z, entity
-     */
     public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
         TileEntity te = world.getTileEntity(x, y, z);
+
         if (te instanceof TileStoneCrucible) {
             TileStoneCrucible cruc = (TileStoneCrucible) te;
+
             if (cruc.isHot() && cruc.getFluidHeight() > .301) {
                 entity.setFire(3);
             }
         }
     }
 
-    /**
-     * Is this block (a) opaque and (b) a full 1m cube? This determines whether or not to render the shared face of two
-     * adjacent blocks and also whether the player can attach torches, redstone wire, etc to this block.
-     */
     public boolean isOpaqueCube() {
         return false;
     }
 
-    /**
-     * If this block doesn't render as an ordinary block it will return False (examples: signs, buttons, stairs, etc)
-     */
     public boolean renderAsNormalBlock() {
         return false;
     }
 
     private boolean interactWithAmalgamContainerItem(TileEntity te, IAmalgamContainerItem container, ItemStack stack, EntityPlayer player) {
         TileStoneCrucible crucible = (TileStoneCrucible) te;
+
         if (player.isSneaking()) {
             int drainAmount = Math.min(container.getEmptySpace(stack), Config.BASE_AMOUNT);
             AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, drainAmount, true);
-            if (fluidStack != null) { // see if we drained anything
+
+            if (fluidStack != null) {
                 int result = container.fill(stack, fluidStack, true);
                 fluidStack.amount -= result;
+
                 if (fluidStack.amount > 0) {
                     crucible.fill(ForgeDirection.UNKNOWN, fluidStack, true);
                 }
             }
         } else if (container.getFluid(stack).amount == 0) {
             AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, container.getEmptySpace(stack), true);
+
             if (fluidStack != null) {
                 int result = container.fill(stack, fluidStack, true);
                 fluidStack.amount -= result;
+
                 if (fluidStack.amount > 0) {
                     crucible.fill(ForgeDirection.UNKNOWN, fluidStack, true);
                 }
@@ -159,32 +147,36 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
             newStack.amount -= filled;
             container.fill(stack, newStack, true);
         }
+
         return true;
     }
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-
         ItemStack stack = player.inventory.getCurrentItem();
+
         if (stack == null) {
             return true;
         }
 
         TileStoneCrucible crucible = (TileStoneCrucible) world.getTileEntity(x, y, z);
 
-        if (!crucible.isHot()) {
-            return false;
-        }
-
         if (stack.getItem() instanceof IAmalgamContainerItem) {
+            if (!crucible.isHot()) {
+                return true;
+            }
+
             return interactWithAmalgamContainerItem(crucible, (IAmalgamContainerItem) stack.getItem(), stack, player);
         }
 
         if (PropertyManager.itemIsAmalgable(stack)) {
+            if (!crucible.isHot()) {
+                return true;
+            }
 
             int amount = PropertyManager.getVolume(stack);
-            if (amount > 0 && amount < crucible.getEmptySpace()) {
 
+            if (amount > 0 && amount < crucible.getEmptySpace()) {
                 PropertyList amalgProperties = PropertyManager.getProperties(stack);
                 AmalgamStack amalg = new AmalgamStack(amount, amalgProperties);
 
@@ -197,21 +189,20 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
 
                 return true;
             } else {
-                return false;
+                return true;
             }
-
-        } else {
-            return false;
         }
+        return false;
     }
 
     @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int metaData) {// or
-                                                                                         // side?
+    public void breakBlock(World world, int x, int y, int z, Block block, int metaData) {
         TileStoneCrucible crucible = (TileStoneCrucible) world.getTileEntity(x, y, z);
+
         if (crucible != null) {
             crucible.emptyTank();
         }
+
         super.breakBlock(world, x, y, z, block, metaData);
         world.removeTileEntity(x, y, z);
     }
@@ -221,6 +212,7 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
         super.onBlockEventReceived(world, x, y, z, side, metaData);
 
         TileEntity tileentity = world.getTileEntity(x, y, z);
+
         return tileentity == null ? false : tileentity.receiveClientEvent(side, metaData);
     }
 

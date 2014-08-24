@@ -14,8 +14,6 @@ import amalgam.common.tile.TileCastingTable;
 
 public class ContainerCasting extends Container {
 
-    // FIXME Armor recipe is not being found immediately after armor is picked up from the cast result slot.
-
     public TileCastingTable    castingTable;
     public InventoryCasting    castingMatrix;
     public InventoryCastResult castResult;
@@ -48,6 +46,7 @@ public class ContainerCasting extends Container {
                 castingMatrix.setInventorySlotContents(slotNum, castingTable.getStackInSlot(slotNum));
             }
         }
+
         this.addSlotToContainer(new SlotCastingResult(inv.player, castingMatrix, castResult, 0, 124, 35));
 
         for (rowNum = 0; rowNum < 3; ++rowNum) {
@@ -67,8 +66,10 @@ public class ContainerCasting extends Container {
     public final void updateAmalgamDistribution() {
         TileCastingTable te = this.castingTable;
         int amount = te.getTankAmount();
+
         for (int slotNum = 0; slotNum < this.inventorySlots.size(); slotNum++) {
             Slot s = this.getSlot(slotNum);
+
             if (s instanceof SlotCasting) {
                 if (te.getCastState(slotNum) == 1 && amount > 0) {
                     ((SlotCasting) s).doesHaveAmalgam(true);
@@ -135,6 +136,7 @@ public class ContainerCasting extends Container {
         super.onCraftMatrixChanged(inv);
         this.updateAmalgamDistribution();
         ICastingRecipe recipe = CastingManager.findMatchingRecipe(castingMatrix, castingTable.getWorldObj());
+
         if (recipe == null) {
             castResult.setInventorySlotContents(0, null);
             return;
@@ -153,6 +155,7 @@ public class ContainerCasting extends Container {
     public ItemStack slotClick(int slotNum, int ctrNum, int shiftNum, EntityPlayer player) {
         if (slotNum >= 0 && slotNum < this.inventorySlots.size()) {
             Slot slot = this.getSlot(slotNum);
+
             if (slot instanceof SlotCasting) {
                 if (!slot.getHasStack() && player.inventory.getItemStack() == null) {
                     int newState = ((SlotCasting) slot).toggleCastState();

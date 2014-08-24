@@ -25,9 +25,13 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
 
     public static final String ABSORB_TAG = "absorb max";
     public IIcon               iconHelmet;
+    public IIcon               iconHelmetOverlay;
     public IIcon               iconChest;
+    public IIcon               iconChestOverlay;
     public IIcon               iconLegs;
+    public IIcon               iconLegsOverlay;
     public IIcon               iconBoots;
+    public IIcon               iconBootsOverlay;
 
     public ItemAmalgamArmor(ArmorMaterial mat, int renderIndex, int armorType) {
         super(mat, renderIndex, armorType);
@@ -37,14 +41,33 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
     @Override
     public void registerIcons(IIconRegister iconRegister) {
         this.iconHelmet = iconRegister.registerIcon("amalgam:amalgamHelmet");
-        this.iconChest = iconRegister.registerIcon("amalgam:amalgamChest");
-        this.iconLegs = iconRegister.registerIcon("amalgam:amalgamLegs");
+        this.iconHelmetOverlay = iconRegister.registerIcon("amalgam:amalgamHelmetOverlay");
+        this.iconChest = iconRegister.registerIcon("amalgam:amalgamChestplate");
+        this.iconChestOverlay = iconRegister.registerIcon("amalgam:amalgamChestplateOverlay");
+        this.iconLegs = iconRegister.registerIcon("amalgam:amalgamLeggings");
+        this.iconLegsOverlay = iconRegister.registerIcon("amalgam:amalgamLeggingsOverlay");
         this.iconBoots = iconRegister.registerIcon("amalgam:amalgamBoots");
+        this.iconBootsOverlay = iconRegister.registerIcon("amalgam:amalgamBootsOverlay");
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(ItemStack stack, int pass) {
+        if (pass == 1) {
+            switch (this.armorType) {
+                case 0:
+                    return this.iconHelmetOverlay;
+                case 1:
+                    return this.iconChestOverlay;
+                case 2:
+                    return this.iconLegsOverlay;
+                case 3:
+                    return this.iconBootsOverlay;
+                default:
+                    return null;
+            }
+        }
+
         switch (this.armorType) {
             case 0:
                 return this.iconHelmet;
@@ -60,9 +83,17 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
     }
 
     public String getArmorTexture(ItemStack itemstack, Entity entity, int slot, String type) {
+        if ("overlay".equals(type)) {
+            if (itemstack.getItem() == Config.amalgamLegs) {
+                return Amalgam.MODID + ":textures/models/armor/amalgamOverlay2.png";
+            }
+            return Amalgam.MODID + ":textures/models/armor/amalgamOverlay1.png";
+        }
+
         if (itemstack.getItem() == Config.amalgamLegs) {
             return Amalgam.MODID + ":textures/models/armor/amalgamLayer2.png";
         }
+
         return Amalgam.MODID + ":textures/models/armor/amalgamLayer1.png";
     }
 
@@ -90,6 +121,27 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
         return stack.getTagCompound().getInteger(ItemAmalgamTool.DURABILITY_TAG);
     }
 
+    /**
+     * Return the color for the specified armor ItemStack.
+     */
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getColorFromItemStack(ItemStack stack, int renderPass) {
+        if (renderPass == 1) {
+            return 0xFFFFFF;
+        }
+
+        if (!Config.coloredAmalgam) {
+            return (int) PropertyManager.COLOR.getDefaultValue();
+        }
+
+        if (stack.hasTagCompound() && stack.stackTagCompound.hasKey(ItemAmalgamTool.COLOR_TAG)) {
+            return stack.stackTagCompound.getInteger(ItemAmalgamTool.COLOR_TAG);
+        }
+
+        return 0xFFFFFF;
+    }
+
     @Override
     public ItemStack generateStackWithProperties(PropertyList pList, ItemStack[] materials, int stackSize) {
         ItemStack returnStack = new ItemStack(this, stackSize);
@@ -100,13 +152,16 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
             return returnStack;
         }
 
-        float luster = pList.getValue(PropertyManager.LUSTER);
-        float density = pList.getValue(PropertyManager.DENSITY);
+        float luster = pList.getValue(PropertyManager.LUSTER) * 5.0F;
+        float density = pList.getValue(PropertyManager.DENSITY) * 5.0F;
         float hardness = pList.getValue(PropertyManager.HARDNESS);
         float maliability = pList.getValue(PropertyManager.MALIABILITY);
+        int color = (int) pList.getValue(PropertyManager.COLOR);
 
+        toolTag.setInteger(ItemAmalgamTool.COLOR_TAG, color);
         toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (luster));
         float armorTypeFactor = 1.0F;
+
         switch (this.armorType) {
             case 0:
                 armorTypeFactor = 11.0F / 16F;
@@ -141,8 +196,8 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
         }
 
         toolTag.setInteger(ABSORB_TAG, (int) Math.ceil((maliability + hardness + 3.0) * armorTypeFactor));
-
         returnStack.setTagCompound(toolTag);
+
         return returnStack;
     }
 
@@ -151,6 +206,7 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
         float absorbRatio = armor.getTagCompound().getInteger(ABSORB_TAG) * .04F;
         int absorbMax = (int) (absorbRatio * 20);
         int priority = slot;
+
         return new ArmorProperties(priority, absorbRatio, absorbMax);
     }
 
@@ -159,12 +215,36 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
         if (armor.getTagCompound() == null) {
             return 1;
         }
+
         return armor.getTagCompound().getInteger(ABSORB_TAG);
     }
 
     @Override
     public void damageArmor(EntityLivingBase entity, ItemStack stack, DamageSource source, int damage, int slot) {
         stack.damageItem(1, entity);
+    }
+
+    @Override
+    public boolean hasColor(ItemStack stack) {
+        return true;
+    }
+
+    public int getColor(ItemStack stack) {
+        if (!Config.coloredAmalgam) {
+            return (int) PropertyManager.COLOR.getDefaultValue();
+        }
+
+        if (stack.hasTagCompound() && stack.stackTagCompound.hasKey(ItemAmalgamTool.COLOR_TAG)) {
+            return stack.stackTagCompound.getInteger(ItemAmalgamTool.COLOR_TAG);
+        }
+
+        return 0xFFFFFF;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean requiresMultipleRenderPasses() {
+        return true;
     }
 
 }

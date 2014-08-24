@@ -10,6 +10,8 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IIcon;
+import amalgam.common.Config;
 import amalgam.common.casting.ICastItem;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
@@ -22,13 +24,16 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemAmalgamSword extends ItemSword implements ICastItem {
 
+    IIcon hilt;
+
     public ItemAmalgamSword() {
         super(ItemAmalgamTool.toolMatAmalgam);
     }
 
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister iconRegister) {
-        this.itemIcon = iconRegister.registerIcon("amalgam:amalgamSword");
+        this.itemIcon = iconRegister.registerIcon("amalgam:amalgamSwordBlade");
+        this.hilt = iconRegister.registerIcon("amalgam:amalgamSwordHilt");
     }
 
     @Override
@@ -39,14 +44,12 @@ public class ItemAmalgamSword extends ItemSword implements ICastItem {
         dataList.add(EnumChatFormatting.BLUE + "+" + (int) getDamageVsEntity(stack) + " Attack Damage");
     }
 
-    /**
-     * Return the enchantability factor of the item, most of the time is based on material.
-     */
     @Override
     public int getItemEnchantability(ItemStack stack) {
         if (stack.getTagCompound() == null) {
             return 0;
         }
+
         return stack.getTagCompound().getInteger(ItemAmalgamTool.ENCHANTABILITY_TAG);
     }
 
@@ -55,6 +58,7 @@ public class ItemAmalgamSword extends ItemSword implements ICastItem {
         if (stack.getTagCompound() == null) {
             return 1;
         }
+
         return stack.getTagCompound().getInteger(ItemAmalgamTool.DURABILITY_TAG);
     }
 
@@ -62,6 +66,7 @@ public class ItemAmalgamSword extends ItemSword implements ICastItem {
         if (stack.getTagCompound() == null) {
             return 0.0F;
         }
+
         return stack.getTagCompound().getInteger(ItemAmalgamTool.DAMAGE_TAG);
     }
 
@@ -90,20 +95,57 @@ public class ItemAmalgamSword extends ItemSword implements ICastItem {
             return returnStack;
         }
 
-        float luster = pList.getValue(PropertyManager.LUSTER);
-        float density = pList.getValue(PropertyManager.DENSITY);
+        float luster = pList.getValue(PropertyManager.LUSTER) * 5.0F;
+        float density = pList.getValue(PropertyManager.DENSITY) * 5.0F;
         float hardness = pList.getValue(PropertyManager.HARDNESS);
         float maliability = pList.getValue(PropertyManager.MALIABILITY);
+        int color = (int) pList.getValue(PropertyManager.COLOR);
 
+        toolTag.setInteger(ItemAmalgamTool.COLOR_TAG, color);
         toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (luster));
         int maxDurability = (int) ((density * density) * (hardness + 1));
-
         toolTag.setInteger(ItemAmalgamTool.DURABILITY_TAG, maxDurability);
         float damage = maliability + 4;
         toolTag.setFloat(ItemAmalgamTool.DAMAGE_TAG, damage);
-
         returnStack.setTagCompound(toolTag);
+
         return returnStack;
     }
 
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean requiresMultipleRenderPasses() {
+        return true;
+    }
+
+    @Override
+    public int getRenderPasses(int metadata) {
+        return 2;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getColorFromItemStack(ItemStack stack, int renderPass) {
+        if (renderPass == 1) {
+            if (!Config.coloredAmalgam) {
+                return (int) PropertyManager.COLOR.getDefaultValue();
+            }
+            if (stack.hasTagCompound() && stack.stackTagCompound.hasKey(ItemAmalgamTool.COLOR_TAG)) {
+                return stack.stackTagCompound.getInteger(ItemAmalgamTool.COLOR_TAG);
+            }
+
+            return 0xFFFFFF;
+        }
+
+        return -1;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public IIcon getIcon(ItemStack stack, int renderPass) {
+        if (renderPass == 1) {
+            return this.itemIcon;
+        }
+
+        return this.hilt;
+    }
 }

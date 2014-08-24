@@ -56,6 +56,7 @@ public class ShapedCastingRecipe implements ICastingRecipe {
                 }
 
                 ItemStack itemstack1 = inv.getStackInRowAndColumn(k, l);
+
                 if (itemstack1 == null && inv.getCastState(k + l * 3) != 0) {
                     itemstack1 = new ItemStack(Blocks.fire);
                 }
@@ -92,16 +93,17 @@ public class ShapedCastingRecipe implements ICastingRecipe {
     @Override
     public ItemStack getCastingResult(InventoryCasting inv, PropertyList list) {
         ItemStack temp[] = new ItemStack[recipeItems.length];
-
         int currentIndex = 0;
+
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack s = inv.getStackInSlot(i);
+
             if (s != null) {
                 temp[currentIndex] = s;
                 currentIndex++;
             }
         }
+
         return this.recipeOutput.generateStackWithProperties(list, temp, this.amount);
     }
-
 }
