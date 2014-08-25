@@ -3,8 +3,10 @@ package amalgam.common.item;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 
 import com.google.common.collect.Sets;
 
@@ -27,5 +29,28 @@ public class ItemAmalgamPick extends ItemAmalgamTool {
     public void registerIcons(IIconRegister iconRegister) {
         this.itemIcon = iconRegister.registerIcon("amalgam:amalgamPickBlade");
         this.hilt = iconRegister.registerIcon("amalgam:amalgamPickHilt");
+    }
+
+    @Override
+    public boolean canHarvestBlock(Block block, ItemStack stack) {
+        float harvestLevel = this.getHarvestLevel(stack, block.getHarvestTool(0));
+        return block == Blocks.obsidian ? harvestLevel >= 3
+                : (block != Blocks.diamond_block && block != Blocks.diamond_ore ? (block != Blocks.emerald_ore && block != Blocks.emerald_block ? (block != Blocks.gold_block
+                        && block != Blocks.gold_ore ? (block != Blocks.iron_block && block != Blocks.iron_ore ? (block != Blocks.lapis_block
+                        && block != Blocks.lapis_ore ? (block != Blocks.redstone_ore && block != Blocks.lit_redstone_ore ? (block.getMaterial() == Material.rock ? true
+                        : (block.getMaterial() == Material.iron ? true : block.getMaterial() == Material.anvil))
+                        : harvestLevel >= 2)
+                        : harvestLevel >= 1)
+                        : harvestLevel >= 1)
+                        : harvestLevel >= 2)
+                        : harvestLevel >= 2)
+                        : harvestLevel >= 2);
+
+    }
+
+    @Override
+    public float func_150893_a(ItemStack stack, Block p_150893_2_) {
+        return p_150893_2_.getMaterial() != Material.iron && p_150893_2_.getMaterial() != Material.anvil
+                && p_150893_2_.getMaterial() != Material.rock ? super.func_150893_a(stack, p_150893_2_) : this.getEfficiency(stack);
     }
 }

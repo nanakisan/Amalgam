@@ -5,6 +5,7 @@ import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import amalgam.common.casting.ICastItem;
 
 import com.google.common.collect.Sets;
@@ -26,5 +27,10 @@ public class ItemAmalgamShovel extends ItemAmalgamTool implements ICastItem {
     public void registerIcons(IIconRegister iconRegister) {
         this.itemIcon = iconRegister.registerIcon("amalgam:amalgamShovelBlade");
         this.hilt = iconRegister.registerIcon("amalgam:amalgamShovelHilt");
+    }
+
+    @Override
+    public boolean canHarvestBlock(Block block, ItemStack stack) {
+        return block == Blocks.snow_layer ? true : block == Blocks.snow;
     }
 }

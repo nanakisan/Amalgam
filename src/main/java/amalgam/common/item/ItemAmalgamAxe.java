@@ -3,8 +3,10 @@ package amalgam.common.item;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import amalgam.common.casting.ICastItem;
 
 import com.google.common.collect.Sets;
@@ -26,5 +28,11 @@ public class ItemAmalgamAxe extends ItemAmalgamTool implements ICastItem {
     public void registerIcons(IIconRegister iconRegister) {
         this.itemIcon = iconRegister.registerIcon("amalgam:amalgamAxeBlade");
         this.hilt = iconRegister.registerIcon("amalgam:amalgamAxeHilt");
+    }
+
+    @Override
+    public float func_150893_a(ItemStack stack, Block p_150893_2_) {
+        return p_150893_2_.getMaterial() != Material.wood && p_150893_2_.getMaterial() != Material.plants
+                && p_150893_2_.getMaterial() != Material.vine ? super.func_150893_a(stack, p_150893_2_) : this.getEfficiency(stack);
     }
 }

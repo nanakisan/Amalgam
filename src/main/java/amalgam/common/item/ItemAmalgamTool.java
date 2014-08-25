@@ -77,7 +77,6 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
             if (stack.getTagCompound() == null) {
                 return 0;
             }
-
             return stack.getTagCompound().getInteger(HARVEST_TAG);
         } else {
             return super.getHarvestLevel(stack, toolClass);
