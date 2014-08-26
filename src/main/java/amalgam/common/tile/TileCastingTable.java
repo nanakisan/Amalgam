@@ -179,6 +179,10 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         return tank.getFluidAmount() == tank.getCapacity();
     }
 
+    public int getCapacity() {
+        return tank.getCapacity();
+    }
+
     public int getCastState(int i) {
         return castStates[i];
     }

@@ -169,4 +169,12 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler {
         return ((AmalgamStack) tank.getFluid()).getProperties();
     }
 
+    public int getFluidVolume() {
+        return this.tank.getFluidAmount();
+    }
+
+    public int getTankCapacity() {
+        return this.tank.getCapacity();
+    }
+
 }

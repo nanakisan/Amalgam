@@ -32,7 +32,7 @@ public class ItemAmalgamAxe extends ItemAmalgamTool implements ICastItem {
 
     @Override
     public float func_150893_a(ItemStack stack, Block block) {
-        return block.getMaterial() != Material.wood && block.getMaterial() != Material.plants
-                && block.getMaterial() != Material.vine ? super.func_150893_a(stack, block) : this.getEfficiency(stack);
+        return block.getMaterial() != Material.wood && block.getMaterial() != Material.plants && block.getMaterial() != Material.vine ? super
+                .func_150893_a(stack, block) : this.getEfficiency(stack);
     }
 }

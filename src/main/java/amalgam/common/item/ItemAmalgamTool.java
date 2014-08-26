@@ -57,7 +57,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         EntityPlayer player = (EntityPlayer) entityHitting;
         float damage = getDamageVsEntity(stack);
         DamageSource damageSource = DamageSource.causePlayerDamage(player);
-        entityBeingHit.attackEntityFrom(damageSource, (int) damage);
+        entityBeingHit.attackEntityFrom(damageSource, damage);
 
         return super.hitEntity(stack, entityBeingHit, entityHitting);
     }
@@ -106,7 +106,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
             return 0.0F;
         }
 
-        return stack.getTagCompound().getInteger(ItemAmalgamTool.DAMAGE_TAG);
+        return stack.getTagCompound().getFloat(ItemAmalgamTool.DAMAGE_TAG);
     }
 
     public float getEfficiency(ItemStack stack) {
@@ -114,7 +114,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
             return 1.0F;
         }
 
-        return stack.getTagCompound().getInteger(ItemAmalgamTool.EFFICIENCY_TAG);
+        return stack.getTagCompound().getFloat(ItemAmalgamTool.EFFICIENCY_TAG);
     }
 
     @Override
@@ -129,7 +129,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         dataList.add(EnumChatFormatting.DARK_GREEN + "+" + getItemEnchantability(stack) + " Enchantability");
         dataList.add(EnumChatFormatting.DARK_GREEN + "+" + (int) getEfficiency(stack) + " Efficiency");
         dataList.add(EnumChatFormatting.DARK_GREEN + "+" + getHarvestLevel(stack, this.toolClass) + " Harvest Level");
-        dataList.add(EnumChatFormatting.BLUE + "+" + (int) getDamageVsEntity(stack) + " Attack Damage");
+        dataList.add(EnumChatFormatting.BLUE + "+" + String.format("%.1f", getDamageVsEntity(stack)) + " Attack Damage");
     }
 
     @Override
@@ -151,7 +151,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
 
         toolTag.setInteger(HARVEST_TAG, (int) Math.ceil(hardness));
         toolTag.setInteger(ENCHANTABILITY_TAG, (int) (luster));
-        toolTag.setInteger(EFFICIENCY_TAG, (int) ((3 * luster * luster + 1.5 * density * density) / 120.0) + 1);
+        toolTag.setFloat(EFFICIENCY_TAG, ((3.0F * luster * luster + 1.5F * density * density) / 120.0F) + 1.0F);
         int maxDurability = (int) ((density * density) * (hardness + 1));
         toolTag.setInteger(DURABILITY_TAG, maxDurability);
         toolTag.setFloat(DAMAGE_TAG, maliability + this.damageMod);

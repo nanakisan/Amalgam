@@ -50,7 +50,7 @@ public class ItemAmalgamPick extends ItemAmalgamTool {
 
     @Override
     public float func_150893_a(ItemStack stack, Block block) {
-        return block.getMaterial() != Material.iron && block.getMaterial() != Material.anvil
-                && block.getMaterial() != Material.rock ? super.func_150893_a(stack, block) : this.getEfficiency(stack);
+        return block.getMaterial() != Material.iron && block.getMaterial() != Material.anvil && block.getMaterial() != Material.rock ? super
+                .func_150893_a(stack, block) : this.getEfficiency(stack);
     }
 }

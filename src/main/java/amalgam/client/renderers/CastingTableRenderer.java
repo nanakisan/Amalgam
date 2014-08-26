@@ -112,10 +112,9 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
         return Config.castingTableRID;
     }
 
-    // FIXME rendering is not good on fast graphics
     @Override
     public void renderTileEntityAt(TileEntity te, double x, double y, double z, float f) {
-        if (!Config.advancedRendering) {
+        if (!Minecraft.getMinecraft().gameSettings.fancyGraphics) {
             return;
         }
 

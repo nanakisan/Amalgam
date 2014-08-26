@@ -22,8 +22,11 @@ public final class PropertyManager {
 
     public static final Property                    MALIABILITY       = new Property("Maliability", 1, ComboType.QUADAVERAGE);
     public static final Property                    DENSITY           = new Property("Density", 6, ComboType.QUADAVERAGE);
-    public static final Property                    LUSTER            = new Property("Luster", 10, ComboType.QUADAVERAGE);
+    public static final Property                    LUSTER            = new Property("Luster", 2, ComboType.QUADAVERAGE);
     public static final Property                    HARDNESS          = new Property("Hardness", 1, ComboType.QUADAVERAGE);
+
+    // TODO add in another property, conductivity?, look over default values. Do an overhaul of property stuff for better
+    // gameplay choices. Ignore vanilla stuff, but use as a guideline for power levels
 
     public static final Property                    COLOR             = new Property("Color", 0x999999, ComboType.COLOR);
 
@@ -171,4 +174,5 @@ public final class PropertyManager {
 
         return false;
     }
+
 }

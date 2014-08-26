@@ -7,6 +7,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -15,7 +16,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 public class Amalgam {
 
     public static final String MODID   = "amalgam";
-    public static final String VERSION = "0.4.0";
+    public static final String VERSION = "0.4.1";
 
     @Instance(MODID)
     public static Amalgam      instance;
@@ -40,6 +41,8 @@ public class Amalgam {
         FMLCommonHandler.instance().bus().register(Config.instance);
         Config.registerAmalgamProperties();
         Config.registerRecipes();
+
+        FMLInterModComms.sendMessage("Waila", "register", "amalgam.common.ProviderAmalgam.callbackRegister");
     }
 
     @EventHandler

@@ -41,7 +41,7 @@ public class ItemAmalgamSword extends ItemSword implements ICastItem {
     public void addInformation(ItemStack stack, EntityPlayer player, List dataList, boolean b) {
         dataList.add((getMaxDamage(stack) - getDamage(stack)) + "/" + getMaxDamage(stack));
         dataList.add(EnumChatFormatting.DARK_GREEN + "+" + getItemEnchantability(stack) + " Enchantability");
-        dataList.add(EnumChatFormatting.BLUE + "+" + (int) getDamageVsEntity(stack) + " Attack Damage");
+        dataList.add(EnumChatFormatting.BLUE + "+" + String.format("%.1f", getDamageVsEntity(stack)) + " Attack Damage");
     }
 
     @Override
@@ -67,7 +67,7 @@ public class ItemAmalgamSword extends ItemSword implements ICastItem {
             return 0.0F;
         }
 
-        return stack.getTagCompound().getInteger(ItemAmalgamTool.DAMAGE_TAG);
+        return stack.getTagCompound().getFloat(ItemAmalgamTool.DAMAGE_TAG);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class ItemAmalgamSword extends ItemSword implements ICastItem {
         EntityPlayer player = (EntityPlayer) entityHitting;
         float damage = getDamageVsEntity(stack);
         DamageSource damageSource = DamageSource.causePlayerDamage(player);
-        entityBeingHit.attackEntityFrom(damageSource, (int) damage);
+        entityBeingHit.attackEntityFrom(damageSource, damage);
 
         return super.hitEntity(stack, entityBeingHit, entityHitting);
     }
@@ -105,7 +105,7 @@ public class ItemAmalgamSword extends ItemSword implements ICastItem {
         toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (luster));
         int maxDurability = (int) ((density * density) * (hardness + 1));
         toolTag.setInteger(ItemAmalgamTool.DURABILITY_TAG, maxDurability);
-        float damage = maliability + 4;
+        float damage = maliability + 4.0F;
         toolTag.setFloat(ItemAmalgamTool.DAMAGE_TAG, damage);
         returnStack.setTagCompound(toolTag);
 

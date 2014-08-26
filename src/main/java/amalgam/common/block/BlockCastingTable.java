@@ -119,7 +119,8 @@ public class BlockCastingTable extends BlockContainer implements ITileEntityProv
 
         return matsRemain;
     }
-
+    
+    // TODO consolidate block code for crucible and casting table (will need to consolidate tile entity code as well). Create the IBlockAmalgamContainer
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.inventory.getCurrentItem();

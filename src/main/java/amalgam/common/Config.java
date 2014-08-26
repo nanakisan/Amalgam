@@ -40,22 +40,22 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class Config {
 
-    public static Config        instance                   = new Config();
+    public static Config        instance            = new Config();
 
     public static Configuration configFile;
 
-    public static final Logger  LOG                        = LogManager.getLogger(Amalgam.MODID);
-    public static final int     CASTING_GUI_ID             = 1;
+    public static final Logger  LOG                 = LogManager.getLogger(Amalgam.MODID);
+    public static final int     CASTING_GUI_ID      = 1;
 
-    public static boolean       replicateVanillaProperties = true;
-    public static boolean       advancedRendering          = true;
-    public static boolean       floatingCastResult         = true;
-    public static boolean       coloredAmalgam             = true;
-    public static int           baseVolume                 = 10;
+    public static boolean       materialRebalancing = true;
+    public static boolean       moreMaterials       = true;
+    public static boolean       floatingCastResult  = true;
+    public static boolean       coloredAmalgam      = true;
+    public static int           baseVolume          = 10;
 
-    public static final int     BASE_AMOUNT                = 1;
-    public static final int     INGOT_AMOUNT               = BASE_AMOUNT * 9;
-    public static final int     BLOCK_AMOUNT               = INGOT_AMOUNT * 9;
+    public static final int     BASE_AMOUNT         = 1;
+    public static final int     INGOT_AMOUNT        = BASE_AMOUNT * 9;
+    public static final int     BLOCK_AMOUNT        = INGOT_AMOUNT * 9;
 
     public static Fluid         fluidAmalgam;
 
@@ -78,8 +78,8 @@ public class Config {
 
     public static CreativeTabs  tab;
 
-    public static int           castingTableRID            = -1;
-    public static int           crucibleRID                = -1;
+    public static int           castingTableRID     = -1;
+    public static int           crucibleRID         = -1;
 
     public static void init(FMLPreInitializationEvent event) {
         tab = new CreativeTabs("Amalgam") {
@@ -96,20 +96,21 @@ public class Config {
 
     public static void syncConfig() {
 
-        replicateVanillaProperties = configFile.getBoolean("Replicate Vanilla Properties", Configuration.CATEGORY_GENERAL,
-                replicateVanillaProperties, "True: Use vanilla properties for vanilla ores. Fasle: Use new properties for vanilla ores");
+        materialRebalancing = configFile.getBoolean("Allow vanilla material rebalancing", Configuration.CATEGORY_GENERAL, materialRebalancing,
+                "Use new balanced properties for iron, gold and diamond.");
 
-        advancedRendering = configFile.getBoolean("Advanced rendering", Configuration.CATEGORY_GENERAL, advancedRendering,
-                "Allows for rendering of items on casting tables");
+        moreMaterials = configFile
+                .getBoolean("Allow extra vanilla materials to be used", Configuration.CATEGORY_GENERAL, moreMaterials,
+                        "Allow obsidian, redstone, blaze rods, lapis, emeralds and nether quartz to be used in amalgam in addition to iron, gold and diamond");
 
         floatingCastResult = configFile.getBoolean("Floating Cast Result", Configuration.CATEGORY_GENERAL, floatingCastResult,
-                "Does the cast result float, or is it rendered flat");
+                "Render the casting table output above the casting table.");
 
         coloredAmalgam = configFile.getBoolean("Allow colored amalgam", Configuration.CATEGORY_GENERAL, coloredAmalgam,
                 "Allow amalgam color to be determined by material properties");
 
         baseVolume = configFile.getInt("Base amalgam volume (mB)", Configuration.CATEGORY_GENERAL, baseVolume, 1, Integer.MAX_VALUE,
-                "The volume of the smallest bit of amalgam (mB)");
+                "The volume of the smallest unit of amalgam (mB)");
 
         if (configFile.hasChanged()) {
             configFile.save();
@@ -174,11 +175,7 @@ public class Config {
         PropertyList goldProp;
         PropertyList diamondProp;
 
-        if (Config.replicateVanillaProperties) {
-            ironProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.IRON);
-            goldProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.GOLD);
-            diamondProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.EMERALD);
-        } else {
+        if (Config.materialRebalancing) {
             ironProp = new PropertyList().add(PropertyManager.DENSITY, 2.5F).add(PropertyManager.HARDNESS, 2).add(PropertyManager.LUSTER, 2.0F)
                     .add(PropertyManager.MALIABILITY, 3.5F);
 
@@ -187,21 +184,56 @@ public class Config {
 
             diamondProp = new PropertyList().add(PropertyManager.DENSITY, 5.0F).add(PropertyManager.HARDNESS, 3.25F)
                     .add(PropertyManager.LUSTER, 1.0F).add(PropertyManager.MALIABILITY, 0.5F);
+        } else {
+            ironProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.IRON);
+            goldProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.GOLD);
+            diamondProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.EMERALD);
         }
 
-        ironProp.add(PropertyManager.COLOR, 0xFFFFFF);
+        ironProp.add(PropertyManager.COLOR, 0xBBBBBB);
         goldProp.add(PropertyManager.COLOR, 0xEAEE57);
         diamondProp.add(PropertyManager.COLOR, 0x33EBCB);
 
+        PropertyManager.registerOreDictProperties("nuggetIron", ironProp, Config.BASE_AMOUNT);
+        PropertyManager.registerOreDictProperties("nuggetGold", goldProp, Config.BASE_AMOUNT);
+        PropertyManager.registerOreDictProperties("nuggetDiamond", diamondProp, Config.BASE_AMOUNT);
         PropertyManager.registerOreDictProperties("ingotIron", ironProp, Config.INGOT_AMOUNT);
         PropertyManager.registerOreDictProperties("ingotGold", goldProp, Config.INGOT_AMOUNT);
         PropertyManager.registerOreDictProperties("gemDiamond", diamondProp, Config.INGOT_AMOUNT);
         PropertyManager.registerOreDictProperties("blockIron", ironProp, Config.BLOCK_AMOUNT);
         PropertyManager.registerOreDictProperties("blockGold", goldProp, Config.BLOCK_AMOUNT);
         PropertyManager.registerOreDictProperties("blockDiamond", diamondProp, Config.BLOCK_AMOUNT);
-        PropertyManager.registerOreDictProperties("nuggetGold", goldProp, Config.BASE_AMOUNT);
 
         PropertyManager.registerItemProperties(new ItemStack(amalgamBlob), null, 0);
+
+        if (Config.moreMaterials) {
+            PropertyList lapisProp = new PropertyList().add(PropertyManager.DENSITY, 0.5F).add(PropertyManager.HARDNESS, 0.5F)
+                    .add(PropertyManager.LUSTER, 6.0F).add(PropertyManager.MALIABILITY, 0.5F).add(PropertyManager.COLOR, 0x0F298C);
+            PropertyList redstoneProp = new PropertyList().add(PropertyManager.DENSITY, 1.0F).add(PropertyManager.HARDNESS, 1.0F)
+                    .add(PropertyManager.LUSTER, 1.0F).add(PropertyManager.MALIABILITY, 4.0F).add(PropertyManager.COLOR, 0xD12B13);
+            PropertyList emeraldProp = new PropertyList().add(PropertyManager.DENSITY, 1.0F).add(PropertyManager.HARDNESS, 1.0F)
+                    .add(PropertyManager.LUSTER, 4.0F).add(PropertyManager.MALIABILITY, 1.0F).add(PropertyManager.COLOR, 0x41F384);
+            PropertyList quartzProp = new PropertyList().add(PropertyManager.DENSITY, 2.0F).add(PropertyManager.HARDNESS, 2.0F)
+                    .add(PropertyManager.LUSTER, 3.0F).add(PropertyManager.MALIABILITY, 3.0F).add(PropertyManager.COLOR, 0xFFFFFF);
+            PropertyList obsidianProp = new PropertyList().add(PropertyManager.DENSITY, 6.0F).add(PropertyManager.HARDNESS, 3.9F)
+                    .add(PropertyManager.LUSTER, 0.0F).add(PropertyManager.MALIABILITY, 0.5F).add(PropertyManager.COLOR, 0x09090B);
+            PropertyList blazeRodProp = new PropertyList().add(PropertyManager.DENSITY, 1.0F).add(PropertyManager.HARDNESS, 0.5F)
+                    .add(PropertyManager.LUSTER, 2.0F).add(PropertyManager.MALIABILITY, 5.0F).add(PropertyManager.COLOR, 0xFFCB00);
+
+            PropertyManager.registerOreDictProperties("gemLapis", lapisProp, Config.BASE_AMOUNT * 2);
+            PropertyManager.registerOreDictProperties("gemQuartz", quartzProp, Config.BASE_AMOUNT * 2);
+            PropertyManager.registerOreDictProperties("dustRedstone", redstoneProp, Config.BASE_AMOUNT * 2);
+            PropertyManager.registerOreDictProperties("gemEmerald", emeraldProp, Config.INGOT_AMOUNT);
+
+            PropertyManager.registerOreDictProperties("blockQuartz", quartzProp, Config.INGOT_AMOUNT * 2);
+            PropertyManager.registerOreDictProperties("blockLapis", lapisProp, Config.INGOT_AMOUNT * 2);
+            PropertyManager.registerOreDictProperties("blockRedstone", redstoneProp, Config.INGOT_AMOUNT * 2);
+            PropertyManager.registerOreDictProperties("blockEmerald", emeraldProp, Config.BLOCK_AMOUNT);
+
+            PropertyManager.registerItemProperties(new ItemStack(Items.blaze_powder), blazeRodProp, BASE_AMOUNT);
+            PropertyManager.registerItemProperties(new ItemStack(Items.blaze_rod), blazeRodProp, BASE_AMOUNT * 2);
+            PropertyManager.registerItemProperties(new ItemStack(Blocks.obsidian), obsidianProp, BASE_AMOUNT * 3);
+        }
     }
 
     public static void registerRecipes() {

@@ -54,6 +54,7 @@ public class AmalgamStack extends FluidStack {
                     break;
                 case COLOR: // convert to HSL space, average, convert back to RGB
 
+                    // TODO algorithm isn't working properly (test:2 redstone blocks then 2 lapis blocks give one color. Do it in reverse and get a different color)
                     Color aColor = new Color((int) aValue);
                     Color bColor = new Color((int) bValue);
 
