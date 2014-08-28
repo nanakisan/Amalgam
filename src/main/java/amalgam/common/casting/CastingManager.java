@@ -13,7 +13,7 @@ import amalgam.common.container.InventoryCasting;
 
 public final class CastingManager {
 
-    // TODO allow nugget, ingot, and block amounts of amalgam to be used in recipes. Right now we can only use ingots.
+    // FIXME allow nugget, ingot, and block amounts of amalgam to be used in recipes. Right now we can only use ingots.
 
     private static final CastingManager INSTANCE = new CastingManager();
     private static List<ICastingRecipe> recipes  = new ArrayList<ICastingRecipe>();

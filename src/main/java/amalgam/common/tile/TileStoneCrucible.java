@@ -16,6 +16,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.AmalgamTank;
+import amalgam.common.network.PacketHandler;
+import amalgam.common.network.PacketSyncCrucible;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
 
@@ -26,11 +28,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileStoneCrucible extends AbstractTileAmalgamContainer implements IInventory {
 
-    private static Set<Block>   heatSources   = Sets.newHashSet(new Block[] { Blocks.fire, Blocks.lava });
+    private static Set<Block>   heatSources   = Sets.newHashSet(new Block[] { Blocks.fire, Blocks.lava, Blocks.flowing_lava });
     private static final String HEAT_TAG      = "heat";
     private boolean             hasHeat;
-
-    private ItemStack           buffer;
 
     private static final int    UPDATE_PERIOD = 50;
     private int                 ticksSinceUpdate;
@@ -57,7 +57,6 @@ public class TileStoneCrucible extends AbstractTileAmalgamContainer implements I
     @Override
     public void updateEntity() {
         ticksSinceUpdate++;
-        meltBufferItem();
 
         if (ticksSinceUpdate > UPDATE_PERIOD) {
             ticksSinceUpdate = 0;
@@ -71,25 +70,6 @@ public class TileStoneCrucible extends AbstractTileAmalgamContainer implements I
         }
     }
 
-    private void meltBufferItem() {
-        if (buffer != null && this.isHot()) {
-            ItemStack stack = this.decrStackSize(0, 1);
-            int amount = PropertyManager.getVolume(stack);
-
-            if (amount > 0 && amount < this.getEmptySpace()) {
-                PropertyList amalgProperties = PropertyManager.getProperties(stack);
-                AmalgamStack amalg = new AmalgamStack(amount, amalgProperties);
-
-                if (amalgProperties == null) {
-                    Config.LOG.error("No properties!!!!!");
-                }
-
-                this.fill(ForgeDirection.UNKNOWN, amalg, true);
-                // FIXME need to update clientside!
-            }
-        }
-    }
-
     public static void addHeatSource(Block source) {
         TileStoneCrucible.heatSources.add(source);
     }
@@ -98,7 +78,7 @@ public class TileStoneCrucible extends AbstractTileAmalgamContainer implements I
         return this.hasHeat;
     }
 
-    public float getFluidHeight() {
+    public float getRenderLiquidLevel() {
         return 0.3F + 0.69F * ((float) this.tank.getFluidAmount() / (float) this.tank.getCapacity());
     }
 
@@ -106,6 +86,7 @@ public class TileStoneCrucible extends AbstractTileAmalgamContainer implements I
     public Packet getDescriptionPacket() {
         NBTTagCompound tag = new NBTTagCompound();
         tank.writeToNBT(tag);
+        tag.setBoolean(HEAT_TAG, this.hasHeat);
         return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, this.blockMetadata, tag);
     }
 
@@ -113,6 +94,7 @@ public class TileStoneCrucible extends AbstractTileAmalgamContainer implements I
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
         NBTTagCompound tag = pkt.func_148857_g();
         this.tank.readFromNBT(tag);
+        this.hasHeat = tag.getBoolean(HEAT_TAG);
     }
 
     @Override
@@ -128,32 +110,41 @@ public class TileStoneCrucible extends AbstractTileAmalgamContainer implements I
 
     @Override
     public ItemStack getStackInSlot(int slot) {
-        if (slot == 0) {
-            return buffer;
-        }
         return null;
     }
 
     @Override
     public ItemStack decrStackSize(int slot, int amount) {
-        if (slot == 0) {
-            return buffer.splitStack(amount);
-        }
         return null;
     }
 
     @Override
     public ItemStack getStackInSlotOnClosing(int slot) {
-        if (slot == 0) {
-            return buffer;
-        }
         return null;
     }
 
     @Override
     public void setInventorySlotContents(int slot, ItemStack stack) {
-        if (slot == 0 && buffer == null) {
-            buffer = stack;
+        if (slot == 0 && stack != null && stack.stackSize == 1) {
+            if (!isHot()) {
+                return;
+            }
+
+            int amount = PropertyManager.getVolume(stack);
+
+            if (amount > 0 && amount <= getEmptySpace()) {
+                PropertyList amalgProperties = PropertyManager.getProperties(stack);
+                AmalgamStack amalg = new AmalgamStack(amount, amalgProperties);
+
+                if (amalgProperties == null) {
+                    Config.LOG.error("No properties!!!!!");
+                }
+
+                fill(ForgeDirection.UNKNOWN, amalg, true);
+                PacketHandler.INSTANCE.sendToAll(new PacketSyncCrucible((AmalgamStack) tank.getFluid(), this.xCoord, this.yCoord, this.zCoord));
+            }
+        } else {
+            Config.LOG.error("Error while inputting item into crucible");
         }
     }
 
@@ -193,9 +184,8 @@ public class TileStoneCrucible extends AbstractTileAmalgamContainer implements I
         return false;
     }
 
-    @Override
-    public boolean receiveClientEvent(int eventNum, int arg) {
-        return false;
+    public void setAmalgam(AmalgamStack amalgamStack) {
+        tank.setFluid(amalgamStack);
     }
 
 }

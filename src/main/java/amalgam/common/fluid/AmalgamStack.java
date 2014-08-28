@@ -54,8 +54,6 @@ public class AmalgamStack extends FluidStack {
                     break;
                 case COLOR: // convert to HSL space, average, convert back to RGB
 
-                    // TODO color algorithm isn't working properly (test:2 redstone blocks then 2 lapis blocks give one
-                    // color. Do it in reverse and get a different color)
                     Color aColor = new Color((int) aValue);
                     Color bColor = new Color((int) bValue);
 
@@ -68,7 +66,12 @@ public class AmalgamStack extends FluidStack {
                     float[] rHSV = new float[3];
 
                     if (Math.abs(aHSV[0] - bHSV[0]) > 0.5F) {
-                        rHSV[0] = (aHSV[0] * stackA.amount - (1 - bHSV[0]) * stackB.amount) / (stackA.amount + stackB.amount);
+                        if (aHSV[0] < bHSV[0]) {
+                            rHSV[0] = (aHSV[0] * stackA.amount - (1.0F - bHSV[0]) * stackB.amount) / (stackA.amount + stackB.amount);
+                        } else {
+                            rHSV[0] = (bHSV[0] * stackB.amount - (1.0F - aHSV[0]) * stackA.amount) / (stackA.amount + stackB.amount);
+                        }
+
                         if (rHSV[0] < 0) {
                             rHSV[0] += 1.0;
                         }

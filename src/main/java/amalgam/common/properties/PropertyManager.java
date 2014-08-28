@@ -25,9 +25,8 @@ public final class PropertyManager {
     public static final Property                    LUSTER            = new Property("Luster", 2, ComboType.QUADAVERAGE);
     public static final Property                    HARDNESS          = new Property("Hardness", 1, ComboType.QUADAVERAGE);
 
-    // TODO add in another property, conductivity?, look over default values. Do an overhaul of property stuff for
-    // better
-    // gameplay choices. Ignore vanilla stuff, but use as a guideline for power levels
+    // FIXME Do an overhaul of property stuff for better gameplay choices. Ignore vanilla stuff, but use as a guideline
+    // for power levels
 
     public static final Property                    COLOR             = new Property("Color", 0x999999, ComboType.COLOR);
 
@@ -134,7 +133,6 @@ public final class PropertyManager {
     public static int getVolume(ItemStack stack) {
         Item item = stack.getItem();
 
-        // First we check the item registry, then we fall back on the ore dict registry if we find no entry.
         if (ITEM_REGISTRY.containsKey(item)) {
             List<Object> blob = (List<Object>) ITEM_REGISTRY.get(item);
 
@@ -160,7 +158,6 @@ public final class PropertyManager {
     public static boolean itemIsAmalgable(ItemStack stack) {
         Item item = stack.getItem();
 
-        // First we check the item registry, then we fall back on the ore dict registry if we find no entry.
         if (ITEM_REGISTRY.containsKey(item)) {
             return true;
         }

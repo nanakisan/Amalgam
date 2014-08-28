@@ -26,7 +26,7 @@ public class CrucibleRenderer extends TileEntitySpecialRenderer implements ISimp
     @Override
     public void renderTileEntityAt(TileEntity te, double x, double y, double z, float f) {
         GL11.glPushMatrix();
-        float height = ((TileStoneCrucible) te).getFluidHeight();
+        float height = ((TileStoneCrucible) te).getRenderLiquidLevel();
         GL11.glTranslated(x, y + height, z + 1.0D);
         GL11.glRotatef(90.0F, -1.0F, 0.0F, 0.0F);
         PropertyList p = ((TileStoneCrucible) te).getAmalgamPropertyList();

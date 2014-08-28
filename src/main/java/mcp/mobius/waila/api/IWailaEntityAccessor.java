@@ -13,12 +13,19 @@ import net.minecraft.world.World;
  */
 
 public interface IWailaEntityAccessor {
-	World        		 getWorld();
-	EntityPlayer 		 getPlayer();
-	Entity               getEntity();
-	MovingObjectPosition getPosition();
-	Vec3                 getRenderingPosition();
-	NBTTagCompound       getNBTData();
-	int                  getNBTInteger(NBTTagCompound tag, String keyname);
-	double               getPartialFrame();
+    World getWorld();
+
+    EntityPlayer getPlayer();
+
+    Entity getEntity();
+
+    MovingObjectPosition getPosition();
+
+    Vec3 getRenderingPosition();
+
+    NBTTagCompound getNBTData();
+
+    int getNBTInteger(NBTTagCompound tag, String keyname);
+
+    double getPartialFrame();
 }

@@ -15,14 +15,23 @@ import net.minecraftforge.common.util.ForgeDirection;
  */
 
 public interface IWailaFMPAccessor {
-	World        		 getWorld();
-	EntityPlayer 		 getPlayer();
-	TileEntity           getTileEntity();
-	MovingObjectPosition getPosition();
-	NBTTagCompound       getNBTData();
-	NBTTagCompound       getFullNBTData();
-	int                  getNBTInteger(NBTTagCompound tag, String keyname);
-	double               getPartialFrame();
-	Vec3                 getRenderingPosition();
-	String               getID();
+    World getWorld();
+
+    EntityPlayer getPlayer();
+
+    TileEntity getTileEntity();
+
+    MovingObjectPosition getPosition();
+
+    NBTTagCompound getNBTData();
+
+    NBTTagCompound getFullNBTData();
+
+    int getNBTInteger(NBTTagCompound tag, String keyname);
+
+    double getPartialFrame();
+
+    Vec3 getRenderingPosition();
+
+    String getID();
 }

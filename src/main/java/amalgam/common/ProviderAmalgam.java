@@ -13,8 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import amalgam.common.properties.Property;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
-import amalgam.common.tile.TileCastingTable;
-import amalgam.common.tile.TileStoneCrucible;
+import amalgam.common.tile.AbstractTileAmalgamContainer;
 
 public class ProviderAmalgam implements IWailaDataProvider {
 
@@ -30,25 +29,12 @@ public class ProviderAmalgam implements IWailaDataProvider {
 
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        // TODO consolidate WAILA code for the tile entities
-
         TileEntity te = accessor.getTileEntity();
-        if (te instanceof TileStoneCrucible) {
-            PropertyList l = ((TileStoneCrucible) te).getAmalgamPropertyList();
-            int currentVolume = ((TileStoneCrucible) te).getFluidVolume();
-            int capacity = ((TileStoneCrucible) te).getTankCapacity();
-            currenttip.add("Volume: " + currentVolume + "/" + capacity);
 
-            if (currentVolume != 0 && accessor.getPlayer().isSneaking()) {
-                currenttip.add("--------");
-                addPropertiesToTooltip(currenttip, l);
-            }
-        }
-
-        if (te instanceof TileCastingTable) {
-            PropertyList l = ((TileCastingTable) te).getAmalgamPropertyList();
-            int currentVolume = ((TileCastingTable) te).getFluidAmount();
-            int capacity = ((TileCastingTable) te).getTankCapacity();
+        if (te instanceof AbstractTileAmalgamContainer) {
+            PropertyList l = ((AbstractTileAmalgamContainer) te).getAmalgamPropertyList();
+            int currentVolume = ((AbstractTileAmalgamContainer) te).getFluidVolume();
+            int capacity = ((AbstractTileAmalgamContainer) te).getTankCapacity();
             currenttip.add("Volume: " + currentVolume + "/" + capacity);
 
             if (currentVolume != 0 && accessor.getPlayer().isSneaking()) {

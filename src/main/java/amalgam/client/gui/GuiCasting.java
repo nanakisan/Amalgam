@@ -30,7 +30,7 @@ public class GuiCasting extends GuiContainer {
 
         ContainerCasting table = (ContainerCasting) this.inventorySlots;
         SlotCasting testSlot;
-        
+
         for (int i = 0; i < 9; i++) {
             testSlot = (SlotCasting) table.getSlot(i);
 
@@ -47,7 +47,7 @@ public class GuiCasting extends GuiContainer {
         }
 
         TileCastingTable castingTable = table.castingTable;
-        
+
         if (castingTable.getEmptySpace() != 0 && castingTable.getStackInSlot(9) != null) {
             float red = (float) Math.pow(Math.sin(Minecraft.getMinecraft().theWorld.getWorldTime() * 0.1), 2);
             GL11.glEnable(GL11.GL_BLEND);

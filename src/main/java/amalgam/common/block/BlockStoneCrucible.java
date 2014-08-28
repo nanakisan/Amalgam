@@ -6,6 +6,7 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -113,8 +114,19 @@ public class BlockStoneCrucible extends AbstractBlockAmalgamContainer implements
         if (te instanceof TileStoneCrucible) {
             TileStoneCrucible cruc = (TileStoneCrucible) te;
 
-            if (cruc.isHot() && cruc.getFluidHeight() > .301) {
-                entity.setFire(3);
+            if (cruc.isHot()) {
+
+                if (entity instanceof EntityItem) {
+                    ItemStack stack = ((EntityItem) entity).getEntityItem();
+                    if (PropertyManager.itemIsAmalgable(stack)) {
+                        interactWithAmalgableItem(cruc, stack);
+                        return;
+                    }
+                }
+
+                if (cruc.getRenderLiquidLevel() > .301) {
+                    entity.setFire(3);
+                }
             }
         }
     }
@@ -154,7 +166,7 @@ public class BlockStoneCrucible extends AbstractBlockAmalgamContainer implements
 
         int amount = PropertyManager.getVolume(stack);
 
-        if (amount > 0 && amount < crucible.getEmptySpace()) {
+        if (amount > 0 && amount <= crucible.getEmptySpace()) {
             PropertyList amalgProperties = PropertyManager.getProperties(stack);
             AmalgamStack amalg = new AmalgamStack(amount, amalgProperties);
 
@@ -165,6 +177,7 @@ public class BlockStoneCrucible extends AbstractBlockAmalgamContainer implements
             crucible.fill(ForgeDirection.UNKNOWN, amalg, true);
             stack.stackSize = stack.stackSize - 1;
 
+            te.getWorldObj().notifyBlocksOfNeighborChange(te.xCoord, te.yCoord, te.zCoord, this);
             return;
         }
     }
@@ -173,6 +186,26 @@ public class BlockStoneCrucible extends AbstractBlockAmalgamContainer implements
     protected void interactWithAmalgamContainerItem(TileEntity te, IAmalgamContainerItem container, ItemStack stack, EntityPlayer player) {
         if (te instanceof TileStoneCrucible && ((TileStoneCrucible) te).isHot()) {
             super.interactWithAmalgamContainerItem(te, container, stack, player);
+            te.getWorldObj().notifyBlocksOfNeighborChange(te.xCoord, te.yCoord, te.zCoord, this);
         }
+    }
+
+    /**
+     * If this returns true, then comparators facing away from this block will use the value from
+     * getComparatorInputOverride instead of the actual redstone signal strength.
+     */
+    @Override
+    public boolean hasComparatorInputOverride() {
+        return true;
+    }
+
+    /**
+     * If hasComparatorInputOverride returns true, the return value from this is used instead of the redstone signal
+     * strength when this block inputs to a comparator.
+     */
+    @Override
+    public int getComparatorInputOverride(World world, int x, int y, int z, int meta) {
+        TileStoneCrucible crucible = (TileStoneCrucible) world.getTileEntity(x, y, z);
+        return (int) (15.0F * crucible.getFluidVolume() / crucible.getTankCapacity());
     }
 }

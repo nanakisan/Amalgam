@@ -16,18 +16,30 @@ import net.minecraftforge.common.util.ForgeDirection;
  */
 
 public interface IWailaDataAccessor {
-		
-	World        		 getWorld();
-	EntityPlayer 		 getPlayer();
-	Block        		 getBlock();
-	int          		 getBlockID();
-	int          		 getMetadata();
-	TileEntity           getTileEntity();
-	MovingObjectPosition getPosition();
-	Vec3                 getRenderingPosition();
-	NBTTagCompound       getNBTData();
-	int                  getNBTInteger(NBTTagCompound tag, String keyname);
-	double               getPartialFrame();
-	ForgeDirection       getSide();
-	ItemStack            getStack();
+
+    World getWorld();
+
+    EntityPlayer getPlayer();
+
+    Block getBlock();
+
+    int getBlockID();
+
+    int getMetadata();
+
+    TileEntity getTileEntity();
+
+    MovingObjectPosition getPosition();
+
+    Vec3 getRenderingPosition();
+
+    NBTTagCompound getNBTData();
+
+    int getNBTInteger(NBTTagCompound tag, String keyname);
+
+    double getPartialFrame();
+
+    ForgeDirection getSide();
+
+    ItemStack getStack();
 }
