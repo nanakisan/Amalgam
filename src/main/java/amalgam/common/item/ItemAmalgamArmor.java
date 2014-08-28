@@ -24,14 +24,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialArmor {
 
     public static final String ABSORB_TAG = "absorb max";
-    public IIcon               iconHelmet;
-    public IIcon               iconHelmetOverlay;
-    public IIcon               iconChest;
-    public IIcon               iconChestOverlay;
-    public IIcon               iconLegs;
-    public IIcon               iconLegsOverlay;
-    public IIcon               iconBoots;
-    public IIcon               iconBootsOverlay;
+    @SideOnly(Side.CLIENT)
+    public IIcon[]             icons      = new IIcon[8];
 
     public ItemAmalgamArmor(ArmorMaterial mat, int renderIndex, int armorType) {
         super(mat, renderIndex, armorType);
@@ -40,46 +34,20 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
     @SideOnly(Side.CLIENT)
     @Override
     public void registerIcons(IIconRegister iconRegister) {
-        this.iconHelmet = iconRegister.registerIcon("amalgam:amalgamHelmet");
-        this.iconHelmetOverlay = iconRegister.registerIcon("amalgam:amalgamHelmetOverlay");
-        this.iconChest = iconRegister.registerIcon("amalgam:amalgamChestplate");
-        this.iconChestOverlay = iconRegister.registerIcon("amalgam:amalgamChestplateOverlay");
-        this.iconLegs = iconRegister.registerIcon("amalgam:amalgamLeggings");
-        this.iconLegsOverlay = iconRegister.registerIcon("amalgam:amalgamLeggingsOverlay");
-        this.iconBoots = iconRegister.registerIcon("amalgam:amalgamBoots");
-        this.iconBootsOverlay = iconRegister.registerIcon("amalgam:amalgamBootsOverlay");
+        this.icons[0] = iconRegister.registerIcon("amalgam:amalgamHelmet");
+        this.icons[1] = iconRegister.registerIcon("amalgam:amalgamHelmetOverlay");
+        this.icons[2] = iconRegister.registerIcon("amalgam:amalgamChestplate");
+        this.icons[3] = iconRegister.registerIcon("amalgam:amalgamChestplateOverlay");
+        this.icons[4] = iconRegister.registerIcon("amalgam:amalgamLeggings");
+        this.icons[5] = iconRegister.registerIcon("amalgam:amalgamLeggingsOverlay");
+        this.icons[6] = iconRegister.registerIcon("amalgam:amalgamBoots");
+        this.icons[7] = iconRegister.registerIcon("amalgam:amalgamBootsOverlay");
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(ItemStack stack, int pass) {
-        if (pass == 1) {
-            switch (this.armorType) {
-                case 0:
-                    return this.iconHelmetOverlay;
-                case 1:
-                    return this.iconChestOverlay;
-                case 2:
-                    return this.iconLegsOverlay;
-                case 3:
-                    return this.iconBootsOverlay;
-                default:
-                    return null;
-            }
-        }
-
-        switch (this.armorType) {
-            case 0:
-                return this.iconHelmet;
-            case 1:
-                return this.iconChest;
-            case 2:
-                return this.iconLegs;
-            case 3:
-                return this.iconBoots;
-            default:
-                return null;
-        }
+        return icons[armorType * 2 + pass];
     }
 
     public String getArmorTexture(ItemStack itemstack, Entity entity, int slot, String type) {

@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL11;
 import amalgam.common.Amalgam;
 import amalgam.common.container.ContainerCasting;
 import amalgam.common.container.SlotCasting;
+import amalgam.common.tile.TileCastingTable;
 
 public class GuiCasting extends GuiContainer {
 
@@ -28,15 +29,16 @@ public class GuiCasting extends GuiContainer {
         this.drawTexturedModalRect(xPos, yPos, 0, 0, this.xSize, this.ySize);
 
         ContainerCasting table = (ContainerCasting) this.inventorySlots;
-
+        SlotCasting testSlot;
+        
         for (int i = 0; i < 9; i++) {
-            SlotCasting slot = (SlotCasting) table.getSlot(i);
+            testSlot = (SlotCasting) table.getSlot(i);
 
-            if (slot.getCastState() != 0) {
+            if (testSlot.getCastState() != 0) {
                 int rowNum = i / 3;
                 int colNum = i % 3;
 
-                if (slot.containsAmalgam()) {
+                if (testSlot.containsAmalgam()) {
                     this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 178, 18, 16, 16);
                 } else {
                     this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 178, 1, 16, 16);
@@ -44,7 +46,9 @@ public class GuiCasting extends GuiContainer {
             }
         }
 
-        if (!table.castingTable.tankIsFull() && table.castingTable.getStackInSlot(9) != null) {
+        TileCastingTable castingTable = table.castingTable;
+        
+        if (castingTable.getEmptySpace() != 0 && castingTable.getStackInSlot(9) != null) {
             float red = (float) Math.pow(Math.sin(Minecraft.getMinecraft().theWorld.getWorldTime() * 0.1), 2);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glColor4f(red, 0.0F, 0.0F, 0.3F);

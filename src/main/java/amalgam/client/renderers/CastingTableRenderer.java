@@ -28,11 +28,12 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
         block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
         renderer.setRenderBoundsFromBlock(block);
 
-        IIcon top = ((BlockCastingTable) block).getBlockTextureFromSide(1);
-        IIcon side = ((BlockCastingTable) block).getBlockTextureFromSide(2);
-        IIcon base = ((BlockCastingTable) block).getBlockTextureFromSide(0);
-        IIcon baseSide = ((BlockCastingTable) block).getBlockTextureFromSide(7);
-        IIcon neck = ((BlockCastingTable) block).getBlockTextureFromSide(6);
+        BlockCastingTable table = (BlockCastingTable) block;
+        IIcon top = table.getBlockTextureFromSide(1);
+        IIcon side = table.getBlockTextureFromSide(2);
+        IIcon base = table.getBlockTextureFromSide(0);
+        IIcon baseSide = table.getBlockTextureFromSide(7);
+        IIcon neck = table.getBlockTextureFromSide(6);
 
         Tessellator t = Tessellator.instance;
         GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
@@ -78,10 +79,11 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
         renderer.setRenderBoundsFromBlock(block);
         renderer.renderStandardBlock(block, x, y, z);
 
-        IIcon top = ((BlockCastingTable) block).getBlockTextureFromSide(1);
-        IIcon base = ((BlockCastingTable) block).getBlockTextureFromSide(0);
-        IIcon baseSide = ((BlockCastingTable) block).getBlockTextureFromSide(7);
-        IIcon neck = ((BlockCastingTable) block).getBlockTextureFromSide(6);
+        BlockCastingTable table = (BlockCastingTable) block;
+        IIcon top = table.getBlockTextureFromSide(1);
+        IIcon base = table.getBlockTextureFromSide(0);
+        IIcon baseSide = table.getBlockTextureFromSide(7);
+        IIcon neck = table.getBlockTextureFromSide(6);
 
         renderer.renderFaceYNeg(block, x, y + 1.0F - 0.375F, z, top);
         renderer.renderFaceYPos(block, x, y - 1.0F + 0.25F, z, base);
@@ -138,7 +140,7 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
 
         GL11.glScalef(1.25F, 1.25F, 1.25F);
 
-        if (!table.tankIsFull()) {
+        if (table.getEmptySpace() != 0) {
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_DST_ALPHA);
         }

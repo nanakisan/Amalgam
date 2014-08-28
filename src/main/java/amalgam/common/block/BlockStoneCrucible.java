@@ -2,7 +2,6 @@ package amalgam.common.block;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -23,7 +22,7 @@ import amalgam.common.tile.TileStoneCrucible;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockStoneCrucible extends Block implements ITileEntityProvider {
+public class BlockStoneCrucible extends AbstractBlockAmalgamContainer implements ITileEntityProvider {
 
     @SideOnly(Side.CLIENT)
     private IIcon iconInner;
@@ -50,11 +49,6 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
         return side == 1 ? this.iconTop : side == 0 ? this.iconBottom : side == 6 ? this.iconInner : this.blockIcon;
     }
 
-    @Override
-    public int getRenderType() {
-        return Config.crucibleRID;
-    }
-
     @SideOnly(Side.CLIENT)
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
@@ -66,6 +60,22 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
         this.solidAmalgam = iconRegister.registerIcon("amalgam:amalgamSolid");
     }
 
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
+
+    @Override
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
+
+    @Override
+    public int getRenderType() {
+        return Config.crucibleRID;
+    }
+
+    @SideOnly(Side.CLIENT)
     public static IIcon getAmalgamIcon(boolean isSolid) {
         if (isSolid) {
             return ((BlockStoneCrucible) Config.stoneCrucible).solidAmalgam;
@@ -91,10 +101,12 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
         this.setBlockBoundsForItemRender();
     }
 
+    @Override
     public void setBlockBoundsForItemRender() {
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
     }
 
+    @Override
     public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
         TileEntity te = world.getTileEntity(x, y, z);
 
@@ -107,112 +119,10 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
         }
     }
 
-    public boolean isOpaqueCube() {
-        return false;
-    }
-
-    public boolean renderAsNormalBlock() {
-        return false;
-    }
-
-    private boolean interactWithAmalgamContainerItem(TileEntity te, IAmalgamContainerItem container, ItemStack stack, EntityPlayer player) {
-        TileStoneCrucible crucible = (TileStoneCrucible) te;
-
-        if (player.isSneaking()) {
-            int drainAmount = Math.min(container.getEmptySpace(stack), Config.BASE_AMOUNT);
-            AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, drainAmount, true);
-
-            if (fluidStack != null) {
-                int result = container.fill(stack, fluidStack, true);
-                fluidStack.amount -= result;
-
-                if (fluidStack.amount > 0) {
-                    crucible.fill(ForgeDirection.UNKNOWN, fluidStack, true);
-                }
-            }
-        } else if (container.getFluid(stack).amount == 0) {
-            AmalgamStack fluidStack = (AmalgamStack) crucible.drain(ForgeDirection.UNKNOWN, container.getEmptySpace(stack), true);
-
-            if (fluidStack != null) {
-                int result = container.fill(stack, fluidStack, true);
-                fluidStack.amount -= result;
-
-                if (fluidStack.amount > 0) {
-                    crucible.fill(ForgeDirection.UNKNOWN, fluidStack, true);
-                }
-            }
-        } else {
-            AmalgamStack newStack = (AmalgamStack) container.drain(stack, container.getCapacity(stack), true);
-            int filled = crucible.fill(ForgeDirection.UNKNOWN, newStack, true);
-            newStack.amount -= filled;
-            container.fill(stack, newStack, true);
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-        ItemStack stack = player.inventory.getCurrentItem();
-
-        if (stack == null) {
-            return true;
-        }
-
-        TileStoneCrucible crucible = (TileStoneCrucible) world.getTileEntity(x, y, z);
-
-        if (stack.getItem() instanceof IAmalgamContainerItem) {
-            if (!crucible.isHot()) {
-                return true;
-            }
-
-            return interactWithAmalgamContainerItem(crucible, (IAmalgamContainerItem) stack.getItem(), stack, player);
-        }
-
-        if (PropertyManager.itemIsAmalgable(stack)) {
-            if (!crucible.isHot()) {
-                return true;
-            }
-
-            int amount = PropertyManager.getVolume(stack);
-
-            if (amount > 0 && amount < crucible.getEmptySpace()) {
-                PropertyList amalgProperties = PropertyManager.getProperties(stack);
-                AmalgamStack amalg = new AmalgamStack(amount, amalgProperties);
-
-                if (amalgProperties == null) {
-                    Config.LOG.error("No properties!!!!!");
-                }
-
-                crucible.fill(ForgeDirection.UNKNOWN, amalg, true);
-                stack.stackSize = stack.stackSize - 1;
-
-                return true;
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int metaData) {
-        TileStoneCrucible crucible = (TileStoneCrucible) world.getTileEntity(x, y, z);
-
-        if (crucible != null) {
-            crucible.emptyTank();
-        }
-
-        super.breakBlock(world, x, y, z, block, metaData);
-        world.removeTileEntity(x, y, z);
-    }
-
     @Override
     public boolean onBlockEventReceived(World world, int x, int y, int z, int side, int metaData) {
         super.onBlockEventReceived(world, x, y, z, side, metaData);
-
         TileEntity tileentity = world.getTileEntity(x, y, z);
-
         return tileentity == null ? false : tileentity.receiveClientEvent(side, metaData);
     }
 
@@ -228,5 +138,41 @@ public class BlockStoneCrucible extends Block implements ITileEntityProvider {
         }
 
         return false;
+    }
+
+    @Override
+    protected void interactWithAmalgableItem(TileEntity te, ItemStack stack) {
+        if (!(te instanceof TileStoneCrucible)) {
+            return;
+        }
+
+        TileStoneCrucible crucible = (TileStoneCrucible) te;
+
+        if (!crucible.isHot()) {
+            return;
+        }
+
+        int amount = PropertyManager.getVolume(stack);
+
+        if (amount > 0 && amount < crucible.getEmptySpace()) {
+            PropertyList amalgProperties = PropertyManager.getProperties(stack);
+            AmalgamStack amalg = new AmalgamStack(amount, amalgProperties);
+
+            if (amalgProperties == null) {
+                Config.LOG.error("No properties!!!!!");
+            }
+
+            crucible.fill(ForgeDirection.UNKNOWN, amalg, true);
+            stack.stackSize = stack.stackSize - 1;
+
+            return;
+        }
+    }
+
+    @Override
+    protected void interactWithAmalgamContainerItem(TileEntity te, IAmalgamContainerItem container, ItemStack stack, EntityPlayer player) {
+        if (te instanceof TileStoneCrucible && ((TileStoneCrucible) te).isHot()) {
+            super.interactWithAmalgamContainerItem(te, container, stack, player);
+        }
     }
 }

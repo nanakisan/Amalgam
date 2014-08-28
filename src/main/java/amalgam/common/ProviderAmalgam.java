@@ -31,47 +31,43 @@ public class ProviderAmalgam implements IWailaDataProvider {
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         // TODO consolidate WAILA code for the tile entities
-        
+
         TileEntity te = accessor.getTileEntity();
         if (te instanceof TileStoneCrucible) {
-            PropertyList l = ((TileStoneCrucible) te).getAmalgamProperties();
+            PropertyList l = ((TileStoneCrucible) te).getAmalgamPropertyList();
             int currentVolume = ((TileStoneCrucible) te).getFluidVolume();
             int capacity = ((TileStoneCrucible) te).getTankCapacity();
             currenttip.add("Volume: " + currentVolume + "/" + capacity);
-            
+
             if (currentVolume != 0 && accessor.getPlayer().isSneaking()) {
                 currenttip.add("--------");
-                
-                for (Property p : Property.getAll()) {
-                    if (p == PropertyManager.COLOR) {
-                        continue;
-                    }
-
-                    currenttip.add(p.getName() + ": " + SpecialChars.WHITE +  String.format("%.1f",l.getValue(p)));
-                }
+                addPropertiesToTooltip(currenttip, l);
             }
         }
 
         if (te instanceof TileCastingTable) {
             PropertyList l = ((TileCastingTable) te).getAmalgamPropertyList();
-            int currentVolume = ((TileCastingTable) te).getTankAmount();
-            int capacity = ((TileCastingTable) te).getCapacity();
+            int currentVolume = ((TileCastingTable) te).getFluidAmount();
+            int capacity = ((TileCastingTable) te).getTankCapacity();
             currenttip.add("Volume: " + currentVolume + "/" + capacity);
-            
+
             if (currentVolume != 0 && accessor.getPlayer().isSneaking()) {
                 currenttip.add("--------");
-                
-                for (Property p : Property.getAll()) {
-                    if (p == PropertyManager.COLOR) {
-                        continue;
-                    }
-
-                    currenttip.add(p.getName() + ": " + SpecialChars.WHITE + String.format("%.1f",l.getValue(p)));
-                }
+                addPropertiesToTooltip(currenttip, l);
             }
         }
 
         return currenttip;
+    }
+
+    public void addPropertiesToTooltip(List<String> currentTip, PropertyList pList) {
+        for (Property p : Property.getAll()) {
+            if (p == PropertyManager.COLOR) {
+                continue;
+            }
+
+            currentTip.add(p.getName() + ": " + SpecialChars.WHITE + String.format("%.1f", pList.getValue(p)));
+        }
     }
 
     @Override
@@ -80,7 +76,6 @@ public class ProviderAmalgam implements IWailaDataProvider {
     }
 
     public static void callbackRegister(IWailaRegistrar registrar) {
-        Config.LOG.info("in here !!!!");
         registrar.registerBodyProvider(new ProviderAmalgam(), Block.class);
     }
 

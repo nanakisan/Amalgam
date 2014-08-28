@@ -65,7 +65,7 @@ public class ContainerCasting extends Container {
 
     public final void updateAmalgamDistribution() {
         TileCastingTable te = this.castingTable;
-        int amount = te.getTankAmount();
+        int amount = te.getFluidAmount();
 
         for (int slotNum = 0; slotNum < this.inventorySlots.size(); slotNum++) {
             Slot s = this.getSlot(slotNum);
@@ -143,7 +143,7 @@ public class ContainerCasting extends Container {
         }
 
         PropertyList pList = castingTable.getAmalgamPropertyList();
-        if (castingTable.getTankAmount() == 0) {
+        if (castingTable.getFluidAmount() == 0) {
             pList = null;
         }
 

@@ -35,16 +35,16 @@ public class ItemAmalgamPick extends ItemAmalgamTool {
     public boolean canHarvestBlock(Block block, ItemStack stack) {
         float harvestLevel = this.getHarvestLevel(stack, block.getHarvestTool(0));
         return block == Blocks.obsidian ? harvestLevel >= 3
-                : (block != Blocks.diamond_block && block != Blocks.diamond_ore ? (block != Blocks.emerald_ore && block != Blocks.emerald_block ? (block != Blocks.gold_block
+                : block != Blocks.diamond_block && block != Blocks.diamond_ore ? (block != Blocks.emerald_ore && block != Blocks.emerald_block ? (block != Blocks.gold_block
                         && block != Blocks.gold_ore ? (block != Blocks.iron_block && block != Blocks.iron_ore ? (block != Blocks.lapis_block
                         && block != Blocks.lapis_ore ? (block != Blocks.redstone_ore && block != Blocks.lit_redstone_ore ? (block.getMaterial() == Material.rock ? true
-                        : (block.getMaterial() == Material.iron ? true : block.getMaterial() == Material.anvil))
+                        : block.getMaterial() == Material.iron ? true : block.getMaterial() == Material.anvil)
                         : harvestLevel >= 2)
                         : harvestLevel >= 1)
                         : harvestLevel >= 1)
                         : harvestLevel >= 2)
                         : harvestLevel >= 2)
-                        : harvestLevel >= 2);
+                        : harvestLevel >= 2;
 
     }
 

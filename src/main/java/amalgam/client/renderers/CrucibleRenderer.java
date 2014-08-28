@@ -29,7 +29,7 @@ public class CrucibleRenderer extends TileEntitySpecialRenderer implements ISimp
         float height = ((TileStoneCrucible) te).getFluidHeight();
         GL11.glTranslated(x, y + height, z + 1.0D);
         GL11.glRotatef(90.0F, -1.0F, 0.0F, 0.0F);
-        PropertyList p = ((TileStoneCrucible) te).getAmalgamProperties();
+        PropertyList p = ((TileStoneCrucible) te).getAmalgamPropertyList();
         Color color;
 
         if (Config.coloredAmalgam) {

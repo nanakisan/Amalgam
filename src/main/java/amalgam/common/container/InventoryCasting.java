@@ -65,7 +65,9 @@ public class InventoryCasting implements IInventory, ISidedInventory {
             return null;
         }
 
-        if (stackList[slot] != null) {
+        if (stackList[slot] == null) {
+            return null;
+        } else {
             ItemStack itemstack;
 
             if (stackList[slot].stackSize <= decNum) {
@@ -85,8 +87,6 @@ public class InventoryCasting implements IInventory, ISidedInventory {
 
                 return itemstack;
             }
-        } else {
-            return null;
         }
     }
 
@@ -176,6 +176,6 @@ public class InventoryCasting implements IInventory, ISidedInventory {
     }
 
     public boolean castComplete() {
-        return this.table.castingTable.tankIsFull();
+        return this.table.castingTable.getEmptySpace() == 0;
     }
 }

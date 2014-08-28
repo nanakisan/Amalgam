@@ -10,28 +10,27 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
 import amalgam.common.Config;
 import amalgam.common.casting.ICastItem;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.AmalgamTank;
 import amalgam.common.item.ItemAmalgamBlob;
-import amalgam.common.properties.PropertyList;
 
-public class TileCastingTable extends TileEntity implements IFluidHandler {
+public class TileCastingTable extends AbstractTileAmalgamContainer {
 
     private ItemStack[]         castingItems = new ItemStack[10];
     private int[]               castStates   = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    private final AmalgamTank   tank         = new AmalgamTank(0);
 
     private static final String ITEMS_KEY    = "ItemStacks";
     private static final String CAST_KEY     = "CastStates";
     private static final String SLOT_KEY     = "Slot";
+
+    public TileCastingTable() {
+        super();
+        tank = new AmalgamTank(0);
+    }
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
@@ -73,7 +72,7 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
 
     @Override
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-        int fillAmount = tank.fill(resource, doFill);
+        int fillAmount = super.fill(from, resource, doFill);
         ItemStack s = castingItems[9];
 
         if (fillAmount > 0 && doFill && s != null && s.hasTagCompound()) {
@@ -85,12 +84,8 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
 
     @Override
     public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-        if (resource == null) {
-            return null;
-        }
-
+        FluidStack returnStack = super.drain(from, resource.amount, doDrain);
         ItemStack s = castingItems[9];
-        FluidStack returnStack = tank.drain(resource.amount, doDrain);
 
         if (returnStack != null && s != null && s.hasTagCompound()) {
             updateCastResult(s);
@@ -101,8 +96,8 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
 
     @Override
     public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+        FluidStack returnStack = super.drain(from, maxDrain, doDrain);
         ItemStack s = castingItems[9];
-        FluidStack returnStack = tank.drain(maxDrain, doDrain);
 
         if (returnStack != null && s != null && s.hasTagCompound()) {
             updateCastResult(s);
@@ -123,32 +118,7 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         }
 
         ItemStack[] materials = items.toArray(new ItemStack[items.size()]);
-        castingItems[9] = ((ICastItem) result.getItem()).generateStackWithProperties(this.getAmalgamPropertyList(), materials, result.stackSize);
-    }
-
-    @Override
-    public boolean canFill(ForgeDirection from, Fluid fluid) {
-        if (fluid.getID() == Config.fluidAmalgam.getID()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean canDrain(ForgeDirection from, Fluid fluid) {
-        boolean canDrain = false;
-
-        if (fluid.getID() == Config.fluidAmalgam.getID()) {
-            canDrain = true;
-        }
-
-        return canDrain;
-    }
-
-    @Override
-    public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-        return new FluidTankInfo[] { tank.getInfo() };
+        castingItems[9] = ((ICastItem) result.getItem()).generateStackWithProperties(getAmalgamPropertyList(), materials, result.stackSize);
     }
 
     public void updateAmalgamTankCapacity() {
@@ -173,14 +143,6 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
                 this.worldObj.spawnEntityInWorld(amalgEntity);
             }
         }
-    }
-
-    public boolean tankIsFull() {
-        return tank.getFluidAmount() == tank.getCapacity();
-    }
-
-    public int getCapacity() {
-        return tank.getCapacity();
     }
 
     public int getCastState(int i) {
@@ -230,25 +192,6 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         }
     }
 
-    public void emptyTank() {
-        if (!this.worldObj.isRemote) {
-            int amount = tank.getFluidAmount();
-            PropertyList p = ((AmalgamStack) tank.getFluid()).getProperties();
-
-            while (amount > 0) {
-                int dropAmount = Math.min(amount, Config.INGOT_AMOUNT);
-                amount -= dropAmount;
-                ItemStack droppedBlob = new ItemStack(Config.amalgamBlob, 1);
-
-                ((ItemAmalgamBlob) Config.amalgamBlob).setProperties(droppedBlob, p);
-                ((ItemAmalgamBlob) Config.amalgamBlob).setVolume(droppedBlob, dropAmount);
-
-                EntityItem amalgEntity = new EntityItem(this.worldObj, xCoord, yCoord, zCoord, droppedBlob);
-                this.worldObj.spawnEntityInWorld(amalgEntity);
-            }
-        }
-    }
-
     public ItemStack getStackInSlot(int slotNum) {
         return castingItems[slotNum];
     }
@@ -257,7 +200,7 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         castingItems[slotNum] = stack;
     }
 
-    public int getTankAmount() {
+    public int getFluidAmount() {
         return tank.getFluidAmount();
     }
 
@@ -265,16 +208,14 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
         tank.setFluid(fluid);
     }
 
-    public PropertyList getAmalgamPropertyList() {
-        return ((AmalgamStack) tank.getFluid()).getProperties();
-    }
-
     public boolean decrStackSize(int slot, int decNum) {
         if (castStates[slot] != 0) {
             return true;
         }
 
-        if (castingItems[slot] != null) {
+        if (castingItems[slot] == null) {
+            return true;
+        } else {
             ItemStack itemstack;
 
             if (castingItems[slot].stackSize <= decNum) {
@@ -290,8 +231,7 @@ public class TileCastingTable extends TileEntity implements IFluidHandler {
 
                 return true;
             }
-        } else {
-            return true;
         }
     }
+
 }

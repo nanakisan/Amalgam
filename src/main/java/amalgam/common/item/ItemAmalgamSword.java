@@ -24,7 +24,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemAmalgamSword extends ItemSword implements ICastItem {
 
-    IIcon hilt;
+    private IIcon hilt;
 
     public ItemAmalgamSword() {
         super(ItemAmalgamTool.toolMatAmalgam);

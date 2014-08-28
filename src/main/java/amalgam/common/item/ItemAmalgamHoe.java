@@ -18,7 +18,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemAmalgamHoe extends ItemHoe implements ICastItem {
 
-    IIcon hilt;
+    private IIcon hilt;
 
     public ItemAmalgamHoe() {
         super(ItemAmalgamTool.toolMatAmalgam);

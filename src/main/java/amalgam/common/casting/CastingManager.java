@@ -26,7 +26,7 @@ public final class CastingManager {
     }
 
     public static ShapedCastingRecipe addRecipe(ICastItem output, int amount, Object... inputList) {
-        String s = "";
+        StringBuffer s = new StringBuffer("");
         int i = 0;
         int j = 0;
         int k = 0;
@@ -38,14 +38,14 @@ public final class CastingManager {
                 String s1 = astring[l];
                 ++k;
                 j = s1.length();
-                s = s + s1;
+                s = s.append(s1);
             }
         } else {
             while (i < inputList.length && inputList[i] instanceof String) {
                 String s2 = (String) inputList[i++];
                 ++k;
                 j = s2.length();
-                s = s + s2;
+                s = s.append(s2);
             }
         }
         HashMap<Character, ItemStack> hashmap;

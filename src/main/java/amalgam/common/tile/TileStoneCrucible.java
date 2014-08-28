@@ -3,41 +3,42 @@ package amalgam.common.tile;
 import java.util.Set;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
 import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.AmalgamTank;
-import amalgam.common.item.ItemAmalgamBlob;
 import amalgam.common.properties.PropertyList;
+import amalgam.common.properties.PropertyManager;
 
 import com.google.common.collect.Sets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TileStoneCrucible extends TileEntity implements IFluidHandler {
-
-    protected AmalgamTank       tank          = new AmalgamTank(Config.INGOT_AMOUNT * 15);
+public class TileStoneCrucible extends AbstractTileAmalgamContainer implements IInventory {
 
     private static Set<Block>   heatSources   = Sets.newHashSet(new Block[] { Blocks.fire, Blocks.lava });
     private static final String HEAT_TAG      = "heat";
     private boolean             hasHeat;
 
+    private ItemStack           buffer;
+
     private static final int    UPDATE_PERIOD = 50;
-    private int                 ticksSinceLastUpdate;
+    private int                 ticksSinceUpdate;
+
+    public TileStoneCrucible() {
+        super();
+        tank = new AmalgamTank(Config.INGOT_AMOUNT * 15);
+    }
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
@@ -54,78 +55,37 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler {
     }
 
     @Override
-    public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-        return tank.fill(resource, doFill);
-    }
-
-    @Override
-    public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-        if (resource == null) {
-            return null;
-        }
-
-        return tank.drain(resource.amount, doDrain);
-    }
-
-    @Override
-    public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-        return tank.drain(maxDrain, doDrain);
-    }
-
-    @Override
-    public boolean canFill(ForgeDirection from, Fluid fluid) {
-        if (fluid.getID() == Config.fluidAmalgam.getID()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean canDrain(ForgeDirection from, Fluid fluid) {
-        return true;
-    }
-
-    @Override
-    public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-        return new FluidTankInfo[] { tank.getInfo() };
-    }
-
-    public int getEmptySpace() {
-        return tank.getCapacity() - tank.getFluidAmount();
-    }
-
-    public void emptyTank() {
-        if (!this.worldObj.isRemote) {
-            int amount = tank.getFluidAmount();
-            PropertyList p = ((AmalgamStack) tank.getFluid()).getProperties();
-
-            while (amount > 0) {
-                int dropAmount = Math.min(amount, Config.INGOT_AMOUNT);
-                amount -= dropAmount;
-                ItemStack droppedBlob = new ItemStack(Config.amalgamBlob, 1);
-
-                ((ItemAmalgamBlob) Config.amalgamBlob).setProperties(droppedBlob, p);
-                ((ItemAmalgamBlob) Config.amalgamBlob).setVolume(droppedBlob, dropAmount);
-
-                EntityItem amalgEntity = new EntityItem(this.worldObj, xCoord, yCoord, zCoord, droppedBlob);
-                this.worldObj.spawnEntityInWorld(amalgEntity);
-            }
-        }
-    }
-
-    @Override
     public void updateEntity() {
-        ticksSinceLastUpdate++;
+        ticksSinceUpdate++;
+        meltBufferItem();
 
-        if (ticksSinceLastUpdate > UPDATE_PERIOD) {
-            ticksSinceLastUpdate = 0;
+        if (ticksSinceUpdate > UPDATE_PERIOD) {
+            ticksSinceUpdate = 0;
             Block test = this.worldObj.getBlock(this.xCoord, this.yCoord - 1, this.zCoord);
 
             if (TileStoneCrucible.heatSources.contains(test)) {
                 this.hasHeat = true;
             } else {
                 this.hasHeat = false;
+            }
+        }
+    }
+
+    private void meltBufferItem() {
+        if (buffer != null && this.isHot()) {
+            ItemStack stack = this.decrStackSize(0, 1);
+            int amount = PropertyManager.getVolume(stack);
+
+            if (amount > 0 && amount < this.getEmptySpace()) {
+                PropertyList amalgProperties = PropertyManager.getProperties(stack);
+                AmalgamStack amalg = new AmalgamStack(amount, amalgProperties);
+
+                if (amalgProperties == null) {
+                    Config.LOG.error("No properties!!!!!");
+                }
+
+                this.fill(ForgeDirection.UNKNOWN, amalg, true);
+                // FIXME need to update clientside!
             }
         }
     }
@@ -138,12 +98,8 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler {
         return this.hasHeat;
     }
 
-    public String toString() {
-        return tank.toString();
-    }
-
     public float getFluidHeight() {
-        return 0.3F + 0.7F * ((float) this.tank.getFluidAmount() / (float) this.tank.getCapacity());
+        return 0.3F + 0.69F * ((float) this.tank.getFluidAmount() / (float) this.tank.getCapacity());
     }
 
     @Override
@@ -165,16 +121,81 @@ public class TileStoneCrucible extends TileEntity implements IFluidHandler {
         return AxisAlignedBB.getBoundingBox(this.xCoord, this.yCoord, this.zCoord, this.xCoord + 1, this.yCoord + 1, this.zCoord + 1);
     }
 
-    public PropertyList getAmalgamProperties() {
-        return ((AmalgamStack) tank.getFluid()).getProperties();
+    @Override
+    public int getSizeInventory() {
+        return 1;
     }
 
-    public int getFluidVolume() {
-        return this.tank.getFluidAmount();
+    @Override
+    public ItemStack getStackInSlot(int slot) {
+        if (slot == 0) {
+            return buffer;
+        }
+        return null;
     }
 
-    public int getTankCapacity() {
-        return this.tank.getCapacity();
+    @Override
+    public ItemStack decrStackSize(int slot, int amount) {
+        if (slot == 0) {
+            return buffer.splitStack(amount);
+        }
+        return null;
+    }
+
+    @Override
+    public ItemStack getStackInSlotOnClosing(int slot) {
+        if (slot == 0) {
+            return buffer;
+        }
+        return null;
+    }
+
+    @Override
+    public void setInventorySlotContents(int slot, ItemStack stack) {
+        if (slot == 0 && buffer == null) {
+            buffer = stack;
+        }
+    }
+
+    @Override
+    public String getInventoryName() {
+        return null;
+    }
+
+    @Override
+    public boolean hasCustomInventoryName() {
+        return false;
+    }
+
+    @Override
+    public int getInventoryStackLimit() {
+        return 1;
+    }
+
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer player) {
+        return false;
+    }
+
+    @Override
+    public void openInventory() {
+    }
+
+    @Override
+    public void closeInventory() {
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int slot, ItemStack stack) {
+        if (stack != null && PropertyManager.itemIsAmalgable(stack) && PropertyManager.getVolume(stack) <= this.getEmptySpace()) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean receiveClientEvent(int eventNum, int arg) {
+        return false;
     }
 
 }

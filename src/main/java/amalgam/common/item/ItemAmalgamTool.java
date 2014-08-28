@@ -151,7 +151,7 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
 
         toolTag.setInteger(HARVEST_TAG, (int) Math.ceil(hardness));
         toolTag.setInteger(ENCHANTABILITY_TAG, (int) (luster));
-        toolTag.setFloat(EFFICIENCY_TAG, ((3.0F * luster * luster + 1.5F * density * density) / 120.0F) + 1.0F);
+        toolTag.setFloat(EFFICIENCY_TAG, (3.0F * luster * luster + 1.5F * density * density) / 120.0F + 1.0F);
         int maxDurability = (int) ((density * density) * (hardness + 1));
         toolTag.setInteger(DURABILITY_TAG, maxDurability);
         toolTag.setFloat(DAMAGE_TAG, maliability + this.damageMod);
