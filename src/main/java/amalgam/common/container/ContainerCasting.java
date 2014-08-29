@@ -18,6 +18,9 @@ public class ContainerCasting extends Container {
     public InventoryCasting    castingMatrix;
     public InventoryCastResult castResult;
 
+    /* FIXME add mouseover test to gui saying which state a sot is in and how much amalgam it contains. It should also
+     * say how much more amalgam is needed total when mousing over the cast result */
+
     public ContainerCasting(InventoryPlayer inv, TileCastingTable te) {
         super();
 
@@ -71,11 +74,33 @@ public class ContainerCasting extends Container {
             Slot s = this.getSlot(slotNum);
 
             if (s instanceof SlotCasting) {
-                if (te.getCastState(slotNum) == 1 && amount > 0) {
-                    ((SlotCasting) s).doesHaveAmalgam(true);
-                    amount -= Config.INGOT_AMOUNT;
+                /* Check if we have anymore amalgam */
+                if (amount <= 0) {
+                    ((SlotCasting) s).setHasAmalgam(false);
+                    ((SlotCasting) s).setIsFull(false);
                 } else {
-                    ((SlotCasting) s).doesHaveAmalgam(false);
+                    ((SlotCasting) s).setHasAmalgam(true);
+                    int state = te.getCastState(slotNum);
+                    /* If we have amalgam, decrease the total by the amount needed to fill the slot based on it's
+                     * casting state */
+                    switch (state) {
+                        case SlotCasting.NUGGET_STATE:
+                            amount -= Config.BASE_AMOUNT;
+                            break;
+                        case SlotCasting.INGOT_STATE:
+                            amount -= Config.INGOT_AMOUNT;
+                            break;
+                        case SlotCasting.BLOCK_STATE:
+                            amount -= Config.BLOCK_AMOUNT;
+                            break;
+                    }
+
+                    /* If we didn't have enough amalgam to fill the slot, set isFull to false */
+                    if (amount < 0) {
+                        ((SlotCasting) s).setIsFull(false);
+                    } else {
+                        ((SlotCasting) s).setIsFull(true);
+                    }
                 }
             }
         }

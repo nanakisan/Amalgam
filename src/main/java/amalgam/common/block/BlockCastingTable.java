@@ -54,7 +54,7 @@ public class BlockCastingTable extends AbstractBlockAmalgamContainer implements 
     }
 
     private boolean onCastPickup(TileCastingTable table, EntityPlayer player) {
-        // FIXME color of floating cast result doesn't reset using this!!!
+        // TODO color of floating cast result doesn't reset using this!!!
         table.setTankFluid(null);
         boolean matsRemain = true;
 
@@ -100,7 +100,7 @@ public class BlockCastingTable extends AbstractBlockAmalgamContainer implements 
             ItemStack resultStack = table.getStackInSlot(9);
             if (player.isSneaking() && resultStack != null && table.getEmptySpace() == 0) {
                 if (!onCastPickup(table, player)) {
-                    table.setStackInSlot(9, null);
+                    table.updateCastResult(resultStack);
                 }
                 player.setCurrentItemOrArmor(0, resultStack);
 

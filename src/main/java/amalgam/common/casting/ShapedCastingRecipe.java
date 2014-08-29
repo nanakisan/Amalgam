@@ -1,9 +1,10 @@
 package amalgam.common.casting;
 
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import amalgam.common.Config;
 import amalgam.common.container.InventoryCasting;
+import amalgam.common.container.SlotCasting;
 import amalgam.common.properties.PropertyList;
 
 public class ShapedCastingRecipe implements ICastingRecipe {
@@ -57,8 +58,20 @@ public class ShapedCastingRecipe implements ICastingRecipe {
 
                 ItemStack itemstack1 = inv.getStackInRowAndColumn(k, l);
 
-                if (itemstack1 == null && inv.getCastState(k + l * 3) != 0) {
-                    itemstack1 = new ItemStack(Blocks.fire);
+                if (itemstack1 == null){
+                    int state = inv.getCastState(k + l * 3);
+                    switch(state){
+                        case SlotCasting.NUGGET_STATE:
+                            itemstack1 = new ItemStack(CastingManager.NUGGET_PLACEHOLDER);
+                            break;
+                        case SlotCasting.INGOT_STATE:
+                            itemstack1 = new ItemStack(CastingManager.INGOT_PLACEHOLDER);
+                            break;
+                        case SlotCasting.BLOCK_STATE:
+                            itemstack1 = new ItemStack(CastingManager.BLOCK_PLACEHOLDER);
+                            break;
+                    }
+                    
                 }
 
                 if (itemstack1 != null || itemstack != null) {
@@ -70,6 +83,8 @@ public class ShapedCastingRecipe implements ICastingRecipe {
                         return false;
                     }
 
+                    Config.LOG.info("itemstack1: " + itemstack1.getDisplayName() + "   itemstack: " + itemstack.getDisplayName());
+                    
                     if (itemstack.getItemDamage() != 32767 && itemstack.getItemDamage() != itemstack1.getItemDamage()) {
                         return false;
                     }

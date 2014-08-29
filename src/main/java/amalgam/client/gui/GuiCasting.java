@@ -23,6 +23,9 @@ public class GuiCasting extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float floatParam, int intParam1, int intParam2) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        
+        /* Load the gui texture. This is essential before we call any draw commands */
+        
         this.mc.getTextureManager().bindTexture(CRAFTING_GUI_TEXTURES);
         int xPos = (this.width - this.xSize) / 2;
         int yPos = (this.height - this.ySize) / 2;
@@ -31,23 +34,29 @@ public class GuiCasting extends GuiContainer {
         ContainerCasting table = (ContainerCasting) this.inventorySlots;
         SlotCasting testSlot;
 
+        /* Loop through all the casting slots, get their state and the amount of amalgam in them, and overlay them on
+         * the gui. */
+        
         for (int i = 0; i < 9; i++) {
             testSlot = (SlotCasting) table.getSlot(i);
+            int state = testSlot.getCastState();
 
-            if (testSlot.getCastState() != 0) {
+            if (state != SlotCasting.EMPTY_STATE) {
                 int rowNum = i / 3;
                 int colNum = i % 3;
 
-                if (testSlot.containsAmalgam()) {
-                    this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 178, 18, 16, 16);
+                if (testSlot.getHasAmalgam()) {
+                    this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 160 + 17 * state, 18, 16, 16);
                 } else {
-                    this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 178, 1, 16, 16);
+                    this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 160 + 17 * state, 1, 16, 16);
                 }
             }
         }
 
         TileCastingTable castingTable = table.castingTable;
 
+        /* Add the red overlay if the cast result is not complete. */
+        
         if (castingTable.getEmptySpace() != 0 && castingTable.getStackInSlot(9) != null) {
             float red = (float) Math.pow(Math.sin(Minecraft.getMinecraft().theWorld.getWorldTime() * 0.1), 2);
             GL11.glEnable(GL11.GL_BLEND);

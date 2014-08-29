@@ -13,10 +13,21 @@ import amalgam.common.container.InventoryCasting;
 
 public final class CastingManager {
 
-    // FIXME allow nugget, ingot, and block amounts of amalgam to be used in recipes. Right now we can only use ingots.
+    private static final CastingManager INSTANCE           = new CastingManager();
+    private static List<ICastingRecipe> recipes            = new ArrayList<ICastingRecipe>();
 
-    private static final CastingManager INSTANCE = new CastingManager();
-    private static List<ICastingRecipe> recipes  = new ArrayList<ICastingRecipe>();
+    /* These placeholder items are used to represent different amounts of amalgam in casting recipes. Since they
+     * shouldn't ever be used in actual recipes I don't think this should be a problem. */
+    public static final Block          NUGGET_PLACEHOLDER = Blocks.water;
+    public static final Block          INGOT_PLACEHOLDER  = Blocks.fire;
+    public static final Block          BLOCK_PLACEHOLDER  = Blocks.lava;
+
+    /* These characters are used to represent different amounts of amalgam in casting recipes. Hopefully they won't
+     * cause any conflicts as long as people don't use these special characters to represent other things in their
+     * recipe! */
+    public static final char NUGGET_CHAR = '.';
+    public static final char INGOT_CHAR = '@';
+    public static final char BLOCK_CHAR = '#';
 
     public static CastingManager getInstance() {
         return INSTANCE;
@@ -71,8 +82,12 @@ public final class CastingManager {
 
             if (hashmap.containsKey(Character.valueOf(c0))) {
                 aitemstack[i1] = ((ItemStack) hashmap.get(Character.valueOf(c0))).copy();
-            } else if (c0 == 'a' || c0 == 'A') {
-                aitemstack[i1] = new ItemStack(Blocks.fire);
+            } else if (c0 == NUGGET_CHAR){
+                aitemstack[i1] = new ItemStack(NUGGET_PLACEHOLDER);
+            } else if (c0 == INGOT_CHAR){
+                aitemstack[i1] = new ItemStack(INGOT_PLACEHOLDER);
+            } else if (c0 == BLOCK_CHAR){
+                aitemstack[i1] = new ItemStack(BLOCK_PLACEHOLDER);
             } else {
                 aitemstack[i1] = null;
             }
@@ -97,6 +112,8 @@ public final class CastingManager {
             } else if (component instanceof Item) {
                 arraylist.add(new ItemStack((Item) component));
             } else if (component instanceof String) {
+                
+                // FIXME update this part to use differnt amalgam amounts (see shapedRecipe above)
                 if (((String) component).equalsIgnoreCase("a") || ((String) component).equalsIgnoreCase("amalgam")) {
                     arraylist.add(new ItemStack(Blocks.fire));
                 }

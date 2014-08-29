@@ -14,6 +14,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import amalgam.common.Config;
 import amalgam.common.casting.ICastItem;
+import amalgam.common.container.SlotCasting;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.AmalgamTank;
 import amalgam.common.item.ItemAmalgamBlob;
@@ -106,7 +107,7 @@ public class TileCastingTable extends AbstractTileAmalgamContainer {
         return returnStack;
     }
 
-    private void updateCastResult(ItemStack result) {
+    public void updateCastResult(ItemStack result) {
         ItemStack temp;
         Set<ItemStack> items = new HashSet<ItemStack>();
 
@@ -124,10 +125,22 @@ public class TileCastingTable extends AbstractTileAmalgamContainer {
     public void updateAmalgamTankCapacity() {
         int newCapacity = 0;
 
+        /* Calculate new tank capacity based on the casting states of the slots on the table */
         for (int i = 0; i < 9; i++) {
-            newCapacity += castStates[i] * Config.INGOT_AMOUNT;
+            switch(castStates[i]){
+                case SlotCasting.NUGGET_STATE:
+                    newCapacity += Config.BASE_AMOUNT;
+                    break;
+                case SlotCasting.INGOT_STATE:
+                    newCapacity += Config.INGOT_AMOUNT;
+                    break;
+                case SlotCasting.BLOCK_STATE:
+                    newCapacity += Config.BLOCK_AMOUNT;
+                    break;
+            }
         }
 
+        /* Set the tank capacity to the new capacity. If the capacity decreased we may get the amalgam overflow */
         AmalgamStack extraAmalgam = tank.setCapacity(newCapacity);
 
         if (extraAmalgam != null) {
@@ -136,6 +149,7 @@ public class TileCastingTable extends AbstractTileAmalgamContainer {
             }
 
             if (!this.worldObj.isRemote) {
+                /* If there is amalgam overflow we spawn it in the world as solidified amalgam */
                 ItemStack droppedBlob = new ItemStack(Config.amalgamBlob, 1);
                 ((ItemAmalgamBlob) Config.amalgamBlob).setProperties(droppedBlob, extraAmalgam.getProperties());
                 ((ItemAmalgamBlob) Config.amalgamBlob).setVolume(droppedBlob, extraAmalgam.amount);

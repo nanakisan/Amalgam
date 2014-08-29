@@ -220,14 +220,14 @@ public class Config {
             PropertyList blazeRodProp = new PropertyList().add(PropertyManager.DENSITY, 1.0F).add(PropertyManager.HARDNESS, 0.5F)
                     .add(PropertyManager.LUSTER, 2.0F).add(PropertyManager.MALIABILITY, 5.0F).add(PropertyManager.COLOR, 0xFFCB00);
 
-            PropertyManager.registerOreDictProperties("gemLapis", lapisProp, Config.BASE_AMOUNT * 2);
+//            PropertyManager.registerOreDictProperties("gemLapis", lapisProp, Config.BASE_AMOUNT * 2);
             PropertyManager.registerOreDictProperties("gemQuartz", quartzProp, Config.BASE_AMOUNT * 2);
-            PropertyManager.registerOreDictProperties("dustRedstone", redstoneProp, Config.BASE_AMOUNT * 2);
+//            PropertyManager.registerOreDictProperties("dustRedstone", redstoneProp, Config.BASE_AMOUNT * 2);
             PropertyManager.registerOreDictProperties("gemEmerald", emeraldProp, Config.INGOT_AMOUNT);
 
             PropertyManager.registerOreDictProperties("blockQuartz", quartzProp, Config.INGOT_AMOUNT * 2);
-            PropertyManager.registerOreDictProperties("blockLapis", lapisProp, Config.INGOT_AMOUNT * 2);
-            PropertyManager.registerOreDictProperties("blockRedstone", redstoneProp, Config.INGOT_AMOUNT * 2);
+//            PropertyManager.registerOreDictProperties("blockLapis", lapisProp, Config.INGOT_AMOUNT * 2);
+//            PropertyManager.registerOreDictProperties("blockRedstone", redstoneProp, Config.INGOT_AMOUNT * 2);
             PropertyManager.registerOreDictProperties("blockEmerald", emeraldProp, Config.BLOCK_AMOUNT);
 
             PropertyManager.registerItemProperties(new ItemStack(Items.blaze_powder), blazeRodProp, BASE_AMOUNT);
@@ -237,19 +237,22 @@ public class Config {
     }
 
     public static void registerRecipes() {
+        char a = CastingManager.INGOT_CHAR;
         CastingManager.addShapelessRecipe((ICastItem) amalgamSword, 1, "Amalgam", Blocks.stone);
-        CastingManager.addRecipe((ICastItem) amalgamSword, 1, "a", "a", "s", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamPick, 1, "aaa", " s ", " s ", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamAxe, 1, "aa", "as", " s", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamAxe, 1, "aa", "sa", "s ", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamShovel, 1, "a", "s", "s", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamHoe, 1, "aa", " s", " s", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamHoe, 1, "aa", "s ", "s ", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamSword, 1, "@", "@", "s", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamPick, 1, "@@@", " s ", " s ", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamAxe, 1, "@@", "@s", " s", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamAxe, 1, "@@", "s@", "s ", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamShovel, 1, "@", "s", "s", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamHoe, 1, "@@", " s", " s", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamHoe, 1, "@@", "s ", "s ", 's', Items.stick);
 
-        CastingManager.addRecipe((ICastItem) amalgamHelmet, 1, "aaa", "a a");
-        CastingManager.addRecipe((ICastItem) amalgamChest, 1, "a a", "aaa", "aaa");
-        CastingManager.addRecipe((ICastItem) amalgamLegs, 1, "aaa", "a a", "a a");
-        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, "a a", "a a");
+        CastingManager.addRecipe((ICastItem) amalgamHelmet, 1, "@@@", "@ @");
+        CastingManager.addRecipe((ICastItem) amalgamChest, 1, "@ @", "@@@", "@@@");
+        CastingManager.addRecipe((ICastItem) amalgamLegs, 1, "@@@", "@ @", "@ @");
+        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, "@ @", "@ @");
+        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, ". .", "@ @");
+        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, ". @", "# @");
 
         GameRegistry.addRecipe(new ItemStack(stoneTongs), "s s", " s ", " s ", 's', Blocks.cobblestone);
         GameRegistry.addRecipe(new ItemStack(stoneCrucible), "s s", "s s", "sss", 's', Blocks.cobblestone);

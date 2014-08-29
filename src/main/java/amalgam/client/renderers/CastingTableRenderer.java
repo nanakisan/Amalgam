@@ -28,6 +28,7 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
         block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
         renderer.setRenderBoundsFromBlock(block);
 
+        /* Get the icons from the block */
         BlockCastingTable table = (BlockCastingTable) block;
         IIcon top = table.getBlockTextureFromSide(1);
         IIcon side = table.getBlockTextureFromSide(2);
@@ -37,6 +38,8 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
 
         Tessellator t = Tessellator.instance;
         GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+
+        /* Draw each face of the Casting Table. We are responsible for drawing all faces here. */
 
         t.startDrawingQuads();
         t.setNormal(0.0F, -1.0F, 0.0F);
@@ -84,6 +87,9 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
         IIcon base = table.getBlockTextureFromSide(0);
         IIcon baseSide = table.getBlockTextureFromSide(7);
         IIcon neck = table.getBlockTextureFromSide(6);
+
+        /* Draw each face of the Casting Table. The faces which lay on the 1x1x1 block sides are already drawn, we have
+         * to draw the faces which aren't on the surface of the block. */
 
         renderer.renderFaceYNeg(block, x, y + 1.0F - 0.375F, z, top);
         renderer.renderFaceYPos(block, x, y - 1.0F + 0.25F, z, base);
