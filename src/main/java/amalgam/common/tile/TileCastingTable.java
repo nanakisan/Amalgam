@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -13,42 +15,51 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import amalgam.common.Config;
+import amalgam.common.casting.CastingManager;
 import amalgam.common.casting.ICastItem;
+import amalgam.common.casting.ICastingRecipe;
+import amalgam.common.container.ICastingHandler;
+import amalgam.common.container.InventoryCasting;
+import amalgam.common.container.InventoryCastingResult;
 import amalgam.common.container.SlotCasting;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.AmalgamTank;
 import amalgam.common.item.ItemAmalgamBlob;
+import amalgam.common.properties.PropertyList;
 
-public class TileCastingTable extends AbstractTileAmalgamContainer {
+public class TileCastingTable extends TileAmalgamContainer implements ISidedInventory, ICastingHandler {
 
-    private ItemStack[]         castingItems = new ItemStack[10];
-    private int[]               castStates   = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    public InventoryCasting       castingInventory;
+    public InventoryCastingResult castingResult;
 
-    private static final String ITEMS_KEY    = "ItemStacks";
-    private static final String CAST_KEY     = "CastStates";
-    private static final String SLOT_KEY     = "Slot";
+    private static final int      RESULT_SLOT = 9;
+    private static final String   ITEMS_KEY   = "ItemStacks";
+    private static final String   CAST_KEY    = "CastStates";
+    private static final String   SLOT_KEY    = "Slot";
 
     public TileCastingTable() {
         super();
         tank = new AmalgamTank(0);
+        castingResult = new InventoryCastingResult();
+        castingInventory = new InventoryCasting(this, 3,3);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
         NBTTagList nbttaglist = tag.getTagList(ITEMS_KEY, 10);
-        this.castingItems = new ItemStack[10];
+        this.castingInventory = new InventoryCasting(this, 3, 3);
 
         for (int i = 0; i < nbttaglist.tagCount(); ++i) {
             NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
-            byte b0 = nbttagcompound1.getByte(SLOT_KEY);
-
-            if (b0 >= 0 && b0 < this.castingItems.length) {
-                this.castingItems[b0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+            byte slot = nbttagcompound1.getByte(SLOT_KEY);
+            byte state = nbttagcompound1.getByte(CAST_KEY);
+            if (slot >= 0 && slot < this.castingInventory.getSizeInventory()) {
+                this.castingInventory.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(nbttagcompound1));
+                this.castingInventory.setCastState(slot, state);
             }
         }
 
-        this.castStates = tag.getIntArray(CAST_KEY);
         tank.readFromNBT(tag);
     }
 
@@ -56,14 +67,16 @@ public class TileCastingTable extends AbstractTileAmalgamContainer {
     public void writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
         tank.writeToNBT(tag);
-        tag.setIntArray(CAST_KEY, this.castStates);
+
         NBTTagList nbttaglist = new NBTTagList();
 
-        for (int i = 0; i < this.castingItems.length; ++i) {
-            if (this.castingItems[i] != null) {
+        for (int i = 0; i < this.castingInventory.getSizeInventory(); ++i) {
+            ItemStack item = this.castingInventory.getStackInSlot(i);
+            if (item != null) {
                 NBTTagCompound nbttagcompound1 = new NBTTagCompound();
                 nbttagcompound1.setByte(SLOT_KEY, (byte) i);
-                this.castingItems[i].writeToNBT(nbttagcompound1);
+                nbttagcompound1.setByte(CAST_KEY, (byte) this.castingInventory.getCastState(i));
+                item.writeToNBT(nbttagcompound1);
                 nbttaglist.appendTag(nbttagcompound1);
             }
         }
@@ -74,7 +87,7 @@ public class TileCastingTable extends AbstractTileAmalgamContainer {
     @Override
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
         int fillAmount = super.fill(from, resource, doFill);
-        ItemStack s = castingItems[9];
+        ItemStack s = castingResult.getStackInSlot(0);
 
         if (fillAmount > 0 && doFill && s != null && s.hasTagCompound()) {
             updateCastResult(s);
@@ -86,7 +99,7 @@ public class TileCastingTable extends AbstractTileAmalgamContainer {
     @Override
     public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
         FluidStack returnStack = super.drain(from, resource.amount, doDrain);
-        ItemStack s = castingItems[9];
+        ItemStack s = castingResult.getStackInSlot(0);
 
         if (returnStack != null && s != null && s.hasTagCompound()) {
             updateCastResult(s);
@@ -98,7 +111,7 @@ public class TileCastingTable extends AbstractTileAmalgamContainer {
     @Override
     public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
         FluidStack returnStack = super.drain(from, maxDrain, doDrain);
-        ItemStack s = castingItems[9];
+        ItemStack s = castingResult.getStackInSlot(0);
 
         if (returnStack != null && s != null && s.hasTagCompound()) {
             updateCastResult(s);
@@ -112,22 +125,23 @@ public class TileCastingTable extends AbstractTileAmalgamContainer {
         Set<ItemStack> items = new HashSet<ItemStack>();
 
         for (int i = 0; i < 9; i++) {
-            temp = castingItems[i];
+            temp = castingInventory.getStackInSlot(i);
             if (temp != null) {
                 items.add(temp);
             }
         }
 
         ItemStack[] materials = items.toArray(new ItemStack[items.size()]);
-        castingItems[9] = ((ICastItem) result.getItem()).generateStackWithProperties(getAmalgamPropertyList(), materials, result.stackSize);
+        castingResult.setInventorySlotContents(0,
+                ((ICastItem) result.getItem()).generateStackWithProperties(getAmalgamPropertyList(), materials, result.stackSize));
     }
 
-    public void updateAmalgamTankCapacity() {
+    public void updateTankCapacity(InventoryCasting inv) {
         int newCapacity = 0;
 
         /* Calculate new tank capacity based on the casting states of the slots on the table */
         for (int i = 0; i < 9; i++) {
-            switch(castStates[i]){
+            switch (inv.getCastState(i)) {
                 case SlotCasting.NUGGET_STATE:
                     newCapacity += Config.BASE_AMOUNT;
                     break;
@@ -148,6 +162,7 @@ public class TileCastingTable extends AbstractTileAmalgamContainer {
                 return;
             }
 
+            /* make sure we are on the server */
             if (!this.worldObj.isRemote) {
                 /* If there is amalgam overflow we spawn it in the world as solidified amalgam */
                 ItemStack droppedBlob = new ItemStack(Config.amalgamBlob, 1);
@@ -159,59 +174,18 @@ public class TileCastingTable extends AbstractTileAmalgamContainer {
         }
     }
 
-    public int getCastState(int i) {
-        return castStates[i];
-    }
-
-    public void setCastState(int index, int value) {
-        this.castStates[index] = value;
-        this.updateAmalgamTankCapacity();
-    }
-
     @Override
     public Packet getDescriptionPacket() {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setIntArray(CAST_KEY, this.castStates);
-        tank.writeToNBT(tag);
-        NBTTagList nbttaglist = new NBTTagList();
-
-        for (int i = 0; i < this.castingItems.length; ++i) {
-            if (this.castingItems[i] != null) {
-                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-                nbttagcompound1.setByte(SLOT_KEY, (byte) i);
-                this.castingItems[i].writeToNBT(nbttagcompound1);
-                nbttaglist.appendTag(nbttagcompound1);
-            }
-        }
-
-        tag.setTag(ITEMS_KEY, nbttaglist);
+        this.writeToNBT(tag);
+        
         return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, this.blockMetadata, tag);
     }
 
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
         NBTTagCompound tag = pkt.func_148857_g();
-        this.castStates = tag.getIntArray(CAST_KEY);
-        this.tank.readFromNBT(tag);
-        NBTTagList nbttaglist = tag.getTagList(ITEMS_KEY, 10);
-        this.castingItems = new ItemStack[10];
-
-        for (int i = 0; i < nbttaglist.tagCount(); ++i) {
-            NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
-            byte b0 = nbttagcompound1.getByte(SLOT_KEY);
-
-            if (b0 >= 0 && b0 < this.castingItems.length) {
-                this.castingItems[b0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
-            }
-        }
-    }
-
-    public ItemStack getStackInSlot(int slotNum) {
-        return castingItems[slotNum];
-    }
-
-    public void setStackInSlot(int slotNum, ItemStack stack) {
-        castingItems[slotNum] = stack;
+        this.readFromNBT(tag);
     }
 
     public int getFluidAmount() {
@@ -222,30 +196,124 @@ public class TileCastingTable extends AbstractTileAmalgamContainer {
         tank.setFluid(fluid);
     }
 
-    public boolean decrStackSize(int slot, int decNum) {
-        if (castStates[slot] != 0) {
-            return true;
-        }
-
-        if (castingItems[slot] == null) {
-            return true;
-        } else {
-            ItemStack itemstack;
-
-            if (castingItems[slot].stackSize <= decNum) {
-                itemstack = castingItems[slot];
-                this.setStackInSlot(slot, null);
-                return false;
-            } else {
-                itemstack = castingItems[slot].splitStack(decNum);
-
-                if (castingItems[slot].stackSize == 0) {
-                    this.setStackInSlot(slot, itemstack);
-                }
-
-                return true;
-            }
-        }
+    @Override
+    public int getSizeInventory() {
+        return castingInventory.getSizeInventory();
     }
 
+    @Override
+    public ItemStack getStackInSlotOnClosing(int slot) {
+        if (slot == RESULT_SLOT) {
+            return castingResult.getStackInSlotOnClosing(0);
+        }
+        return castingInventory.getStackInSlotOnClosing(slot);
+    }
+
+    @Override
+    public void setInventorySlotContents(int slot, ItemStack stack) {
+        if (slot == RESULT_SLOT) {
+            castingResult.setInventorySlotContents(0, stack);
+        }
+        castingInventory.setInventorySlotContents(slot, stack);
+    }
+
+    @Override
+    public String getInventoryName() {
+        return "container.castingtable";
+    }
+
+    @Override
+    public boolean hasCustomInventoryName() {
+        return true;
+    }
+
+    @Override
+    public int getInventoryStackLimit() {
+        return castingInventory.getInventoryStackLimit();
+    }
+
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer player) {
+        return castingInventory.isUseableByPlayer(player);
+    }
+
+    @Override
+    public void openInventory() {
+    }
+
+    @Override
+    public void closeInventory() {
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int slot, ItemStack stack) {
+        if (slot == RESULT_SLOT) {
+            return castingResult.isItemValidForSlot(0, stack);
+        }
+
+        return castingInventory.isItemValidForSlot(slot, stack);
+    }
+
+    @Override
+    public ItemStack decrStackSize(int slot, int decNum) {
+        if (slot == RESULT_SLOT) {
+            return castingResult.decrStackSize(0, decNum);
+        }
+
+        return castingInventory.decrStackSize(slot, decNum);
+    }
+
+    @Override
+    public int[] getAccessibleSlotsFromSide(int side) {
+        return new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    }
+
+    @Override
+    public boolean canInsertItem(int slot, ItemStack stack, int meta) {
+        if (slot == RESULT_SLOT) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean canExtractItem(int slot, ItemStack stack, int meta) {
+        if (slot == RESULT_SLOT && getEmptySpace() == 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public ItemStack getStackInSlot(int slot) {
+        if (slot == RESULT_SLOT) {
+            return castingResult.getStackInSlot(0);
+        }
+
+        return castingInventory.getStackInSlot(slot);
+    }
+
+    @Override
+    public boolean isCastComplete() {
+        return tank.getCapacity() == tank.getFluidAmount();
+    }
+
+    @Override 
+    public void onCastMatrixChanged(InventoryCasting inv){
+        ICastingRecipe recipe = CastingManager.findMatchingRecipe(inv, worldObj);
+
+        if (recipe == null) {
+            castingResult.setInventorySlotContents(0, null);
+            return;
+        }
+
+        PropertyList pList = getAmalgamPropertyList();
+        if (getFluidAmount() == 0) {
+            pList = null;
+        }
+
+        castingResult.setInventorySlotContents(0, recipe.getCastingResult(inv, pList));
+    }
 }

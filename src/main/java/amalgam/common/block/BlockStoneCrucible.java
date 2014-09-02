@@ -17,15 +17,13 @@ import net.minecraftforge.common.util.ForgeDirection;
 import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.IAmalgamContainerItem;
-import amalgam.common.network.PacketHandler;
-import amalgam.common.network.PacketSyncAmalgamTank;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
 import amalgam.common.tile.TileStoneCrucible;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockStoneCrucible extends AbstractBlockAmalgamContainer implements ITileEntityProvider {
+public class BlockStoneCrucible extends BlockAmalgamContainer implements ITileEntityProvider {
 
     @SideOnly(Side.CLIENT)
     private IIcon iconInner;

@@ -26,7 +26,7 @@ import com.google.common.collect.Sets;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TileStoneCrucible extends AbstractTileAmalgamContainer implements IInventory {
+public class TileStoneCrucible extends TileAmalgamContainer implements IInventory {
 
     private static Set<Block>   heatSources   = Sets.newHashSet(new Block[] { Blocks.fire, Blocks.lava, Blocks.flowing_lava });
     private static final String HEAT_TAG      = "heat";

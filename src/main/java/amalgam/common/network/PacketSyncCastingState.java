@@ -49,7 +49,7 @@ public class PacketSyncCastingState implements IMessage, IMessageHandler<PacketS
         TileEntity te = Amalgam.proxy.getClientWorld().getTileEntity(message.x, message.y, message.z);
 
         if (te instanceof TileCastingTable) {
-            ((TileCastingTable) te).setCastState(message.slot, message.state);
+            ((TileCastingTable) te).castingInventory.setCastState(message.slot, message.state);
         }
 
         return null;

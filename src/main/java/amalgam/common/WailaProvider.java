@@ -13,7 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import amalgam.common.properties.Property;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
-import amalgam.common.tile.AbstractTileAmalgamContainer;
+import amalgam.common.tile.TileAmalgamContainer;
 
 public class WailaProvider implements IWailaDataProvider {
 
@@ -31,10 +31,10 @@ public class WailaProvider implements IWailaDataProvider {
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         TileEntity te = accessor.getTileEntity();
 
-        if (te instanceof AbstractTileAmalgamContainer) {
-            PropertyList l = ((AbstractTileAmalgamContainer) te).getAmalgamPropertyList();
-            int currentVolume = ((AbstractTileAmalgamContainer) te).getFluidVolume();
-            int capacity = ((AbstractTileAmalgamContainer) te).getTankCapacity();
+        if (te instanceof TileAmalgamContainer) {
+            PropertyList l = ((TileAmalgamContainer) te).getAmalgamPropertyList();
+            int currentVolume = ((TileAmalgamContainer) te).getFluidVolume();
+            int capacity = ((TileAmalgamContainer) te).getTankCapacity();
             currenttip.add("Volume: " + currentVolume + "/" + capacity);
 
             // FIXME if we are holding an amalgable item and look at the crucible, show what the amalgam properties would

@@ -16,9 +16,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public abstract class AbstractTileAmalgamContainer extends TileEntity implements IFluidHandler {
+public abstract class TileAmalgamContainer extends TileEntity implements IFluidHandler {
 
-    protected AmalgamTank tank;
+    public AmalgamTank tank;
 
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection from) {
@@ -43,15 +43,17 @@ public abstract class AbstractTileAmalgamContainer extends TileEntity implements
             return null;
         }
         FluidStack returnStack = tank.drain(resource.amount, doDrain);
-        PacketHandler.INSTANCE.sendToAll(new PacketSyncAmalgamTank((AmalgamStack) this.getTankInfo(null)[0].fluid, this.xCoord, this.yCoord,
-                this.zCoord));
+        if (doDrain && returnStack != null) {
+            PacketHandler.INSTANCE.sendToAll(new PacketSyncAmalgamTank((AmalgamStack) this.getTankInfo(null)[0].fluid, this.xCoord, this.yCoord,
+                    this.zCoord));
+        }
         return returnStack;
     }
 
     @Override
     public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
         FluidStack returnStack = tank.drain(maxDrain, doDrain);
-        if (returnStack != null) {
+        if (doDrain && returnStack != null) {
             PacketHandler.INSTANCE.sendToAll(new PacketSyncAmalgamTank((AmalgamStack) this.getTankInfo(null)[0].fluid, this.xCoord, this.yCoord,
                     this.zCoord));
         }

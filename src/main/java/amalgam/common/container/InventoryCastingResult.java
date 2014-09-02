@@ -4,15 +4,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-public class InventoryCastResult implements IInventory {
+public class InventoryCastingResult implements IInventory {
 
     private ItemStack[]            stackResult = new ItemStack[1];
     public boolean                 castComplete;
-    private final ContainerCasting table;
-
-    public InventoryCastResult(ContainerCasting containerCasting) {
-        this.table = containerCasting;
-    }
 
     public int getSizeInventory() {
         return 1;
@@ -54,7 +49,6 @@ public class InventoryCastResult implements IInventory {
 
     public void setInventorySlotContents(int slotNum, ItemStack stack) {
         this.stackResult[0] = stack;
-        table.castingTable.setStackInSlot(9, stack);
     }
 
     public int getInventoryStackLimit() {

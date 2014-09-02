@@ -18,7 +18,7 @@ import amalgam.common.tile.TileCastingTable;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockCastingTable extends AbstractBlockAmalgamContainer implements ITileEntityProvider {
+public class BlockCastingTable extends BlockAmalgamContainer implements ITileEntityProvider {
 
     @SideOnly(Side.CLIENT)
     private IIcon iconBottomSide;
@@ -54,15 +54,15 @@ public class BlockCastingTable extends AbstractBlockAmalgamContainer implements 
     }
 
     private boolean onCastPickup(TileCastingTable table, EntityPlayer player) {
-        // TODO color of floating cast result doesn't reset using this!!!
         table.setTankFluid(null);
-        boolean matsRemain = true;
+        boolean matsRemain = false;
 
         for (int slot = 0; slot < 9; slot++) {
             ItemStack stack = table.getStackInSlot(slot);
 
             if (stack != null) {
-                matsRemain = table.decrStackSize(slot, 1);
+                /* this will return null if no mates remain in the slot, we check if it is null to set the mats remain */
+                matsRemain = null != table.decrStackSize(slot, 1);
 
                 if (stack.getItem().hasContainerItem(stack)) {
                     dealWithContainerItem(table, stack, slot, player);
@@ -83,7 +83,7 @@ public class BlockCastingTable extends AbstractBlockAmalgamContainer implements 
 
         if (!stack.getItem().doesContainerItemLeaveCraftingGrid(stack) || !player.inventory.addItemStackToInventory(containerItem)) {
             if (table.getStackInSlot(slot) == null) {
-                table.setStackInSlot(slot, containerItem);
+                table.setInventorySlotContents(slot, containerItem);
             } else {
                 player.dropPlayerItemWithRandomChoice(containerItem, false);
             }
@@ -95,6 +95,7 @@ public class BlockCastingTable extends AbstractBlockAmalgamContainer implements 
         ItemStack stack = player.inventory.getCurrentItem();
         TileCastingTable table = (TileCastingTable) world.getTileEntity(x, y, z);
 
+        Config.LOG.info("Casting Table Activated");
         if (stack == null) {
 
             ItemStack resultStack = table.getStackInSlot(9);

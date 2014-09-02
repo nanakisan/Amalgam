@@ -1,6 +1,5 @@
 package amalgam.common.container;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -13,54 +12,60 @@ public class SlotCasting extends Slot {
     public static final int  INGOT_STATE  = 2;
     public static final int  BLOCK_STATE  = 3;
 
-    private int              castState;
     private boolean          hasAmalgam;
     private boolean          isFull;
 
-    public SlotCasting(IInventory inv, int slotNum, int xPos, int yPos) {
+    public SlotCasting(InventoryCasting inv, int slotNum, int xPos, int yPos) {
         super(inv, slotNum, xPos, yPos);
-        castState = 0;
         hasAmalgam = false;
         isFull = false;
     }
 
     public boolean isItemValid(ItemStack stack) {
-        return castState == 0;
+        return getCastState() == 0;
     }
 
-    public int toggleCastState() {
-        castState = castState + 1;
+    public int toggleCastState(boolean up) {
+        int castState = getCastState();
+        if (up) {
+            castState = castState + 1;
+        } else {
+            castState = castState - 1;
+        }
 
         if (castState > MAX_STATE) {
             castState = 0;
             hasAmalgam = false;
             isFull = false;
+        } else if (castState < 0) {
+            castState = MAX_STATE;
         }
 
+        setCastState(castState);
         return castState;
     }
 
     public void setCastState(int castState) {
-        this.castState = castState;
+        ((InventoryCasting) this.inventory).setCastState(this.slotNumber, castState);
     }
-    
+
     public int getCastState() {
-        return this.castState;
+        return ((InventoryCasting) this.inventory).getCastState(this.slotNumber);
     }
 
     public void setHasAmalgam(boolean hasAmalgam) {
         this.hasAmalgam = hasAmalgam;
     }
-    
+
     public boolean getHasAmalgam() {
-        return this.hasAmalgam && this.castState != 0;
+        return this.hasAmalgam && getCastState() != 0;
     }
-    
+
     public void setIsFull(boolean isFull) {
         this.isFull = isFull;
     }
-    
+
     public boolean getIsFull() {
-        return this.isFull && this.castState != 0;
+        return this.isFull && getCastState() != 0;
     }
 }

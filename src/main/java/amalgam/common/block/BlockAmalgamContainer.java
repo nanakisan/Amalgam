@@ -13,19 +13,19 @@ import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.IAmalgamContainerItem;
 import amalgam.common.properties.PropertyManager;
-import amalgam.common.tile.AbstractTileAmalgamContainer;
+import amalgam.common.tile.TileAmalgamContainer;
 
-public abstract class AbstractBlockAmalgamContainer extends Block implements ITileEntityProvider {
+public abstract class BlockAmalgamContainer extends Block implements ITileEntityProvider {
 
-    protected AbstractBlockAmalgamContainer(Material mat) {
+    protected BlockAmalgamContainer(Material mat) {
         super(mat);
     }
 
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int metaData) {
         TileEntity te = world.getTileEntity(x, y, z);
-        if (te instanceof AbstractTileAmalgamContainer) {
-            ((AbstractTileAmalgamContainer) te).emptyTank();
+        if (te instanceof TileAmalgamContainer) {
+            ((TileAmalgamContainer) te).emptyTank();
         }
 
         super.breakBlock(world, x, y, z, block, metaData);
@@ -60,11 +60,11 @@ public abstract class AbstractBlockAmalgamContainer extends Block implements ITi
     protected abstract void interactWithAmalgableItem(TileEntity te, ItemStack stack);
 
     protected void interactWithAmalgamContainerItem(TileEntity te, IAmalgamContainerItem container, ItemStack stack, EntityPlayer player) {
-        if (!(te instanceof AbstractTileAmalgamContainer)) {
+        if (!(te instanceof TileAmalgamContainer)) {
             return;
         }
 
-        AbstractTileAmalgamContainer handler = (AbstractTileAmalgamContainer) te;
+        TileAmalgamContainer handler = (TileAmalgamContainer) te;
         if (player.isSneaking()) {
             int drainAmount = Math.min(container.getEmptySpace(stack), Config.BASE_AMOUNT);
             AmalgamStack fluidStack = (AmalgamStack) handler.drain(ForgeDirection.UNKNOWN, drainAmount, true);
@@ -91,6 +91,7 @@ public abstract class AbstractBlockAmalgamContainer extends Block implements ITi
         } else {
             AmalgamStack newStack = (AmalgamStack) container.drain(stack, container.getCapacity(stack), true);
             int filled = handler.fill(ForgeDirection.UNKNOWN, newStack, true);
+            Config.LOG.info("filled tank with " + filled + " amalgam " + handler.getTankCapacity());
             newStack.amount -= filled;
             container.fill(stack, newStack, true);
         }

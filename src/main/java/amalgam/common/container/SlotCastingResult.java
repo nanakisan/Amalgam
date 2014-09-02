@@ -5,22 +5,26 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
+import amalgam.common.fluid.AmalgamTank;
 import cpw.mods.fml.common.FMLCommonHandler;
 
 public class SlotCastingResult extends Slot {
 
-    private final InventoryCasting castingMatrix;
+    private final InventoryCasting castingInventory;
     private final EntityPlayer     player;
+    private final AmalgamTank      tank;
     private int                    amountCrafted;
 
-    public SlotCastingResult(EntityPlayer player, InventoryCasting castMatrix, InventoryCastResult castResult, int slotID, int xPos, int yPos) {
-        super(castResult, slotID, xPos, yPos);
-        this.castingMatrix = castMatrix;
+    public SlotCastingResult(EntityPlayer player, InventoryCasting castingInventory, InventoryCastingResult castingResult, AmalgamTank tank,
+            int slotID, int xPos, int yPos) {
+        super(castingResult, slotID, xPos, yPos);
+        this.castingInventory = castingInventory;
         this.player = player;
+        this.tank = tank;
     }
 
     public boolean canTakeStack(EntityPlayer player) {
-        return this.castingMatrix.castComplete();
+        return this.tank.getCapacity() == this.tank.getFluidAmount();
     }
 
     public boolean isItemValid(ItemStack stack) {
@@ -46,7 +50,7 @@ public class SlotCastingResult extends Slot {
     }
 
     private void consumeStackInSlot(ItemStack stack, int slot) {
-        this.castingMatrix.decrStackSize(slot, 1);
+        this.castingInventory.decrStackSize(slot, 1);
 
         if (stack.getItem().hasContainerItem(stack)) {
             ItemStack itemstack2 = stack.getItem().getContainerItem(stack);
@@ -57,8 +61,8 @@ public class SlotCastingResult extends Slot {
             }
 
             if (!stack.getItem().doesContainerItemLeaveCraftingGrid(stack) || !this.player.inventory.addItemStackToInventory(itemstack2)) {
-                if (this.castingMatrix.getStackInSlot(slot) == null) {
-                    this.castingMatrix.setInventorySlotContents(slot, itemstack2);
+                if (this.castingInventory.getStackInSlot(slot) == null) {
+                    this.castingInventory.setInventorySlotContents(slot, itemstack2);
                 } else {
                     this.player.dropPlayerItemWithRandomChoice(itemstack2, false);
                 }
@@ -67,13 +71,16 @@ public class SlotCastingResult extends Slot {
     }
 
     public void onPickupFromSlot(EntityPlayer player, ItemStack stack) {
-        FMLCommonHandler.instance().firePlayerCraftingEvent(player, stack, castingMatrix);
+        FMLCommonHandler.instance().firePlayerCraftingEvent(player, stack, castingInventory);
         this.onCrafting(stack);
 
-        this.castingMatrix.useAmalgamForCrafting();
+        // this.castingMatrix.useAmalgamForCrafting();
+        this.tank.setFluid(null);
+        // TODO onCraftMatrixChanged implementation!!!!
+        // onCraftMatrixChanged()
 
-        for (int i = 0; i < this.castingMatrix.getSizeInventory(); ++i) {
-            ItemStack itemstack1 = this.castingMatrix.getStackInSlot(i);
+        for (int i = 0; i < this.castingInventory.getSizeInventory(); ++i) {
+            ItemStack itemstack1 = this.castingInventory.getStackInSlot(i);
 
             if (itemstack1 != null) {
                 consumeStackInSlot(itemstack1, i);

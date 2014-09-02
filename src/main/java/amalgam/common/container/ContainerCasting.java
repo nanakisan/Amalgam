@@ -15,10 +15,8 @@ import amalgam.common.tile.TileCastingTable;
 public class ContainerCasting extends Container {
 
     public TileCastingTable    castingTable;
-    public InventoryCasting    castingMatrix;
-    public InventoryCastResult castResult;
 
-    /* FIXME add mouseover text to gui saying which state a sot is in and how much amalgam it contains. It should also
+    /* FIXME add mouseover text to gui saying which state a slot is in and how much amalgam it contains. It should also
      * say how much more amalgam is needed total when mousing over the cast result */
 
     /* FIXME allow shift clicking a slot to cycle it in reverse */
@@ -26,9 +24,6 @@ public class ContainerCasting extends Container {
         super();
 
         this.castingTable = te;
-
-        castingMatrix = new InventoryCasting(this, 3, 3);
-        castResult = new InventoryCastResult(this);
 
         int rowNum;
         int colNum;
@@ -38,20 +33,12 @@ public class ContainerCasting extends Container {
             for (colNum = 0; colNum < 3; ++colNum) {
                 slotNum = colNum + rowNum * 3;
 
-                SlotCasting s = new SlotCasting(castingMatrix, slotNum, 30 + colNum * 18, 17 + rowNum * 18);
-                s.setCastState(te.getCastState(slotNum));
+                SlotCasting s = new SlotCasting(castingTable.castingInventory, slotNum, 30 + colNum * 18, 17 + rowNum * 18);
                 this.addSlotToContainer(s);
             }
         }
 
-        for (rowNum = 0; rowNum < 3; ++rowNum) {
-            for (colNum = 0; colNum < 3; ++colNum) {
-                slotNum = colNum + rowNum * 3;
-                castingMatrix.setInventorySlotContents(slotNum, castingTable.getStackInSlot(slotNum));
-            }
-        }
-
-        this.addSlotToContainer(new SlotCastingResult(inv.player, castingMatrix, castResult, 0, 124, 35));
+        this.addSlotToContainer(new SlotCastingResult(inv.player, castingTable.castingInventory, castingTable.castingResult, castingTable.tank, 0, 124, 35));
 
         for (rowNum = 0; rowNum < 3; ++rowNum) {
             for (colNum = 0; colNum < 9; ++colNum) {
@@ -64,7 +51,7 @@ public class ContainerCasting extends Container {
             this.addSlotToContainer(new Slot(inv, colNum, 8 + colNum * 18, 142));
         }
 
-        this.onCraftMatrixChanged(this.castingMatrix);
+        this.onCraftMatrixChanged(this.castingTable.castingInventory);
     }
 
     public final void updateAmalgamDistribution() {
@@ -81,7 +68,7 @@ public class ContainerCasting extends Container {
                     ((SlotCasting) s).setIsFull(false);
                 } else {
                     ((SlotCasting) s).setHasAmalgam(true);
-                    int state = te.getCastState(slotNum);
+                    int state = te.castingInventory.getCastState(slotNum);
                     /* If we have amalgam, decrease the total by the amount needed to fill the slot based on it's
                      * casting state */
                     switch (state) {
@@ -161,10 +148,10 @@ public class ContainerCasting extends Container {
     public void onCraftMatrixChanged(IInventory inv) {
         super.onCraftMatrixChanged(inv);
         this.updateAmalgamDistribution();
-        ICastingRecipe recipe = CastingManager.findMatchingRecipe(castingMatrix, castingTable.getWorldObj());
+        ICastingRecipe recipe = CastingManager.findMatchingRecipe(castingTable.castingInventory, castingTable.getWorldObj());
 
         if (recipe == null) {
-            castResult.setInventorySlotContents(0, null);
+            castingTable.castingResult.setInventorySlotContents(0, null);
             return;
         }
 
@@ -173,7 +160,7 @@ public class ContainerCasting extends Container {
             pList = null;
         }
 
-        castResult.setInventorySlotContents(0, recipe.getCastingResult(castingMatrix, pList));
+        castingTable.castingResult.setInventorySlotContents(0, recipe.getCastingResult(castingTable.castingInventory, pList));
 
     }
 
@@ -184,9 +171,9 @@ public class ContainerCasting extends Container {
 
             if (slot instanceof SlotCasting) {
                 if (!slot.getHasStack() && player.inventory.getItemStack() == null) {
-                    int newState = ((SlotCasting) slot).toggleCastState();
-                    castingTable.setCastState(slot.slotNumber, newState);
-                    this.onCraftMatrixChanged(castingMatrix);
+                    int newState = ((SlotCasting) slot).toggleCastState(true);
+                    castingTable.castingInventory.setCastState(slot.slotNumber, newState);
+                    this.onCraftMatrixChanged(castingTable.castingInventory);
                 }
             }
         }
