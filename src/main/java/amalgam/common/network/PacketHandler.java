@@ -12,7 +12,7 @@ public final class PacketHandler {
     }
 
     public static void init() {
-        INSTANCE.registerMessage(PacketSyncCrucible.class, PacketSyncCrucible.class, 0, Side.CLIENT);
+        INSTANCE.registerMessage(PacketSyncAmalgamTank.class, PacketSyncAmalgamTank.class, 0, Side.CLIENT);
     }
 
 }

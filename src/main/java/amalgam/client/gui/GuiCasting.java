@@ -24,6 +24,8 @@ public class GuiCasting extends GuiContainer {
     protected void drawGuiContainerBackgroundLayer(float floatParam, int intParam1, int intParam2) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         
+        /* FIXME add button to empty the table */
+        
         /* Load the gui texture. This is essential before we call any draw commands */
         
         this.mc.getTextureManager().bindTexture(CRAFTING_GUI_TEXTURES);
@@ -45,7 +47,9 @@ public class GuiCasting extends GuiContainer {
                 int rowNum = i / 3;
                 int colNum = i % 3;
 
-                if (testSlot.getHasAmalgam()) {
+                if (testSlot.getIsFull()){
+                    this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 160 + 17 * state, 18, 16, 16);
+                } else if (testSlot.getHasAmalgam()) {
                     this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 160 + 17 * state, 18, 16, 16);
                 } else {
                     this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 160 + 17 * state, 1, 16, 16);
@@ -65,5 +69,8 @@ public class GuiCasting extends GuiContainer {
             GL11.glDisable(GL11.GL_BLEND);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         }
+        
+        /* text rendering code */
+        this.fontRendererObj.drawStringWithShadow("test", 120, 50, 0xFFFFFF);
     }
 }

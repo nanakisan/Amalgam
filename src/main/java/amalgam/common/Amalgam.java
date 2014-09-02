@@ -19,7 +19,7 @@ public class Amalgam {
     // full overlays
 
     public static final String MODID   = "amalgam";
-    public static final String VERSION = "0.4.1";
+    public static final String VERSION = "0.5.0";
 
     @Instance(MODID)
     public static Amalgam      instance;

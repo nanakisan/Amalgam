@@ -24,7 +24,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialArmor {
 
     public static final String ABSORB_TAG = "absorb max";
-    @SideOnly(Side.CLIENT)
+   // @SideOnly(Side.CLIENT)
     public IIcon[]             icons      = new IIcon[8];
 
     public ItemAmalgamArmor(ArmorMaterial mat, int renderIndex, int armorType) {

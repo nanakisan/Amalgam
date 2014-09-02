@@ -237,22 +237,25 @@ public class Config {
     }
 
     public static void registerRecipes() {
-        char a = CastingManager.INGOT_CHAR;
+        String n = String.valueOf(CastingManager.NUGGET_CHAR);
+        String i = String.valueOf(CastingManager.INGOT_CHAR);
+        String b = String.valueOf(CastingManager.BLOCK_CHAR);
+        
         CastingManager.addShapelessRecipe((ICastItem) amalgamSword, 1, "Amalgam", Blocks.stone);
-        CastingManager.addRecipe((ICastItem) amalgamSword, 1, "@", "@", "s", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamPick, 1, "@@@", " s ", " s ", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamAxe, 1, "@@", "@s", " s", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamAxe, 1, "@@", "s@", "s ", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamShovel, 1, "@", "s", "s", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamHoe, 1, "@@", " s", " s", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamHoe, 1, "@@", "s ", "s ", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamSword, 1, i, i, "s", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamPick, 1, i+i+i, " s ", " s ", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamAxe, 1, i+i, i+"s", " s", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamAxe, 1, i+i, "s" +i, "s ", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamShovel, 1, i, "s", "s", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamHoe, 1, i+i, " s", " s", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamHoe, 1, i+i, "s ", "s ", 's', Items.stick);
 
-        CastingManager.addRecipe((ICastItem) amalgamHelmet, 1, "@@@", "@ @");
-        CastingManager.addRecipe((ICastItem) amalgamChest, 1, "@ @", "@@@", "@@@");
-        CastingManager.addRecipe((ICastItem) amalgamLegs, 1, "@@@", "@ @", "@ @");
-        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, "@ @", "@ @");
-        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, ". .", "@ @");
-        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, ". @", "# @");
+        CastingManager.addRecipe((ICastItem) amalgamHelmet, 1, i+i+i, i+" "+i);
+        CastingManager.addRecipe((ICastItem) amalgamChest, 1, i+" "+i, i+i+i, i+i+i);
+        CastingManager.addRecipe((ICastItem) amalgamLegs, 1, i+i+i, i+" "+i, i+" "+i);
+        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, i+" "+i, i+" "+i);
+        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, n+" "+n, i+" "+i);
+        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, n+" "+i, b+" "+b);
 
         GameRegistry.addRecipe(new ItemStack(stoneTongs), "s s", " s ", " s ", 's', Blocks.cobblestone);
         GameRegistry.addRecipe(new ItemStack(stoneCrucible), "s s", "s s", "sss", 's', Blocks.cobblestone);

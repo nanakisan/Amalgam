@@ -106,6 +106,7 @@ public class BlockCastingTable extends AbstractBlockAmalgamContainer implements 
 
                 return false;
             }
+            // FIXME look in crafting table, container and slot code to see when packets are sent.
 
             player.openGui(Amalgam.instance, Config.CASTING_GUI_ID, world, x, y, z);
 

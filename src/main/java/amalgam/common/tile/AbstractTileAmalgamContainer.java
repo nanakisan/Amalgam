@@ -4,6 +4,8 @@ import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.AmalgamTank;
 import amalgam.common.item.ItemAmalgamBlob;
+import amalgam.common.network.PacketHandler;
+import amalgam.common.network.PacketSyncAmalgamTank;
 import amalgam.common.properties.PropertyList;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -25,7 +27,14 @@ public abstract class AbstractTileAmalgamContainer extends TileEntity implements
 
     @Override
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-        return tank.fill(resource, doFill);
+        int returnValue = tank.fill(resource, doFill);
+        if (doFill && returnValue > 0) {
+            /* Our amalgam containing tile entities change in appearance when they have different amounts of amalgam in
+             * them, therefore we need to send updates to all clients when amalgam is drained or filled into the tank */
+            PacketHandler.INSTANCE.sendToAll(new PacketSyncAmalgamTank((AmalgamStack) this.getTankInfo(null)[0].fluid, this.xCoord, this.yCoord,
+                    this.zCoord));
+        }
+        return returnValue;
     }
 
     @Override
@@ -33,13 +42,20 @@ public abstract class AbstractTileAmalgamContainer extends TileEntity implements
         if (resource == null) {
             return null;
         }
-
-        return tank.drain(resource.amount, doDrain);
+        FluidStack returnStack = tank.drain(resource.amount, doDrain);
+        PacketHandler.INSTANCE.sendToAll(new PacketSyncAmalgamTank((AmalgamStack) this.getTankInfo(null)[0].fluid, this.xCoord, this.yCoord,
+                this.zCoord));
+        return returnStack;
     }
 
     @Override
     public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-        return tank.drain(maxDrain, doDrain);
+        FluidStack returnStack = tank.drain(maxDrain, doDrain);
+        if (returnStack != null) {
+            PacketHandler.INSTANCE.sendToAll(new PacketSyncAmalgamTank((AmalgamStack) this.getTankInfo(null)[0].fluid, this.xCoord, this.yCoord,
+                    this.zCoord));
+        }
+        return returnStack;
     }
 
     @Override

@@ -18,9 +18,10 @@ public class ContainerCasting extends Container {
     public InventoryCasting    castingMatrix;
     public InventoryCastResult castResult;
 
-    /* FIXME add mouseover test to gui saying which state a sot is in and how much amalgam it contains. It should also
+    /* FIXME add mouseover text to gui saying which state a sot is in and how much amalgam it contains. It should also
      * say how much more amalgam is needed total when mousing over the cast result */
 
+    /* FIXME allow shift clicking a slot to cycle it in reverse */
     public ContainerCasting(InventoryPlayer inv, TileCastingTable te) {
         super();
 

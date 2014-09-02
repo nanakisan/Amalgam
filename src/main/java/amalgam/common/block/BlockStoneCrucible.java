@@ -17,6 +17,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.IAmalgamContainerItem;
+import amalgam.common.network.PacketHandler;
+import amalgam.common.network.PacketSyncAmalgamTank;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
 import amalgam.common.tile.TileStoneCrucible;
@@ -178,6 +180,7 @@ public class BlockStoneCrucible extends AbstractBlockAmalgamContainer implements
             stack.stackSize = stack.stackSize - 1;
 
             te.getWorldObj().notifyBlocksOfNeighborChange(te.xCoord, te.yCoord, te.zCoord, this);
+            
             return;
         }
     }

@@ -14,15 +14,15 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 
-public class PacketSyncCrucible implements IMessage, IMessageHandler<PacketSyncCrucible, IMessage> {
+public class PacketSyncAmalgamTank implements IMessage, IMessageHandler<PacketSyncAmalgamTank, IMessage> {
 
     private AmalgamStack amalgamStack;
     private int          x, y, z;
 
-    public PacketSyncCrucible() {
+    public PacketSyncAmalgamTank() {
     }
 
-    public PacketSyncCrucible(AmalgamStack amalgamStack, int x, int y, int z) {
+    public PacketSyncAmalgamTank(AmalgamStack amalgamStack, int x, int y, int z) {
         this.amalgamStack = amalgamStack;
         this.x = x;
         this.y = y;
@@ -56,7 +56,7 @@ public class PacketSyncCrucible implements IMessage, IMessageHandler<PacketSyncC
     }
 
     @Override
-    public IMessage onMessage(PacketSyncCrucible message, MessageContext ctx) {
+    public IMessage onMessage(PacketSyncAmalgamTank message, MessageContext ctx) {
         TileEntity te = Amalgam.proxy.getClientWorld().getTileEntity(message.x, message.y, message.z);
 
         if (te instanceof TileStoneCrucible) {

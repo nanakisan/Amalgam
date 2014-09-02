@@ -15,7 +15,7 @@ import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
 import amalgam.common.tile.AbstractTileAmalgamContainer;
 
-public class ProviderAmalgam implements IWailaDataProvider {
+public class WailaProvider implements IWailaDataProvider {
 
     @Override
     public ItemStack getWailaStack(IWailaDataAccessor accessor, IWailaConfigHandler config) {
@@ -65,7 +65,7 @@ public class ProviderAmalgam implements IWailaDataProvider {
     }
 
     public static void callbackRegister(IWailaRegistrar registrar) {
-        registrar.registerBodyProvider(new ProviderAmalgam(), Block.class);
+        registrar.registerBodyProvider(new WailaProvider(), Block.class);
     }
 
 }
