@@ -30,7 +30,7 @@ public class WailaProvider implements IWailaDataProvider {
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         TileEntity te = accessor.getTileEntity();
-
+        currenttip.add("test");
         if (te instanceof TileAmalgamContainer) {
             PropertyList l = ((TileAmalgamContainer) te).getAmalgamPropertyList();
             int currentVolume = ((TileAmalgamContainer) te).getFluidVolume();

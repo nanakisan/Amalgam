@@ -45,7 +45,7 @@ public class Amalgam {
         Config.registerAmalgamProperties();
         Config.registerRecipes();
 
-        FMLInterModComms.sendMessage("Waila", "register", "amalgam.common.ProviderAmalgam.callbackRegister");
+        FMLInterModComms.sendMessage("Waila", "register", "amalgam.common.WailaProvider.callbackRegister");
     }
 
     @EventHandler

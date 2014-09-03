@@ -16,8 +16,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.AmalgamTank;
-import amalgam.common.network.PacketHandler;
-import amalgam.common.network.PacketSyncAmalgamTank;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
 
@@ -141,7 +139,6 @@ public class TileStoneCrucible extends TileAmalgamContainer implements IInventor
                 }
 
                 fill(ForgeDirection.UNKNOWN, amalg, true);
-                PacketHandler.INSTANCE.sendToAll(new PacketSyncAmalgamTank((AmalgamStack) tank.getFluid(), this.xCoord, this.yCoord, this.zCoord));
             }
         } else {
             Config.LOG.error("Error while inputting item into crucible");

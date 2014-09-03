@@ -8,8 +8,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import amalgam.common.Amalgam;
+import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
-import amalgam.common.tile.TileStoneCrucible;
+import amalgam.common.tile.TileAmalgamContainer;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -59,8 +60,9 @@ public class PacketSyncAmalgamTank implements IMessage, IMessageHandler<PacketSy
     public IMessage onMessage(PacketSyncAmalgamTank message, MessageContext ctx) {
         TileEntity te = Amalgam.proxy.getClientWorld().getTileEntity(message.x, message.y, message.z);
 
-        if (te instanceof TileStoneCrucible) {
-            ((TileStoneCrucible) te).setAmalgam(message.amalgamStack);
+        if (te instanceof TileAmalgamContainer) {
+            Config.LOG.info("setting amalgam tank using packet. new volume: " + message.amalgamStack.amount);
+            ((TileAmalgamContainer) te).setTankFluid(message.amalgamStack);
         }
 
         return null;
