@@ -37,7 +37,8 @@ public class WailaProvider implements IWailaDataProvider {
             int capacity = ((TileAmalgamContainer) te).getTankCapacity();
             currenttip.add("Volume: " + currentVolume + "/" + capacity);
 
-            // FIXME if we are holding an amalgable item and look at the crucible, show what the amalgam properties would
+            // FIXME if we are holding an amalgable item and look at the crucible, show what the amalgam properties
+            // would
             // be upon adding the item. For example (Density: 4.5 -> 5.1)
 
             if (currentVolume != 0 && accessor.getPlayer().isSneaking()) {

@@ -3,18 +3,21 @@ package amalgam.common.container;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import amalgam.common.Config;
 
 public class InventoryCasting implements IInventory {
 
-    private ItemStack[] stackList;
-    private int[]       castState;
-    private final int   inventoryWidth;
-    private ICastingHandler handler;
+    private ItemStack[]    stackList;
+    private int[]          castState;
+    private float[]        amalgamFillAmount;
+    private final int      inventoryWidth;
+    public ICastingHandler handler;
 
     public InventoryCasting(ICastingHandler handler, int rows, int cols) {
         this.inventoryWidth = rows;
         this.stackList = new ItemStack[rows * cols];
         this.castState = new int[rows * cols];
+        this.amalgamFillAmount = new float[rows * cols];
         this.handler = handler;
     }
 
@@ -62,8 +65,7 @@ public class InventoryCasting implements IInventory {
                 // TODO this needs to be called somehow
                 // this.table.onCraftMatrixChanged(this);
                 handler.onCastMatrixChanged(this);
-                
-                
+
                 return itemstack;
             }
         }
@@ -140,10 +142,19 @@ public class InventoryCasting implements IInventory {
     public int getCastState(int slot) {
         return castState[slot];
     }
-    
+
     public void setCastState(int slot, int state) {
         castState[slot] = state;
         handler.updateTankCapacity(this);
+        Config.LOG.info("Setting cast state of slot " + slot + " to " + state);
+    }
+
+    public float getFillAmount(int slot) {
+        return amalgamFillAmount[slot];
+    }
+
+    public void setFillAmount(int slot, float amount) {
+        amalgamFillAmount[slot] = amount;
     }
 
 }

@@ -220,14 +220,14 @@ public class Config {
             PropertyList blazeRodProp = new PropertyList().add(PropertyManager.DENSITY, 1.0F).add(PropertyManager.HARDNESS, 0.5F)
                     .add(PropertyManager.LUSTER, 2.0F).add(PropertyManager.MALIABILITY, 5.0F).add(PropertyManager.COLOR, 0xFFCB00);
 
-//            PropertyManager.registerOreDictProperties("gemLapis", lapisProp, Config.BASE_AMOUNT * 2);
+            // PropertyManager.registerOreDictProperties("gemLapis", lapisProp, Config.BASE_AMOUNT * 2);
             PropertyManager.registerOreDictProperties("gemQuartz", quartzProp, Config.BASE_AMOUNT * 2);
-//            PropertyManager.registerOreDictProperties("dustRedstone", redstoneProp, Config.BASE_AMOUNT * 2);
+            // PropertyManager.registerOreDictProperties("dustRedstone", redstoneProp, Config.BASE_AMOUNT * 2);
             PropertyManager.registerOreDictProperties("gemEmerald", emeraldProp, Config.INGOT_AMOUNT);
 
             PropertyManager.registerOreDictProperties("blockQuartz", quartzProp, Config.INGOT_AMOUNT * 2);
-//            PropertyManager.registerOreDictProperties("blockLapis", lapisProp, Config.INGOT_AMOUNT * 2);
-//            PropertyManager.registerOreDictProperties("blockRedstone", redstoneProp, Config.INGOT_AMOUNT * 2);
+            // PropertyManager.registerOreDictProperties("blockLapis", lapisProp, Config.INGOT_AMOUNT * 2);
+            // PropertyManager.registerOreDictProperties("blockRedstone", redstoneProp, Config.INGOT_AMOUNT * 2);
             PropertyManager.registerOreDictProperties("blockEmerald", emeraldProp, Config.BLOCK_AMOUNT);
 
             PropertyManager.registerItemProperties(new ItemStack(Items.blaze_powder), blazeRodProp, BASE_AMOUNT);
@@ -240,22 +240,22 @@ public class Config {
         String n = String.valueOf(CastingManager.NUGGET_CHAR);
         String i = String.valueOf(CastingManager.INGOT_CHAR);
         String b = String.valueOf(CastingManager.BLOCK_CHAR);
-        
+
         CastingManager.addShapelessRecipe((ICastItem) amalgamSword, 1, "Amalgam", Blocks.stone);
         CastingManager.addRecipe((ICastItem) amalgamSword, 1, i, i, "s", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamPick, 1, i+i+i, " s ", " s ", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamAxe, 1, i+i, i+"s", " s", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamAxe, 1, i+i, "s" +i, "s ", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamPick, 1, i + i + i, " s ", " s ", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamAxe, 1, i + i, i + "s", " s", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamAxe, 1, i + i, "s" + i, "s ", 's', Items.stick);
         CastingManager.addRecipe((ICastItem) amalgamShovel, 1, i, "s", "s", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamHoe, 1, i+i, " s", " s", 's', Items.stick);
-        CastingManager.addRecipe((ICastItem) amalgamHoe, 1, i+i, "s ", "s ", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamHoe, 1, i + i, " s", " s", 's', Items.stick);
+        CastingManager.addRecipe((ICastItem) amalgamHoe, 1, i + i, "s ", "s ", 's', Items.stick);
 
-        CastingManager.addRecipe((ICastItem) amalgamHelmet, 1, i+i+i, i+" "+i);
-        CastingManager.addRecipe((ICastItem) amalgamChest, 1, i+" "+i, i+i+i, i+i+i);
-        CastingManager.addRecipe((ICastItem) amalgamLegs, 1, i+i+i, i+" "+i, i+" "+i);
-        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, i+" "+i, i+" "+i);
-        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, n+" "+n, i+" "+i);
-        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, n+" "+i, b+" "+b);
+        CastingManager.addRecipe((ICastItem) amalgamHelmet, 1, i + i + i, i + " " + i);
+        CastingManager.addRecipe((ICastItem) amalgamChest, 1, i + " " + i, i + i + i, i + i + i);
+        CastingManager.addRecipe((ICastItem) amalgamLegs, 1, i + i + i, i + " " + i, i + " " + i);
+        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, i + " " + i, i + " " + i);
+        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, n + " " + n, i + " " + i);
+        CastingManager.addRecipe((ICastItem) amalgamBoots, 1, n + " " + i, b + " " + b);
 
         GameRegistry.addRecipe(new ItemStack(stoneTongs), "s s", " s ", " s ", 's', Blocks.cobblestone);
         GameRegistry.addRecipe(new ItemStack(stoneCrucible), "s s", "s s", "sss", 's', Blocks.cobblestone);

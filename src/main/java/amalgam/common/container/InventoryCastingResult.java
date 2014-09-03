@@ -6,8 +6,8 @@ import net.minecraft.item.ItemStack;
 
 public class InventoryCastingResult implements IInventory {
 
-    private ItemStack[]            stackResult = new ItemStack[1];
-    public boolean                 castComplete;
+    private ItemStack[] stackResult = new ItemStack[1];
+    public boolean      castComplete;
 
     public int getSizeInventory() {
         return 1;

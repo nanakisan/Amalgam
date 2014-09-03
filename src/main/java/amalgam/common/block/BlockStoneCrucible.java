@@ -178,7 +178,7 @@ public class BlockStoneCrucible extends BlockAmalgamContainer implements ITileEn
             stack.stackSize = stack.stackSize - 1;
 
             te.getWorldObj().notifyBlocksOfNeighborChange(te.xCoord, te.yCoord, te.zCoord, this);
-            
+
             return;
         }
     }

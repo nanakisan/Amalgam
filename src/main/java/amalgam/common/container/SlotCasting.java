@@ -12,13 +12,8 @@ public class SlotCasting extends Slot {
     public static final int  INGOT_STATE  = 2;
     public static final int  BLOCK_STATE  = 3;
 
-    private boolean          hasAmalgam;
-    private boolean          isFull;
-
     public SlotCasting(InventoryCasting inv, int slotNum, int xPos, int yPos) {
         super(inv, slotNum, xPos, yPos);
-        hasAmalgam = false;
-        isFull = false;
     }
 
     public boolean isItemValid(ItemStack stack) {
@@ -35,8 +30,6 @@ public class SlotCasting extends Slot {
 
         if (castState > MAX_STATE) {
             castState = 0;
-            hasAmalgam = false;
-            isFull = false;
         } else if (castState < 0) {
             castState = MAX_STATE;
         }
@@ -53,19 +46,7 @@ public class SlotCasting extends Slot {
         return ((InventoryCasting) this.inventory).getCastState(this.slotNumber);
     }
 
-    public void setHasAmalgam(boolean hasAmalgam) {
-        this.hasAmalgam = hasAmalgam;
-    }
-
-    public boolean getHasAmalgam() {
-        return this.hasAmalgam && getCastState() != 0;
-    }
-
-    public void setIsFull(boolean isFull) {
-        this.isFull = isFull;
-    }
-
-    public boolean getIsFull() {
-        return this.isFull && getCastState() != 0;
+    public float getFillLevel() {
+        return ((InventoryCasting) this.inventory).getFillAmount(slotNumber);
     }
 }

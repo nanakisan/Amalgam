@@ -11,7 +11,7 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 public class PacketSyncCastingState implements IMessage, IMessageHandler<PacketSyncCastingState, IMessage> {
 
     private int slot, state;
-    private int  x, y, z;
+    private int x, y, z;
 
     public PacketSyncCastingState() {
     }
@@ -39,7 +39,7 @@ public class PacketSyncCastingState implements IMessage, IMessageHandler<PacketS
         buf.writeInt(x);
         buf.writeInt(y);
         buf.writeInt(z);
-        
+
         buf.writeByte(slot);
         buf.writeByte(state);
     }

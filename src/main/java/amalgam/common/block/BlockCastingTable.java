@@ -101,7 +101,7 @@ public class BlockCastingTable extends BlockAmalgamContainer implements ITileEnt
             ItemStack resultStack = table.getStackInSlot(9);
             if (player.isSneaking() && resultStack != null && table.getEmptySpace() == 0) {
                 if (!onCastPickup(table, player)) {
-                    table.updateCastResult(resultStack);
+                    table.onCastMatrixChanged(table.castingInventory);
                 }
                 player.setCurrentItemOrArmor(0, resultStack);
 

@@ -58,9 +58,9 @@ public class ShapedCastingRecipe implements ICastingRecipe {
 
                 ItemStack itemstack1 = inv.getStackInRowAndColumn(k, l);
 
-                if (itemstack1 == null){
+                if (itemstack1 == null) {
                     int state = inv.getCastState(k + l * 3);
-                    switch(state){
+                    switch (state) {
                         case SlotCasting.NUGGET_STATE:
                             itemstack1 = new ItemStack(CastingManager.NUGGET_PLACEHOLDER);
                             break;
@@ -71,7 +71,7 @@ public class ShapedCastingRecipe implements ICastingRecipe {
                             itemstack1 = new ItemStack(CastingManager.BLOCK_PLACEHOLDER);
                             break;
                     }
-                    
+
                 }
 
                 if (itemstack1 != null || itemstack != null) {
@@ -84,7 +84,7 @@ public class ShapedCastingRecipe implements ICastingRecipe {
                     }
 
                     Config.LOG.info("itemstack1: " + itemstack1.getDisplayName() + "   itemstack: " + itemstack.getDisplayName());
-                    
+
                     if (itemstack.getItemDamage() != 32767 && itemstack.getItemDamage() != itemstack1.getItemDamage()) {
                         return false;
                     }

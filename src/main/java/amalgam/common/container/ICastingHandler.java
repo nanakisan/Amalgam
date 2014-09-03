@@ -6,6 +6,10 @@ public interface ICastingHandler {
 
     boolean isCastComplete();
 
+    void onCastPickup();
+
     void onCastMatrixChanged(InventoryCasting inv);
+
+    void updateAmalgamDistribution();
 
 }

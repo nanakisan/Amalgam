@@ -5,26 +5,23 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-import amalgam.common.fluid.AmalgamTank;
 import cpw.mods.fml.common.FMLCommonHandler;
 
 public class SlotCastingResult extends Slot {
 
     private final InventoryCasting castingInventory;
     private final EntityPlayer     player;
-    private final AmalgamTank      tank;
     private int                    amountCrafted;
 
-    public SlotCastingResult(EntityPlayer player, InventoryCasting castingInventory, InventoryCastingResult castingResult, AmalgamTank tank,
-            int slotID, int xPos, int yPos) {
+    public SlotCastingResult(EntityPlayer player, InventoryCasting castingInventory, InventoryCastingResult castingResult, int slotID, int xPos,
+            int yPos) {
         super(castingResult, slotID, xPos, yPos);
         this.castingInventory = castingInventory;
         this.player = player;
-        this.tank = tank;
     }
 
     public boolean canTakeStack(EntityPlayer player) {
-        return this.tank.getCapacity() == this.tank.getFluidAmount();
+        return this.castingInventory.handler.isCastComplete();
     }
 
     public boolean isItemValid(ItemStack stack) {
@@ -74,11 +71,6 @@ public class SlotCastingResult extends Slot {
         FMLCommonHandler.instance().firePlayerCraftingEvent(player, stack, castingInventory);
         this.onCrafting(stack);
 
-        // this.castingMatrix.useAmalgamForCrafting();
-        this.tank.setFluid(null);
-        // TODO onCraftMatrixChanged implementation!!!!
-        // onCraftMatrixChanged()
-
         for (int i = 0; i < this.castingInventory.getSizeInventory(); ++i) {
             ItemStack itemstack1 = this.castingInventory.getStackInSlot(i);
 
@@ -86,5 +78,7 @@ public class SlotCastingResult extends Slot {
                 consumeStackInSlot(itemstack1, i);
             }
         }
+
+        this.castingInventory.handler.onCastPickup();
     }
 }
