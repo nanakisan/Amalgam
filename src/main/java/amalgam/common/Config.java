@@ -25,6 +25,7 @@ import amalgam.common.item.ItemAmalgamBlob;
 import amalgam.common.item.ItemAmalgamHoe;
 import amalgam.common.item.ItemAmalgamPick;
 import amalgam.common.item.ItemAmalgamShovel;
+import amalgam.common.item.ItemAmalgamShroom;
 import amalgam.common.item.ItemAmalgamSword;
 import amalgam.common.item.ItemStoneTongs;
 import amalgam.common.properties.PropertyList;
@@ -51,7 +52,7 @@ public class Config {
     public static boolean       moreMaterials       = true;
     public static boolean       floatingCastResult  = true;
     public static boolean       coloredAmalgam      = true;
-    public static int           baseVolume          = 10;
+    public static boolean       allowFunItems       = true;
 
     public static final int     BASE_AMOUNT         = 1;
     public static final int     INGOT_AMOUNT        = BASE_AMOUNT * 9;
@@ -70,6 +71,9 @@ public class Config {
     public static Item          amalgamAxe;
     public static Item          amalgamShovel;
     public static Item          amalgamHoe;
+
+    public static Item          amalgamPotato;
+    public static Item          amalgamShroom;
 
     public static Item          amalgamHelmet;
     public static Item          amalgamChest;
@@ -101,7 +105,7 @@ public class Config {
 
         moreMaterials = configFile
                 .getBoolean("Allow extra vanilla materials to be used", Configuration.CATEGORY_GENERAL, moreMaterials,
-                        "Allow obsidian, redstone, blaze rods, lapis, emeralds and nether quartz to be used in amalgam in addition to iron, gold and diamond");
+                        "Allow obsidian, blaze rods, emeralds and nether quartz to be used in amalgam in addition to iron, gold and diamond");
 
         floatingCastResult = configFile.getBoolean("Floating Cast Result", Configuration.CATEGORY_GENERAL, floatingCastResult,
                 "Render the casting table output above the casting table.");
@@ -109,8 +113,8 @@ public class Config {
         coloredAmalgam = configFile.getBoolean("Allow colored amalgam", Configuration.CATEGORY_GENERAL, coloredAmalgam,
                 "Allow amalgam color to be determined by material properties");
 
-        baseVolume = configFile.getInt("Base amalgam volume (mB)", Configuration.CATEGORY_GENERAL, baseVolume, 1, Integer.MAX_VALUE,
-                "The volume of the smallest unit of amalgam (mB)");
+        allowFunItems = configFile.getBoolean("Allow fun items", Configuration.CATEGORY_GENERAL, allowFunItems,
+                "Allow fun items like the AmalgaShroom and Unstable Amalgamized Potato");
 
         if (configFile.hasChanged()) {
             configFile.save();
@@ -140,6 +144,8 @@ public class Config {
         amalgamShovel = new ItemAmalgamShovel().setUnlocalizedName("amalgamShovel");
         amalgamHoe = new ItemAmalgamHoe().setUnlocalizedName("amalgamHoe");
 
+        amalgamShroom = new ItemAmalgamShroom().setUnlocalizedName("amalgamShroom");
+
         amalgamHelmet = new ItemAmalgamArmor(ItemArmor.ArmorMaterial.CLOTH, 0, 0).setUnlocalizedName("amalgamHelmet");
         amalgamChest = new ItemAmalgamArmor(ItemArmor.ArmorMaterial.CLOTH, 0, 1).setUnlocalizedName("amalgamChest");
         amalgamLegs = new ItemAmalgamArmor(ItemArmor.ArmorMaterial.CLOTH, 0, 2).setUnlocalizedName("amalgamLegs");
@@ -156,6 +162,7 @@ public class Config {
         GameRegistry.registerItem(amalgamChest, "amalgamChest");
         GameRegistry.registerItem(amalgamLegs, "amalgamLegs");
         GameRegistry.registerItem(amalgamBoots, "amalgamBoots");
+        GameRegistry.registerItem(amalgamShroom, "amalgamShroom");
     }
 
     public static void registerBlocks() {
@@ -256,6 +263,8 @@ public class Config {
         CastingManager.addRecipe((ICastItem) amalgamBoots, 1, i + " " + i, i + " " + i);
         CastingManager.addRecipe((ICastItem) amalgamBoots, 1, n + " " + n, i + " " + i);
         CastingManager.addRecipe((ICastItem) amalgamBoots, 1, n + " " + i, b + " " + b);
+
+        CastingManager.addRecipe((ICastItem) amalgamShroom, 1, n + n + n, n + "a" + n, n + n + n, 'a', Blocks.red_mushroom);
 
         GameRegistry.addRecipe(new ItemStack(stoneTongs), "s s", " s ", " s ", 's', Blocks.cobblestone);
         GameRegistry.addRecipe(new ItemStack(stoneCrucible), "s s", "s s", "sss", 's', Blocks.cobblestone);

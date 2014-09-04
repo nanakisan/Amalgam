@@ -15,6 +15,8 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 @Mod(modid = Amalgam.MODID, version = Amalgam.VERSION, guiFactory = "amalgam.client.gui.AmalgamGuiFactory")
 public class Amalgam {
 
+    // FIXME: multiplayer casting table syncing
+    
     public static final String MODID   = "amalgam";
     public static final String VERSION = "0.5.0";
 

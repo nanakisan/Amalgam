@@ -8,10 +8,12 @@ import mcp.mobius.waila.api.IWailaDataProvider;
 import mcp.mobius.waila.api.IWailaRegistrar;
 import mcp.mobius.waila.api.SpecialChars;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import amalgam.common.fluid.AmalgamStack;
+import amalgam.common.fluid.IAmalgamContainerItem;
 import amalgam.common.properties.Property;
-import amalgam.common.properties.PropertyList;
 import amalgam.common.properties.PropertyManager;
 import amalgam.common.tile.TileAmalgamContainer;
 
@@ -31,31 +33,60 @@ public class WailaProvider implements IWailaDataProvider {
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         TileEntity te = accessor.getTileEntity();
         if (te instanceof TileAmalgamContainer) {
-            PropertyList l = ((TileAmalgamContainer) te).getAmalgamPropertyList();
-            int currentVolume = ((TileAmalgamContainer) te).getFluidVolume();
+            AmalgamStack amalgStack = ((TileAmalgamContainer) te).getAmalgamStack();
             int capacity = ((TileAmalgamContainer) te).getTankCapacity();
-            currenttip.add("Volume: " + currentVolume + "/" + capacity);
+            currenttip.add("Volume: " + amalgStack.amount + "/" + capacity);
 
-            // FIXME if we are holding an amalgable item and look at the crucible, show what the amalgam properties
-            // would
-            // be upon adding the item. For example (Density: 4.5 -> 5.1)
-
-            if (currentVolume != 0 && accessor.getPlayer().isSneaking()) {
+            if (amalgStack.amount != 0 && accessor.getPlayer().isSneaking()) {
                 currenttip.add("--------");
-                addPropertiesToTooltip(currenttip, l);
+                addPropertiesToTooltip(currenttip, amalgStack, accessor.getPlayer());
             }
         }
 
         return currenttip;
     }
 
-    public void addPropertiesToTooltip(List<String> currentTip, PropertyList pList) {
-        for (Property p : Property.getAll()) {
-            if (p == PropertyManager.COLOR) {
-                continue;
+    public void addPropertiesToTooltip(List<String> currentTip, AmalgamStack amalgStack, EntityPlayer player) {
+        ItemStack currentItem = player.inventory.getCurrentItem();
+        
+        if (currentItem != null && PropertyManager.itemIsAmalgable(currentItem)) {
+            AmalgamStack a = new AmalgamStack(PropertyManager.getVolume(currentItem), PropertyManager.getProperties(currentItem));
+            a = AmalgamStack.combine(a, amalgStack);
+
+            for (Property p : Property.getAll()) {
+                if (p == PropertyManager.COLOR) {
+                    continue;
+                }
+
+                float currentValue = amalgStack.getProperties().getValue(p);
+                float newValue = a.getProperties().getValue(p);
+                currentTip.add(p.getName() + ": " + SpecialChars.WHITE + String.format("%.1f", currentValue) + "->"
+                        + (currentValue > newValue ? SpecialChars.RED : SpecialChars.GREEN) + String.format("%.1f", newValue));
             }
 
-            currentTip.add(p.getName() + ": " + SpecialChars.WHITE + String.format("%.1f", pList.getValue(p)));
+        } else if (currentItem != null && currentItem.getItem() instanceof IAmalgamContainerItem) {
+            AmalgamStack a = ((IAmalgamContainerItem) currentItem.getItem()).getFluid(currentItem);
+            a = AmalgamStack.combine(a, amalgStack);
+
+            for (Property p : Property.getAll()) {
+                if (p == PropertyManager.COLOR) {
+                    continue;
+                }
+
+                float currentValue = amalgStack.getProperties().getValue(p);
+                float newValue = a.getProperties().getValue(p);
+                currentTip.add(p.getName() + ": " + SpecialChars.WHITE + String.format("%.1f", currentValue) + "->"
+                        + (currentValue > newValue ? SpecialChars.RED : SpecialChars.GREEN) + String.format("%.1f", newValue));
+            }
+        } else {
+            Config.LOG.info("here");
+            for (Property p : Property.getAll()) {
+                if (p == PropertyManager.COLOR) {
+                    continue;
+                }
+
+                currentTip.add(p.getName() + ": " + SpecialChars.WHITE + String.format("%.1f", amalgStack.getProperties().getValue(p)));
+            }
         }
     }
 

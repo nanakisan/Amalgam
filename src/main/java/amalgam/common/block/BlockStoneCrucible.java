@@ -133,15 +133,6 @@ public class BlockStoneCrucible extends BlockAmalgamContainer implements ITileEn
         }
     }
 
-//     TODO figure out if this method is necessary
-    @Override
-    public boolean onBlockEventReceived(World world, int x, int y, int z, int side, int metaData) {
-        super.onBlockEventReceived(world, x, y, z, side, metaData);
-        Config.LOG.info("recieved event!!!");
-        TileEntity tileentity = world.getTileEntity(x, y, z);
-        return tileentity == null ? false : tileentity.receiveClientEvent(side, metaData);
-    }
-
     @Override
     public TileEntity createNewTileEntity(World world, int metaData) {
         return new TileStoneCrucible();

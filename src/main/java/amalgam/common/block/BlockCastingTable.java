@@ -53,7 +53,6 @@ public class BlockCastingTable extends BlockAmalgamContainer implements ITileEnt
         return side == 1 ? this.iconTop : side == 0 ? this.iconBottom : side == 6 ? this.iconNeck : side == 7 ? this.iconBottomSide : this.blockIcon;
     }
 
-    // TODO consider calling the TileCastingTable version of this method instead
     private boolean onCastPickup(TileCastingTable table, EntityPlayer player) {
         table.setTankFluid(null);
         boolean matsRemain = false;

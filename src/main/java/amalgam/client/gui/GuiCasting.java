@@ -1,5 +1,7 @@
 package amalgam.client.gui;
 
+import java.awt.Color;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
@@ -10,6 +12,7 @@ import org.lwjgl.opengl.GL11;
 import amalgam.common.Amalgam;
 import amalgam.common.container.ContainerCasting;
 import amalgam.common.container.SlotCasting;
+import amalgam.common.properties.PropertyManager;
 import amalgam.common.tile.TileCastingTable;
 
 public class GuiCasting extends GuiContainer {
@@ -31,6 +34,9 @@ public class GuiCasting extends GuiContainer {
         this.drawTexturedModalRect(xPos, yPos, 0, 0, this.xSize, this.ySize);
 
         ContainerCasting table = (ContainerCasting) this.inventorySlots;
+        int color = (int) table.castingTable.getAmalgamPropertyList().getValue(PropertyManager.COLOR);
+        
+        Color c = new Color(color);
         SlotCasting testSlot;
 
         /* Loop through all the casting slots, get their state and the amount of amalgam in them, and overlay them on
@@ -43,18 +49,13 @@ public class GuiCasting extends GuiContainer {
                 int rowNum = i / 3;
                 int colNum = i % 3;
 
-                // TODO have amalgam color render properly
-                // TODO have amalgam size change depending on fill level
-                
                 /* Render the casting slot differently depending on the casting state and the amalgam in the slot */
+                this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 160 + 17 * state, 1, 16, 16);
                 
-                if (testSlot.getFillLevel() == 1.0F){
-                    this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 160 + 17 * state, 35, 16, 16);
-                } else if (testSlot.getFillLevel() == 0.0F) {
-                    this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 160 + 17 * state, 1, 16, 16);
-                } else {
-                    this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 160 + 17 * state, 18, 16, 16);
-                }
+                /* change to amalgam color and render fill overlay */
+                GL11.glColor3f(c.getRed()/255.0F, c.getGreen()/255.0F, c.getBlue()/255.0F);
+                this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 16 - (int)(16.0 * testSlot.getFillLevel()) + 18 * rowNum, 160 + 17 * state , 35- (int)(16.0 * testSlot.getFillLevel()) + 16, 16, (int)(16.0 * testSlot.getFillLevel()));
+                GL11.glColor3f(1.0F, 1.0F, 1.0F);
             }
         }
 
