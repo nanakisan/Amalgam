@@ -53,6 +53,7 @@ public class BlockCastingTable extends BlockAmalgamContainer implements ITileEnt
         return side == 1 ? this.iconTop : side == 0 ? this.iconBottom : side == 6 ? this.iconNeck : side == 7 ? this.iconBottomSide : this.blockIcon;
     }
 
+    // TODO consider calling the TileCastingTable version of this method instead
     private boolean onCastPickup(TileCastingTable table, EntityPlayer player) {
         table.setTankFluid(null);
         boolean matsRemain = false;
@@ -95,7 +96,6 @@ public class BlockCastingTable extends BlockAmalgamContainer implements ITileEnt
         ItemStack stack = player.inventory.getCurrentItem();
         TileCastingTable table = (TileCastingTable) world.getTileEntity(x, y, z);
 
-        Config.LOG.info("Casting Table Activated");
         if (stack == null) {
 
             ItemStack resultStack = table.getStackInSlot(9);
@@ -107,7 +107,6 @@ public class BlockCastingTable extends BlockAmalgamContainer implements ITileEnt
 
                 return false;
             }
-            // FIXME look in crafting table, container and slot code to see when packets are sent.
 
             player.openGui(Amalgam.instance, Config.CASTING_GUI_ID, world, x, y, z);
 

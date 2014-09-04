@@ -25,16 +25,18 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockStoneCrucible extends BlockAmalgamContainer implements ITileEntityProvider {
 
+    public static final float EMPTY_LEVEL = 0.300F;
+
     @SideOnly(Side.CLIENT)
-    private IIcon iconInner;
+    private IIcon             iconInner;
     @SideOnly(Side.CLIENT)
-    private IIcon iconTop;
+    private IIcon             iconTop;
     @SideOnly(Side.CLIENT)
-    private IIcon iconBottom;
+    private IIcon             iconBottom;
     @SideOnly(Side.CLIENT)
-    public IIcon  liquidAmalgam;
+    public IIcon              liquidAmalgam;
     @SideOnly(Side.CLIENT)
-    public IIcon  solidAmalgam;
+    public IIcon              solidAmalgam;
 
     public BlockStoneCrucible() {
         super(Material.iron);
@@ -124,16 +126,18 @@ public class BlockStoneCrucible extends BlockAmalgamContainer implements ITileEn
                     }
                 }
 
-                if (cruc.getRenderLiquidLevel() > .301) {
+                if (cruc.getRenderLiquidLevel() > EMPTY_LEVEL) {
                     entity.setFire(3);
                 }
             }
         }
     }
 
+//     TODO figure out if this method is necessary
     @Override
     public boolean onBlockEventReceived(World world, int x, int y, int z, int side, int metaData) {
         super.onBlockEventReceived(world, x, y, z, side, metaData);
+        Config.LOG.info("recieved event!!!");
         TileEntity tileentity = world.getTileEntity(x, y, z);
         return tileentity == null ? false : tileentity.receiveClientEvent(side, metaData);
     }
@@ -154,6 +158,12 @@ public class BlockStoneCrucible extends BlockAmalgamContainer implements ITileEn
 
     @Override
     protected void interactWithAmalgableItem(TileEntity te, ItemStack stack) {
+        // Only deal with this stuff on server side. Updates to the tank are sent to clients through packets after fill
+        // or drain methods are called. Things mess up if you do things here on both Client and Server sides.
+        if (te.getWorldObj().isRemote) {
+            return;
+        }
+
         if (!(te instanceof TileStoneCrucible)) {
             return;
         }
@@ -189,24 +199,5 @@ public class BlockStoneCrucible extends BlockAmalgamContainer implements ITileEn
             super.interactWithAmalgamContainerItem(te, container, stack, player);
             te.getWorldObj().notifyBlocksOfNeighborChange(te.xCoord, te.yCoord, te.zCoord, this);
         }
-    }
-
-    /**
-     * If this returns true, then comparators facing away from this block will use the value from
-     * getComparatorInputOverride instead of the actual redstone signal strength.
-     */
-    @Override
-    public boolean hasComparatorInputOverride() {
-        return true;
-    }
-
-    /**
-     * If hasComparatorInputOverride returns true, the return value from this is used instead of the redstone signal
-     * strength when this block inputs to a comparator.
-     */
-    @Override
-    public int getComparatorInputOverride(World world, int x, int y, int z, int meta) {
-        TileStoneCrucible crucible = (TileStoneCrucible) world.getTileEntity(x, y, z);
-        return (int) (15.0F * crucible.getFluidVolume() / crucible.getTankCapacity());
     }
 }

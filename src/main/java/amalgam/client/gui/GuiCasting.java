@@ -45,10 +45,11 @@ public class GuiCasting extends GuiContainer {
 
                 // TODO have amalgam color render properly
                 // TODO have amalgam size change depending on fill level
+                
+                /* Render the casting slot differently depending on the casting state and the amalgam in the slot */
+                
                 if (testSlot.getFillLevel() == 1.0F){
-                    //GL11.glColor3f(.16F, .7F, .7F);
                     this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 160 + 17 * state, 35, 16, 16);
-                    //GL11.glColor3f(1.0F, 1.0F, 1.0F);
                 } else if (testSlot.getFillLevel() == 0.0F) {
                     this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 160 + 17 * state, 1, 16, 16);
                 } else {

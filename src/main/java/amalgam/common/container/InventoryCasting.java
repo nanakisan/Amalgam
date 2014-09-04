@@ -3,7 +3,6 @@ package amalgam.common.container;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import amalgam.common.Config;
 
 public class InventoryCasting implements IInventory {
 
@@ -28,7 +27,7 @@ public class InventoryCasting implements IInventory {
 
     @Override
     public ItemStack getStackInSlot(int slot) {
-        if (castState[slot] == 0) {
+        if (castState[slot] == SlotCasting.EMPTY_STATE) {
             return stackList[slot];
         }
 
@@ -37,7 +36,7 @@ public class InventoryCasting implements IInventory {
 
     @Override
     public ItemStack decrStackSize(int slot, int decNum) {
-        if (castState[slot] != 0) {
+        if (castState[slot] != SlotCasting.EMPTY_STATE) {
             return null;
         }
 
@@ -49,9 +48,6 @@ public class InventoryCasting implements IInventory {
             if (stackList[slot].stackSize <= decNum) {
                 itemstack = stackList[slot];
                 this.setInventorySlotContents(slot, null);
-
-                // TODO this needs to be called somehow
-                // this.table.onCraftMatrixChanged(this);
                 handler.onCastMatrixChanged(this);
 
                 return itemstack;
@@ -62,8 +58,7 @@ public class InventoryCasting implements IInventory {
                     this.setInventorySlotContents(slot, itemstack);
 
                 }
-                // TODO this needs to be called somehow
-                // this.table.onCraftMatrixChanged(this);
+                
                 handler.onCastMatrixChanged(this);
 
                 return itemstack;
@@ -78,13 +73,11 @@ public class InventoryCasting implements IInventory {
 
     @Override
     public void setInventorySlotContents(int slot, ItemStack stack) {
-        if (castState[slot] != 0) {
+        if (castState[slot] != SlotCasting.EMPTY_STATE) {
             return;
         }
 
         stackList[slot] = stack;
-        // TODO this needs to be called somehow
-        // this.table.onCraftMatrixChanged(this);
         handler.onCastMatrixChanged(this);
     }
 
@@ -118,7 +111,7 @@ public class InventoryCasting implements IInventory {
 
     @Override
     public boolean isItemValidForSlot(int slot, ItemStack stack) {
-        if (castState[slot] == 0) {
+        if (castState[slot] == SlotCasting.EMPTY_STATE) {
             return true;
         }
 
@@ -146,7 +139,6 @@ public class InventoryCasting implements IInventory {
     public void setCastState(int slot, int state) {
         castState[slot] = state;
         handler.updateTankCapacity(this);
-        Config.LOG.info("Setting cast state of slot " + slot + " to " + state);
     }
 
     public float getFillAmount(int slot) {
@@ -156,5 +148,4 @@ public class InventoryCasting implements IInventory {
     public void setFillAmount(int slot, float amount) {
         amalgamFillAmount[slot] = amount;
     }
-
 }

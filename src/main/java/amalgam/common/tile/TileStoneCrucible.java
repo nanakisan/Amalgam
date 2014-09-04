@@ -14,6 +14,7 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import amalgam.common.Config;
+import amalgam.common.block.BlockStoneCrucible;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.AmalgamTank;
 import amalgam.common.properties.PropertyList;
@@ -77,7 +78,7 @@ public class TileStoneCrucible extends TileAmalgamContainer implements IInventor
     }
 
     public float getRenderLiquidLevel() {
-        return 0.3F + 0.69F * ((float) this.tank.getFluidAmount() / (float) this.tank.getCapacity());
+        return BlockStoneCrucible.EMPTY_LEVEL + 0.69F * ((float) this.tank.getFluidAmount() / (float) this.tank.getCapacity());
     }
 
     @Override
@@ -179,10 +180,6 @@ public class TileStoneCrucible extends TileAmalgamContainer implements IInventor
             return true;
         }
         return false;
-    }
-
-    public void setAmalgam(AmalgamStack amalgamStack) {
-        tank.setFluid(amalgamStack);
     }
 
 }

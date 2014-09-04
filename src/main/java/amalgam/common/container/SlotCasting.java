@@ -17,7 +17,7 @@ public class SlotCasting extends Slot {
     }
 
     public boolean isItemValid(ItemStack stack) {
-        return getCastState() == 0;
+        return getCastState() == EMPTY_STATE;
     }
 
     public int toggleCastState(boolean up) {
@@ -29,8 +29,8 @@ public class SlotCasting extends Slot {
         }
 
         if (castState > MAX_STATE) {
-            castState = 0;
-        } else if (castState < 0) {
+            castState = EMPTY_STATE;
+        } else if (castState < EMPTY_STATE) {
             castState = MAX_STATE;
         }
 

@@ -18,7 +18,7 @@ public class InventoryCastingResult implements IInventory {
     }
 
     public String getInventoryName() {
-        return "Result";
+        return "result";
     }
 
     public boolean hasCustomInventoryName() {

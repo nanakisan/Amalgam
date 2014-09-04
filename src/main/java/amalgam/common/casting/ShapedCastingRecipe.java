@@ -83,7 +83,7 @@ public class ShapedCastingRecipe implements ICastingRecipe {
                         return false;
                     }
 
-                    Config.LOG.info("itemstack1: " + itemstack1.getDisplayName() + "   itemstack: " + itemstack.getDisplayName());
+                    // Config.LOG.info("itemstack1: " + itemstack1.getDisplayName() + "   itemstack: " + itemstack.getDisplayName());
 
                     if (itemstack.getItemDamage() != 32767 && itemstack.getItemDamage() != itemstack1.getItemDamage()) {
                         return false;

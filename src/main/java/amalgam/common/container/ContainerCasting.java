@@ -16,10 +16,6 @@ public class ContainerCasting extends Container {
 
     public TileCastingTable castingTable;
 
-    /* FIXME add mouseover text to gui saying which state a slot is in and how much amalgam it contains. It should also
-     * say how much more amalgam is needed total when mousing over the cast result */
-
-    /* FIXME allow shift clicking a slot to cycle it in reverse */
     public ContainerCasting(InventoryPlayer inv, TileCastingTable te) {
         super();
 
@@ -53,46 +49,6 @@ public class ContainerCasting extends Container {
 
         this.onCraftMatrixChanged(this.castingTable.castingInventory);
     }
-
-    // public final void updateAmalgamDistribution() {
-    // TileCastingTable te = this.castingTable;
-    // int amount = te.getFluidAmount();
-    //
-    // for (int slotNum = 0; slotNum < this.inventorySlots.size(); slotNum++) {
-    // Slot s = this.getSlot(slotNum);
-    //
-    // if (s instanceof SlotCasting) {
-    // /* Check if we have anymore amalgam */
-    // if (amount <= 0) {
-    // ((SlotCasting) s).setHasAmalgam(false);
-    // ((SlotCasting) s).setIsFull(false);
-    // } else {
-    // ((SlotCasting) s).setHasAmalgam(true);
-    // int state = te.castingInventory.getCastState(slotNum);
-    // /* If we have amalgam, decrease the total by the amount needed to fill the slot based on it's
-    // * casting state */
-    // switch (state) {
-    // case SlotCasting.NUGGET_STATE:
-    // amount -= Config.BASE_AMOUNT;
-    // break;
-    // case SlotCasting.INGOT_STATE:
-    // amount -= Config.INGOT_AMOUNT;
-    // break;
-    // case SlotCasting.BLOCK_STATE:
-    // amount -= Config.BLOCK_AMOUNT;
-    // break;
-    // }
-    //
-    // /* If we didn't have enough amalgam to fill the slot, set isFull to false */
-    // if (amount < 0) {
-    // ((SlotCasting) s).setIsFull(false);
-    // } else {
-    // ((SlotCasting) s).setIsFull(true);
-    // }
-    // }
-    // }
-    // }
-    // }
 
     @Override
     public boolean canInteractWith(EntityPlayer player) {
@@ -147,8 +103,7 @@ public class ContainerCasting extends Container {
     @Override
     public void onCraftMatrixChanged(IInventory inv) {
         super.onCraftMatrixChanged(inv);
-        Config.LOG.info("in here, what is going on?");
-        // this.updateAmalgamDistribution();
+
         ICastingRecipe recipe = CastingManager.findMatchingRecipe(castingTable.castingInventory, castingTable.getWorldObj());
 
         if (recipe == null) {
@@ -167,13 +122,15 @@ public class ContainerCasting extends Container {
 
     @Override
     public ItemStack slotClick(int slotNum, int ctrNum, int shiftNum, EntityPlayer player) {
-        if (slotNum >= 0 && slotNum < this.inventorySlots.size()) {
+        if (slotNum >= 0 && slotNum < this.inventorySlots.size() && shiftNum != 6) {
             Slot slot = this.getSlot(slotNum);
 
             if (slot instanceof SlotCasting) {
                 if (!slot.getHasStack() && player.inventory.getItemStack() == null) {
-                    int newState = ((SlotCasting) slot).toggleCastState(true);
-                    castingTable.castingInventory.setCastState(slot.slotNumber, newState);
+                    /* Toggle forward if no shift, toggle backwards if shift is pressed */
+                    ((SlotCasting) slot).toggleCastState(shiftNum == 0);
+                    // int newState = ((SlotCasting) slot).toggleCastState(shiftNum == 0);
+                    // castingTable.castingInventory.setCastState(slot.slotNumber, newState);
                     this.onCraftMatrixChanged(castingTable.castingInventory);
                 }
             }
@@ -181,5 +138,4 @@ public class ContainerCasting extends Container {
 
         return super.slotClick(slotNum, ctrNum, shiftNum, player);
     }
-
 }

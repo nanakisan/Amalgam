@@ -40,7 +40,8 @@ public class CrucibleRenderer extends TileEntitySpecialRenderer implements ISimp
 
         GL11.glColor3f(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F);
 
-        if (height > .301) {
+        // if (height > BlockStoneCrucible.EMPTY_LEVEL + .01) {
+        if (height > BlockStoneCrucible.EMPTY_LEVEL) {
             IIcon iicon = ((BlockStoneCrucible) Config.stoneCrucible).solidAmalgam;
 
             if (((TileStoneCrucible) te).isHot()) {

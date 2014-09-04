@@ -9,7 +9,4 @@ public interface ICastingHandler {
     void onCastPickup();
 
     void onCastMatrixChanged(InventoryCasting inv);
-
-    void updateAmalgamDistribution();
-
 }

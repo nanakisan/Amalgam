@@ -87,7 +87,7 @@ public class TileCastingTable extends TileAmalgamContainer implements ISidedInve
                 item.writeToNBT(nbttagcompound1);
                 nbttaglist.appendTag(nbttagcompound1);
             }
-            if (this.castingInventory.getCastState(i) != 0) {
+            if (this.castingInventory.getCastState(i) != SlotCasting.EMPTY_STATE) {
                 NBTTagCompound castCompound = new NBTTagCompound();
                 castCompound.setByte(SLOT_KEY, (byte) i);
                 castCompound.setByte(STATE_KEY, (byte) this.castingInventory.getCastState(i));
@@ -149,6 +149,7 @@ public class TileCastingTable extends TileAmalgamContainer implements ISidedInve
                 case SlotCasting.BLOCK_STATE:
                     newCapacity += Config.BLOCK_AMOUNT;
                     break;
+                default:
             }
         }
 
@@ -321,16 +322,16 @@ public class TileCastingTable extends TileAmalgamContainer implements ISidedInve
     @Override
     public void onCastPickup() {
         this.tank.setFluid(null);
+
         onCastMatrixChanged(this.castingInventory);
         updateAmalgamDistribution();
     }
 
-    @Override
     public void updateAmalgamDistribution() {
         float fillPercentage = (float) this.getFluidAmount() / (float) this.getTankCapacity();
-        Config.LOG.info("fill percentage: " + fillPercentage);
+        // Config.LOG.info("fill percentage: " + fillPercentage);
         for (int i = 0; i < this.castingInventory.getSizeInventory(); i++) {
-            if (this.castingInventory.getCastState(i) != 0) {
+            if (this.castingInventory.getCastState(i) != SlotCasting.EMPTY_STATE) {
                 this.castingInventory.setFillAmount(i, fillPercentage);
             }
         }
