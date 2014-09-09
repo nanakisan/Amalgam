@@ -95,7 +95,7 @@ public abstract class BlockAmalgamContainer extends Block implements ITileEntity
             container.fill(stack, newStack, true);
         }
     }
-    
+
     /**
      * If this returns true, then comparators facing away from this block will use the value from
      * getComparatorInputOverride instead of the actual redstone signal strength.
@@ -112,10 +112,11 @@ public abstract class BlockAmalgamContainer extends Block implements ITileEntity
     @Override
     public int getComparatorInputOverride(World world, int x, int y, int z, int meta) {
         TileEntity amalgContainer = world.getTileEntity(x, y, z);
-        if(amalgContainer instanceof TileAmalgamContainer){
-            return (int) (15.0F * ((TileAmalgamContainer) amalgContainer).getFluidVolume() / ((TileAmalgamContainer) amalgContainer).getTankCapacity());
+        if (amalgContainer instanceof TileAmalgamContainer) {
+            return (int) (15.0F * ((TileAmalgamContainer) amalgContainer).getFluidVolume() / ((TileAmalgamContainer) amalgContainer)
+                    .getTankCapacity());
         }
-        
+
         return 0;
     }
 }

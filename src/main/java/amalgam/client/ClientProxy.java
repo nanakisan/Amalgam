@@ -6,9 +6,11 @@ import net.minecraft.world.World;
 import amalgam.client.gui.GuiCasting;
 import amalgam.client.renderers.CastingTableRenderer;
 import amalgam.client.renderers.CrucibleRenderer;
+import amalgam.client.renderers.RenderAmalgamPotato;
 import amalgam.common.CommonProxy;
 import amalgam.common.Config;
 import amalgam.common.container.ContainerCasting;
+import amalgam.common.entity.EntityAmalgamPotato;
 import amalgam.common.tile.TileCastingTable;
 import amalgam.common.tile.TileStoneCrucible;
 import cpw.mods.fml.client.FMLClientHandler;
@@ -43,5 +45,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileCastingTable.class, castingTableRenderer);
         RenderingRegistry.registerBlockHandler(crucibleRenderer);
         RenderingRegistry.registerBlockHandler(castingTableRenderer);
+
+        RenderingRegistry.registerEntityRenderingHandler(EntityAmalgamPotato.class, new RenderAmalgamPotato());
     }
 }

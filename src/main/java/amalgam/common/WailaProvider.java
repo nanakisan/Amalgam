@@ -48,7 +48,7 @@ public class WailaProvider implements IWailaDataProvider {
 
     public void addPropertiesToTooltip(List<String> currentTip, AmalgamStack amalgStack, EntityPlayer player) {
         ItemStack currentItem = player.inventory.getCurrentItem();
-        
+
         if (currentItem != null && PropertyManager.itemIsAmalgable(currentItem)) {
             AmalgamStack a = new AmalgamStack(PropertyManager.getVolume(currentItem), PropertyManager.getProperties(currentItem));
             a = AmalgamStack.combine(a, amalgStack);
@@ -79,7 +79,6 @@ public class WailaProvider implements IWailaDataProvider {
                         + (currentValue > newValue ? SpecialChars.RED : SpecialChars.GREEN) + String.format("%.1f", newValue));
             }
         } else {
-            Config.LOG.info("here");
             for (Property p : Property.getAll()) {
                 if (p == PropertyManager.COLOR) {
                     continue;

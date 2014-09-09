@@ -16,7 +16,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 public class Amalgam {
 
     // FIXME: multiplayer casting table syncing
-    
+
     public static final String MODID   = "amalgam";
     public static final String VERSION = "0.5.0";
 
@@ -34,6 +34,7 @@ public class Amalgam {
         Config.registerBlocks();
         Config.registerFluids();
 
+        Config.registerEntities();
         PacketHandler.init();
     }
 
@@ -50,6 +51,8 @@ public class Amalgam {
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.registerRenderers();
+
+        Config.removeVanillaRecipes();
     }
 
 }

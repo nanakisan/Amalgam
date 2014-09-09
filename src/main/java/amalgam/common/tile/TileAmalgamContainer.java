@@ -115,7 +115,7 @@ public abstract class TileAmalgamContainer extends TileEntity implements IFluidH
     }
 
     public AmalgamStack getAmalgamStack() {
-        
+
         return (AmalgamStack) tank.getFluid();
     }
 

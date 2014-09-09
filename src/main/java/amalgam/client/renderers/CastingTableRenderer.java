@@ -152,7 +152,9 @@ public class CastingTableRenderer extends TileEntitySpecialRenderer implements I
         }
 
         if (Block.getBlockFromItem(stack.getItem()) == Blocks.air) {
-            EntityItem itemEntity = new EntityItem(te.getWorldObj(), te.xCoord, te.yCoord + 1.2, te.zCoord, stack);
+            ItemStack temp = stack.copy();
+            temp.stackSize = 1;
+            EntityItem itemEntity = new EntityItem(te.getWorldObj(), te.xCoord, te.yCoord + 1.2, te.zCoord, temp);
             itemEntity.hoverStart = 0.0F;
             RenderManager.instance.renderEntityWithPosYaw(itemEntity, 0.0, 0.0, 0.0, 0.0F, 0.0F);
         } else {

@@ -21,8 +21,8 @@ public class ItemAmalgamShroom extends ItemFood implements ICastItem {
 
     private static final String EFFECT_NUM_TAG   = "num";
     private static final String DURATION_MOD_TAG = "dur";
-    private static final String EFFECT_MOD_TAG  = "eff";
-    private static final String COLOR_TAG  = "color";
+    private static final String EFFECT_MOD_TAG   = "eff";
+    private static final String COLOR_TAG        = "color";
 
     IIcon                       base;
 
@@ -37,9 +37,6 @@ public class ItemAmalgamShroom extends ItemFood implements ICastItem {
         this.base = iconRegister.registerIcon("amalgam:amalgamShroomBase");
     }
 
-    // TODO: crafted using nuggets around a mushroom. Gives random potion effects on consumption based on amalgam
-    // properties!
-
     @Override
     protected void onFoodEaten(ItemStack stack, World world, EntityPlayer player) {
         if (!world.isRemote && stack.hasTagCompound()) {
@@ -49,10 +46,10 @@ public class ItemAmalgamShroom extends ItemFood implements ICastItem {
             int effects = stack.stackTagCompound.getInteger(EFFECT_NUM_TAG);
             int durMod = stack.stackTagCompound.getInteger(DURATION_MOD_TAG);
             int effMod = stack.stackTagCompound.getInteger(EFFECT_MOD_TAG);
-            
-            for(int i=0;i<effects;i++){
+
+            for (int i = 0; i < effects; i++) {
                 int duration = random.nextInt(100) + 100 + 20 * random.nextInt(durMod);
-                player.addPotionEffect(new PotionEffect(random.nextInt(22), duration, 1));
+                player.addPotionEffect(new PotionEffect(random.nextInt(22), duration, random.nextInt(effMod)));
             }
         }
     }
@@ -76,8 +73,8 @@ public class ItemAmalgamShroom extends ItemFood implements ICastItem {
 
         toolTag.setInteger(EFFECT_NUM_TAG, (int) (luster / 3.0 + 1));
         toolTag.setInteger(DURATION_MOD_TAG, (int) (density + hardness));
-        toolTag.setInteger(EFFECT_MOD_TAG, (int) (maliability));
-       
+        toolTag.setInteger(EFFECT_MOD_TAG, (int) (maliability / 3.0 + 1));
+
         toolTag.setInteger(COLOR_TAG, color);
         returnStack.setTagCompound(toolTag);
 

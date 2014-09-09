@@ -26,7 +26,7 @@ public class GuiCasting extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float floatParam, int intParam1, int intParam2) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        
+
         /* Load the gui texture. This is essential before we call any draw commands */
         this.mc.getTextureManager().bindTexture(CRAFTING_GUI_TEXTURES);
         int xPos = (this.width - this.xSize) / 2;
@@ -35,7 +35,7 @@ public class GuiCasting extends GuiContainer {
 
         ContainerCasting table = (ContainerCasting) this.inventorySlots;
         int color = (int) table.castingTable.getAmalgamPropertyList().getValue(PropertyManager.COLOR);
-        
+
         Color c = new Color(color);
         SlotCasting testSlot;
 
@@ -51,10 +51,11 @@ public class GuiCasting extends GuiContainer {
 
                 /* Render the casting slot differently depending on the casting state and the amalgam in the slot */
                 this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 18 * rowNum, 160 + 17 * state, 1, 16, 16);
-                
+
                 /* change to amalgam color and render fill overlay */
-                GL11.glColor3f(c.getRed()/255.0F, c.getGreen()/255.0F, c.getBlue()/255.0F);
-                this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 16 - (int)(16.0 * testSlot.getFillLevel()) + 18 * rowNum, 160 + 17 * state , 35- (int)(16.0 * testSlot.getFillLevel()) + 16, 16, (int)(16.0 * testSlot.getFillLevel()));
+                GL11.glColor3f(c.getRed() / 255.0F, c.getGreen() / 255.0F, c.getBlue() / 255.0F);
+                this.drawTexturedModalRect(xPos + 30 + 18 * colNum, yPos + 17 + 16 - (int) (16.0 * testSlot.getFillLevel()) + 18 * rowNum,
+                        160 + 17 * state, 35 - (int) (16.0 * testSlot.getFillLevel()) + 16, 16, (int) (16.0 * testSlot.getFillLevel()));
                 GL11.glColor3f(1.0F, 1.0F, 1.0F);
             }
         }

@@ -58,7 +58,7 @@ public class InventoryCasting implements IInventory {
                     this.setInventorySlotContents(slot, itemstack);
 
                 }
-                
+
                 handler.onCastMatrixChanged(this);
 
                 return itemstack;
