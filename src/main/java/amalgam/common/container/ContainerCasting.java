@@ -9,6 +9,8 @@ import net.minecraft.item.ItemStack;
 import amalgam.common.Config;
 import amalgam.common.casting.CastingManager;
 import amalgam.common.casting.ICastingRecipe;
+import amalgam.common.network.PacketHandler;
+import amalgam.common.network.PacketSyncCastingState;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.tile.TileCastingTable;
 
@@ -128,10 +130,32 @@ public class ContainerCasting extends Container {
             if (slot instanceof SlotCasting) {
                 if (!slot.getHasStack() && player.inventory.getItemStack() == null) {
                     /* Toggle forward if no shift, toggle backwards if shift is pressed */
-                    ((SlotCasting) slot).toggleCastState(shiftNum == 0);
+                    // ((SlotCasting) slot).toggleCastState(shiftNum == 0);
                     // int newState = ((SlotCasting) slot).toggleCastState(shiftNum == 0);
                     // castingTable.castingInventory.setCastState(slot.slotNumber, newState);
-                    this.onCraftMatrixChanged(castingTable.castingInventory);
+
+                    /* calculate new cast state and send packets out */
+                    if (!this.castingTable.getWorldObj().isRemote) {
+                        int castState = castingTable.castingInventory.getCastState(slotNum);
+                        if (shiftNum == 0) {
+                            castState = castState + 1;
+                        } else {
+                            castState = castState - 1;
+                        }
+
+                        if (castState > 3) {
+                            castState = 0;
+                        } else if (castState < 0) {
+                            castState = 3;
+                        }
+
+                        // set the new state on the server
+                        castingTable.castingInventory.setCastState(slot.slotNumber, castState);
+                        // send the new state to the clients
+                        PacketHandler.INSTANCE.sendToAll(new PacketSyncCastingState(slot.slotNumber, castState, this.castingTable.xCoord,
+                                this.castingTable.yCoord, this.castingTable.zCoord));
+                    }
+                    // this.onCraftMatrixChanged(castingTable.castingInventory);
                 }
             }
         }

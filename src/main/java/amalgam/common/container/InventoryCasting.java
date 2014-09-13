@@ -139,6 +139,7 @@ public class InventoryCasting implements IInventory {
     public void setCastState(int slot, int state) {
         castState[slot] = state;
         handler.updateTankCapacity(this);
+        handler.onCastMatrixChanged(this);
     }
 
     public float getFillAmount(int slot) {

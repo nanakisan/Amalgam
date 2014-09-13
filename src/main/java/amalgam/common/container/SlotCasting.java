@@ -40,6 +40,7 @@ public class SlotCasting extends Slot {
 
     public void setCastState(int castState) {
         ((InventoryCasting) this.inventory).setCastState(this.slotNumber, castState);
+
     }
 
     public int getCastState() {

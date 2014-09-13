@@ -3,6 +3,7 @@ package amalgam.common.network;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.tileentity.TileEntity;
 import amalgam.common.Amalgam;
+import amalgam.common.Config;
 import amalgam.common.tile.TileCastingTable;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -49,6 +50,7 @@ public class PacketSyncCastingState implements IMessage, IMessageHandler<PacketS
         TileEntity te = Amalgam.proxy.getClientWorld().getTileEntity(message.x, message.y, message.z);
 
         if (te instanceof TileCastingTable) {
+            Config.LOG.info("Seeting slot " + message.slot + " to state " + message.state);
             ((TileCastingTable) te).castingInventory.setCastState(message.slot, message.state);
         }
 
