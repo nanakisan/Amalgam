@@ -25,12 +25,6 @@ public final class PropertyManager {
     public static final Property                    LUSTER            = new Property("Luster", 2, ComboType.QUADAVERAGE);
     public static final Property                    HARDNESS          = new Property("Hardness", 1, ComboType.QUADAVERAGE);
 
-    // TODO: do an overhaul of property stuff for better gameplay choices. Ignore vanilla stuff, but use as a guideline
-    // for power levels
-
-    // TODO: rebalance weapons, armor, tools, amalgaShroom and unstable amalgamized potato after rebalancing amalgam
-    // properties.
-
     public static final Property                    COLOR             = new Property("Color", 0x999999, ComboType.COLOR);
 
     private PropertyManager() {

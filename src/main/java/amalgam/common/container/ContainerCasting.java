@@ -152,35 +152,26 @@ public class ContainerCasting extends Container {
                         PacketHandler.INSTANCE.sendToAll(new PacketSyncCastingState(slot.slotNumber, castState, this.castingTable.xCoord,
                                 this.castingTable.yCoord, this.castingTable.zCoord));
                     }
-                    // this.onCraftMatrixChanged(castingTable.castingInventory);
                 }
             }
         }
 
         return super.slotClick(slotNum, ctrNum, shiftNum, player);
     }
-    
-    // TODO: testing out this override of detedtAndSendChanges. We send changes to everbody, not just crafters
-    @Override
-    public void detectAndSendChanges()
-    {
-        for (int i = 0; i < this.inventorySlots.size(); ++i)
-        {
-            ItemStack itemstack = ((Slot)this.inventorySlots.get(i)).getStack();
-            ItemStack itemstack1 = (ItemStack)this.inventoryItemStacks.get(i);
 
-            if (!ItemStack.areItemStacksEqual(itemstack1, itemstack) && this.inventorySlots.get(i) instanceof SlotCasting)
-            {
+    @Override
+    public void detectAndSendChanges() {
+        for (int i = 0; i < this.inventorySlots.size(); ++i) {
+            ItemStack itemstack = ((Slot) this.inventorySlots.get(i)).getStack();
+            ItemStack itemstack1 = (ItemStack) this.inventoryItemStacks.get(i);
+
+            if (!ItemStack.areItemStacksEqual(itemstack1, itemstack) && this.inventorySlots.get(i) instanceof SlotCasting) {
                 Config.LOG.info("Change detected");
                 itemstack1 = itemstack == null ? null : itemstack.copy();
                 this.inventoryItemStacks.set(i, itemstack1);
-                
-                PacketHandler.INSTANCE.sendToAll(new PacketSyncCastingItem(itemstack1, i, this.castingTable.xCoord,
-                      this.castingTable.yCoord, this.castingTable.zCoord));
-//                for (int j = 0; j < this.crafters.size(); ++j)
-//                {
-//                    ((ICrafting)this.crafters.get(j)).sendSlotContents(this, i, itemstack1);
-//                }
+
+                PacketHandler.INSTANCE.sendToAll(new PacketSyncCastingItem(itemstack1, i, this.castingTable.xCoord, this.castingTable.yCoord,
+                        this.castingTable.zCoord));
             }
         }
     }

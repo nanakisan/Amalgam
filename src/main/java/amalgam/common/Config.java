@@ -59,8 +59,8 @@ public class Config {
     public static final Logger  LOG                   = LogManager.getLogger(Amalgam.MODID);
     public static final int     CASTING_GUI_ID        = 1;
 
-    public static boolean       materialRebalancing   = true;
     public static boolean       moreMaterials         = true;
+    public static boolean       modMaterials          = true;
     public static boolean       floatingCastResult    = true;
     public static boolean       coloredAmalgam        = true;
     public static boolean       allowFunItems         = true;
@@ -112,11 +112,11 @@ public class Config {
 
     public static void syncConfig() {
 
-        materialRebalancing = configFile.getBoolean("Allow vanilla material rebalancing", Configuration.CATEGORY_GENERAL, materialRebalancing,
-                "Use new balanced properties for iron, gold and diamond.");
-
         moreMaterials = configFile.getBoolean("Allow extra vanilla materials to be used", Configuration.CATEGORY_GENERAL, moreMaterials,
                 "Allow obsidian, blaze rods, emeralds and nether quartz to be used in amalgam in addition to iron, gold and diamond");
+
+        modMaterials = configFile.getBoolean("Allow common mod ores to be used", Configuration.CATEGORY_GENERAL, modMaterials,
+                "Allows copper, tin, silver, and lead to be used in amalgam");
 
         floatingCastResult = configFile.getBoolean("Floating Cast Result", Configuration.CATEGORY_GENERAL, floatingCastResult,
                 "Render the casting table output above the casting table.");
@@ -198,20 +198,14 @@ public class Config {
         PropertyList goldProp;
         PropertyList diamondProp;
 
-        if (Config.materialRebalancing) {
-            ironProp = new PropertyList().add(PropertyManager.DENSITY, 2.5F).add(PropertyManager.HARDNESS, 2).add(PropertyManager.LUSTER, 2.0F)
-                    .add(PropertyManager.MALIABILITY, 3.5F);
+        ironProp = new PropertyList().add(PropertyManager.DENSITY, 2.1F).add(PropertyManager.HARDNESS, 2.5F).add(PropertyManager.LUSTER, 2.2F)
+                .add(PropertyManager.MALIABILITY, 6.1F);
 
-            goldProp = new PropertyList().add(PropertyManager.DENSITY, 1.0F).add(PropertyManager.HARDNESS, 0.75F).add(PropertyManager.LUSTER, 5.0F)
-                    .add(PropertyManager.MALIABILITY, 1.5F);
+        goldProp = new PropertyList().add(PropertyManager.DENSITY, 0.5F).add(PropertyManager.HARDNESS, 0.8F).add(PropertyManager.LUSTER, 9.1F)
+                .add(PropertyManager.MALIABILITY, 1.9F);
 
-            diamondProp = new PropertyList().add(PropertyManager.DENSITY, 5.0F).add(PropertyManager.HARDNESS, 3.25F)
-                    .add(PropertyManager.LUSTER, 1.0F).add(PropertyManager.MALIABILITY, 0.5F);
-        } else {
-            ironProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.IRON);
-            goldProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.GOLD);
-            diamondProp = PropertyManager.generatePropertiesFromToolMaterial(ToolMaterial.EMERALD);
-        }
+        diamondProp = new PropertyList().add(PropertyManager.DENSITY, 6.2F).add(PropertyManager.HARDNESS, 5.7F).add(PropertyManager.LUSTER, 1.5F)
+                .add(PropertyManager.MALIABILITY, 2.2F);
 
         ironProp.add(PropertyManager.COLOR, 0xBBBBBB);
         goldProp.add(PropertyManager.COLOR, 0xEAEE57);
@@ -230,27 +224,19 @@ public class Config {
         PropertyManager.registerItemProperties(new ItemStack(amalgamBlob), null, 0);
 
         if (Config.moreMaterials) {
-            PropertyList lapisProp = new PropertyList().add(PropertyManager.DENSITY, 0.5F).add(PropertyManager.HARDNESS, 0.5F)
-                    .add(PropertyManager.LUSTER, 6.0F).add(PropertyManager.MALIABILITY, 0.5F).add(PropertyManager.COLOR, 0x0F298C);
-            PropertyList redstoneProp = new PropertyList().add(PropertyManager.DENSITY, 1.0F).add(PropertyManager.HARDNESS, 1.0F)
-                    .add(PropertyManager.LUSTER, 1.0F).add(PropertyManager.MALIABILITY, 4.0F).add(PropertyManager.COLOR, 0xD12B13);
-            PropertyList emeraldProp = new PropertyList().add(PropertyManager.DENSITY, 1.0F).add(PropertyManager.HARDNESS, 1.0F)
-                    .add(PropertyManager.LUSTER, 4.0F).add(PropertyManager.MALIABILITY, 1.0F).add(PropertyManager.COLOR, 0x41F384);
-            PropertyList quartzProp = new PropertyList().add(PropertyManager.DENSITY, 2.0F).add(PropertyManager.HARDNESS, 2.0F)
-                    .add(PropertyManager.LUSTER, 3.0F).add(PropertyManager.MALIABILITY, 3.0F).add(PropertyManager.COLOR, 0xFFFFFF);
-            PropertyList obsidianProp = new PropertyList().add(PropertyManager.DENSITY, 6.0F).add(PropertyManager.HARDNESS, 3.9F)
-                    .add(PropertyManager.LUSTER, 0.0F).add(PropertyManager.MALIABILITY, 0.5F).add(PropertyManager.COLOR, 0x09090B);
-            PropertyList blazeRodProp = new PropertyList().add(PropertyManager.DENSITY, 1.0F).add(PropertyManager.HARDNESS, 0.5F)
-                    .add(PropertyManager.LUSTER, 2.0F).add(PropertyManager.MALIABILITY, 5.0F).add(PropertyManager.COLOR, 0xFFCB00);
+            PropertyList emeraldProp = new PropertyList().add(PropertyManager.DENSITY, 3.1F).add(PropertyManager.HARDNESS, 3.7F)
+                    .add(PropertyManager.LUSTER, 3.4F).add(PropertyManager.MALIABILITY, 3.2F).add(PropertyManager.COLOR, 0x41F384);
+            PropertyList quartzProp = new PropertyList().add(PropertyManager.DENSITY, 3.2F).add(PropertyManager.HARDNESS, 2.9F)
+                    .add(PropertyManager.LUSTER, 5.1F).add(PropertyManager.MALIABILITY, 3.3F).add(PropertyManager.COLOR, 0xFFFFFF);
+            PropertyList obsidianProp = new PropertyList().add(PropertyManager.DENSITY, 6.5F).add(PropertyManager.HARDNESS, 9.5F)
+                    .add(PropertyManager.LUSTER, 1.1F).add(PropertyManager.MALIABILITY, 0.2F).add(PropertyManager.COLOR, 0x15091B);
+            PropertyList blazeRodProp = new PropertyList().add(PropertyManager.DENSITY, 0.8F).add(PropertyManager.HARDNESS, 0.5F)
+                    .add(PropertyManager.LUSTER, 2.0F).add(PropertyManager.MALIABILITY, 8.5F).add(PropertyManager.COLOR, 0xFFCB00);
 
-            // PropertyManager.registerOreDictProperties("gemLapis", lapisProp, Config.BASE_AMOUNT * 2);
             PropertyManager.registerOreDictProperties("gemQuartz", quartzProp, Config.BASE_AMOUNT * 2);
-            // PropertyManager.registerOreDictProperties("dustRedstone", redstoneProp, Config.BASE_AMOUNT * 2);
             PropertyManager.registerOreDictProperties("gemEmerald", emeraldProp, Config.INGOT_AMOUNT);
 
             PropertyManager.registerOreDictProperties("blockQuartz", quartzProp, Config.INGOT_AMOUNT * 2);
-            // PropertyManager.registerOreDictProperties("blockLapis", lapisProp, Config.INGOT_AMOUNT * 2);
-            // PropertyManager.registerOreDictProperties("blockRedstone", redstoneProp, Config.INGOT_AMOUNT * 2);
             PropertyManager.registerOreDictProperties("blockEmerald", emeraldProp, Config.BLOCK_AMOUNT);
 
             PropertyManager.registerItemProperties(new ItemStack(Items.blaze_powder), blazeRodProp, BASE_AMOUNT);
@@ -258,7 +244,31 @@ public class Config {
             PropertyManager.registerItemProperties(new ItemStack(Blocks.obsidian), obsidianProp, BASE_AMOUNT * 3);
         }
 
-        // TODO: more ore dictionary properties for common mod metals
+        if (Config.modMaterials) {
+            PropertyList copperProp = new PropertyList().add(PropertyManager.DENSITY, 2.1F).add(PropertyManager.HARDNESS, 1.7F)
+                    .add(PropertyManager.LUSTER, 4.4F).add(PropertyManager.MALIABILITY, 4.2F).add(PropertyManager.COLOR, 0xB87333);
+            PropertyList tinProp = new PropertyList().add(PropertyManager.DENSITY, 3.2F).add(PropertyManager.HARDNESS, 2.9F)
+                    .add(PropertyManager.LUSTER, 1.1F).add(PropertyManager.MALIABILITY, 2.3F).add(PropertyManager.COLOR, 0xBBCCBB);
+            PropertyList silverProp = new PropertyList().add(PropertyManager.DENSITY, 1.5F).add(PropertyManager.HARDNESS, 3.5F)
+                    .add(PropertyManager.LUSTER, 6.5F).add(PropertyManager.MALIABILITY, 4.3F).add(PropertyManager.COLOR, 0xCCCCCC);
+            PropertyList leadProp = new PropertyList().add(PropertyManager.DENSITY, 7.8F).add(PropertyManager.HARDNESS, 6.5F)
+                    .add(PropertyManager.LUSTER, 1.2F).add(PropertyManager.MALIABILITY, 2.2F).add(PropertyManager.COLOR, 0x778899);
+
+            PropertyManager.registerOreDictProperties("nuggetCopper", copperProp, Config.BASE_AMOUNT);
+            PropertyManager.registerOreDictProperties("nuggetTin", tinProp, Config.BASE_AMOUNT);
+            PropertyManager.registerOreDictProperties("nuggetSilver", silverProp, Config.BASE_AMOUNT);
+            PropertyManager.registerOreDictProperties("nuggetLead", leadProp, Config.BASE_AMOUNT);
+
+            PropertyManager.registerOreDictProperties("ingotCopper", copperProp, Config.INGOT_AMOUNT);
+            PropertyManager.registerOreDictProperties("ingotTin", tinProp, Config.INGOT_AMOUNT);
+            PropertyManager.registerOreDictProperties("ingotSilver", silverProp, Config.INGOT_AMOUNT);
+            PropertyManager.registerOreDictProperties("ingotLead", leadProp, Config.INGOT_AMOUNT);
+
+            PropertyManager.registerOreDictProperties("blockCopper", copperProp, Config.BLOCK_AMOUNT);
+            PropertyManager.registerOreDictProperties("blockTin", tinProp, Config.BLOCK_AMOUNT);
+            PropertyManager.registerOreDictProperties("blockSilver", silverProp, Config.BLOCK_AMOUNT);
+            PropertyManager.registerOreDictProperties("iblockLead", leadProp, Config.BLOCK_AMOUNT);
+        }
     }
 
     public static void registerRecipes() {

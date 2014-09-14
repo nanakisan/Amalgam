@@ -23,8 +23,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialArmor {
 
-    public static final String ABSORB_TAG = "absorb max";
-    // @SideOnly(Side.CLIENT)
+    public static final String ABSORB_TAG = "absorbMax";
     public IIcon[]             icons      = new IIcon[8];
 
     public ItemAmalgamArmor(ArmorMaterial mat, int renderIndex, int armorType) {
@@ -120,14 +119,14 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
             return returnStack;
         }
 
-        float luster = pList.getValue(PropertyManager.LUSTER) * 5.0F;
-        float density = pList.getValue(PropertyManager.DENSITY) * 5.0F;
+        float luster = pList.getValue(PropertyManager.LUSTER);
+        float density = pList.getValue(PropertyManager.DENSITY);
         float hardness = pList.getValue(PropertyManager.HARDNESS);
         float maliability = pList.getValue(PropertyManager.MALIABILITY);
         int color = (int) pList.getValue(PropertyManager.COLOR);
 
         toolTag.setInteger(ItemAmalgamTool.COLOR_TAG, color);
-        toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (luster));
+        toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (density * .1 + hardness * .2 + luster * 2.5 + maliability * .3));
         float armorTypeFactor = 1.0F;
 
         switch (this.armorType) {
@@ -145,7 +144,7 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
                 break;
         }
 
-        int maxDurability = (int) (density * 26 * armorTypeFactor);
+        int maxDurability = (int) (density * 200.0F + hardness * 75.0F + luster * 2.0F + maliability * 3.0F);
         toolTag.setInteger(ItemAmalgamTool.DURABILITY_TAG, maxDurability);
 
         switch (this.armorType) {
@@ -163,7 +162,7 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
                 break;
         }
 
-        toolTag.setInteger(ABSORB_TAG, (int) Math.ceil((maliability + hardness + 3.0) * armorTypeFactor));
+        toolTag.setInteger(ABSORB_TAG, (int) (density * .2 + hardness * .2 + luster * .05 + maliability * .6));
         returnStack.setTagCompound(toolTag);
 
         return returnStack;

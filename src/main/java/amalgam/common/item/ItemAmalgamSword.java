@@ -95,17 +95,21 @@ public class ItemAmalgamSword extends ItemSword implements ICastItem {
             return returnStack;
         }
 
-        float luster = pList.getValue(PropertyManager.LUSTER) * 5.0F;
-        float density = pList.getValue(PropertyManager.DENSITY) * 5.0F;
+        float luster = pList.getValue(PropertyManager.LUSTER);
+        float density = pList.getValue(PropertyManager.DENSITY);
         float hardness = pList.getValue(PropertyManager.HARDNESS);
         float maliability = pList.getValue(PropertyManager.MALIABILITY);
         int color = (int) pList.getValue(PropertyManager.COLOR);
 
         toolTag.setInteger(ItemAmalgamTool.COLOR_TAG, color);
-        toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (luster));
-        int maxDurability = (int) ((density * density) * (hardness + 1));
+        toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (density * .1 + hardness * .2 + luster * 2.5 + maliability * .3));
+        // added a resonance between density and hardness. When they are close to the same value you get more durability
+        // (up to +1000)
+        int maxDurability = (int) (density * 200.0F + hardness * 75.0F + luster * 2.0F + maliability * 3.0F);
         toolTag.setInteger(ItemAmalgamTool.DURABILITY_TAG, maxDurability);
-        float damage = maliability + 4.0F;
+        // added a resonance between luster and maliability. When they are close to the same value you get more damage
+        // (up to +3)
+        float damage = 4.0F + (float) (hardness * .1 + maliability * .7);
         toolTag.setFloat(ItemAmalgamTool.DAMAGE_TAG, damage);
         returnStack.setTagCompound(toolTag);
 
