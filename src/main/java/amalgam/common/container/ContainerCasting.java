@@ -3,6 +3,7 @@ package amalgam.common.container;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -10,6 +11,7 @@ import amalgam.common.Config;
 import amalgam.common.casting.CastingManager;
 import amalgam.common.casting.ICastingRecipe;
 import amalgam.common.network.PacketHandler;
+import amalgam.common.network.PacketSyncCastingItem;
 import amalgam.common.network.PacketSyncCastingState;
 import amalgam.common.properties.PropertyList;
 import amalgam.common.tile.TileCastingTable;
@@ -124,18 +126,13 @@ public class ContainerCasting extends Container {
 
     @Override
     public ItemStack slotClick(int slotNum, int ctrNum, int shiftNum, EntityPlayer player) {
-        if (slotNum >= 0 && slotNum < this.inventorySlots.size() && shiftNum != 6) {
-            Slot slot = this.getSlot(slotNum);
+        if (!this.castingTable.getWorldObj().isRemote) {
+            if (slotNum >= 0 && slotNum < this.inventorySlots.size() && shiftNum != 6) {
+                Slot slot = this.getSlot(slotNum);
 
-            if (slot instanceof SlotCasting) {
-                if (!slot.getHasStack() && player.inventory.getItemStack() == null) {
-                    /* Toggle forward if no shift, toggle backwards if shift is pressed */
-                    // ((SlotCasting) slot).toggleCastState(shiftNum == 0);
-                    // int newState = ((SlotCasting) slot).toggleCastState(shiftNum == 0);
-                    // castingTable.castingInventory.setCastState(slot.slotNumber, newState);
+                if (slot instanceof SlotCasting) {
+                    if (!slot.getHasStack() && player.inventory.getItemStack() == null) {
 
-                    /* calculate new cast state and send packets out */
-                    if (!this.castingTable.getWorldObj().isRemote) {
                         int castState = castingTable.castingInventory.getCastState(slotNum);
                         if (shiftNum == 0) {
                             castState = castState + 1;
@@ -161,5 +158,30 @@ public class ContainerCasting extends Container {
         }
 
         return super.slotClick(slotNum, ctrNum, shiftNum, player);
+    }
+    
+    // TODO: testing out this override of detedtAndSendChanges. We send changes to everbody, not just crafters
+    @Override
+    public void detectAndSendChanges()
+    {
+        for (int i = 0; i < this.inventorySlots.size(); ++i)
+        {
+            ItemStack itemstack = ((Slot)this.inventorySlots.get(i)).getStack();
+            ItemStack itemstack1 = (ItemStack)this.inventoryItemStacks.get(i);
+
+            if (!ItemStack.areItemStacksEqual(itemstack1, itemstack) && this.inventorySlots.get(i) instanceof SlotCasting)
+            {
+                Config.LOG.info("Change detected");
+                itemstack1 = itemstack == null ? null : itemstack.copy();
+                this.inventoryItemStacks.set(i, itemstack1);
+                
+                PacketHandler.INSTANCE.sendToAll(new PacketSyncCastingItem(itemstack1, i, this.castingTable.xCoord,
+                      this.castingTable.yCoord, this.castingTable.zCoord));
+//                for (int j = 0; j < this.crafters.size(); ++j)
+//                {
+//                    ((ICrafting)this.crafters.get(j)).sendSlotContents(this, i, itemstack1);
+//                }
+            }
+        }
     }
 }
