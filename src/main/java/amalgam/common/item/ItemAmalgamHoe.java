@@ -67,13 +67,13 @@ public class ItemAmalgamHoe extends ItemHoe implements ICastItem {
 
         float luster = pList.getValue(PropertyManager.LUSTER);
         float density = pList.getValue(PropertyManager.DENSITY);
-        float maliability = pList.getValue(PropertyManager.MALIABILITY);
+        float malleability = pList.getValue(PropertyManager.MALLEABILITY);
         float hardness = pList.getValue(PropertyManager.HARDNESS);
         int color = (int) pList.getValue(PropertyManager.COLOR);
 
         toolTag.setInteger(ItemAmalgamTool.COLOR_TAG, color);
-        toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (density * .1 + hardness * .2 + luster * 2.5 + maliability * .3));
-        int maxDurability = (int) (density * 200.0F + hardness * 75.0F + luster * 2.0F + maliability * 3.0F);
+        toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (density * .1 + hardness * .2 + luster * 2.5 + malleability * .3));
+        int maxDurability = (int) (density * 200.0F + hardness * 75.0F + luster * 2.0F + malleability * 3.0F);
         toolTag.setInteger(ItemAmalgamTool.DURABILITY_TAG, maxDurability);
         returnStack.setTagCompound(toolTag);
 

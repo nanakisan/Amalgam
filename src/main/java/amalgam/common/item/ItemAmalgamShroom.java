@@ -68,12 +68,12 @@ public class ItemAmalgamShroom extends ItemFood implements ICastItem {
         float luster = pList.getValue(PropertyManager.LUSTER);
         float density = pList.getValue(PropertyManager.DENSITY);
         float hardness = pList.getValue(PropertyManager.HARDNESS);
-        float maliability = pList.getValue(PropertyManager.MALIABILITY);
+        float malleability = pList.getValue(PropertyManager.MALLEABILITY);
         int color = (int) pList.getValue(PropertyManager.COLOR);
 
         toolTag.setInteger(EFFECT_NUM_TAG, (int) (luster / 3.0 + 1));
         toolTag.setInteger(DURATION_MOD_TAG, (int) (density + hardness));
-        toolTag.setInteger(EFFECT_MOD_TAG, (int) (maliability / 3.0 + 1));
+        toolTag.setInteger(EFFECT_MOD_TAG, (int) (malleability / 3.0 + 1));
 
         toolTag.setInteger(COLOR_TAG, color);
         returnStack.setTagCompound(toolTag);

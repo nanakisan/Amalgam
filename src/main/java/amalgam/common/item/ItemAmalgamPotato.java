@@ -66,7 +66,7 @@ public class ItemAmalgamPotato extends Item implements ICastItem {
         float luster = pList.getValue(PropertyManager.LUSTER);
         float density = pList.getValue(PropertyManager.DENSITY);
         float hardness = pList.getValue(PropertyManager.HARDNESS);
-        float maliability = pList.getValue(PropertyManager.MALIABILITY);
+        float malleability = pList.getValue(PropertyManager.MALLEABILITY);
         int color = (int) pList.getValue(PropertyManager.COLOR);
 
         float v = (float) (0.2F + (2.5F / density));
@@ -76,7 +76,7 @@ public class ItemAmalgamPotato extends Item implements ICastItem {
         }
         toolTag.setFloat(VELOCITY_TAG, v);
         toolTag.setFloat(EXPLOSION_TAG, (luster / 7.0F) + 0.5F);
-        toolTag.setFloat(DAMAGE_TAG, (maliability / 4.0F));
+        toolTag.setFloat(DAMAGE_TAG, (malleability / 4.0F));
 
         toolTag.setInteger(COLOR_TAG, color);
         returnStack.setTagCompound(toolTag);

@@ -146,16 +146,16 @@ public class ItemAmalgamTool extends ItemTool implements ICastItem {
         float luster = pList.getValue(PropertyManager.LUSTER);
         float density = pList.getValue(PropertyManager.DENSITY);
         float hardness = pList.getValue(PropertyManager.HARDNESS);
-        float maliability = pList.getValue(PropertyManager.MALIABILITY);
+        float malleability = pList.getValue(PropertyManager.MALLEABILITY);
         int color = (int) pList.getValue(PropertyManager.COLOR);
 
         toolTag.setInteger(HARVEST_TAG, (int) (hardness * 0.5));
-        toolTag.setInteger(ENCHANTABILITY_TAG, (int) (density * .1 + hardness * .2 + luster * 2.5 + maliability * .3));
-        toolTag.setFloat(EFFICIENCY_TAG, 1.8F * luster + 0.7F * maliability);
-        int maxDurability = (int) (density * 200.0F + hardness * 75.0F + luster * 2.0F + maliability * 3.0F);
+        toolTag.setInteger(ENCHANTABILITY_TAG, (int) (density * .1 + hardness * .2 + luster * 2.5 + malleability * .3));
+        toolTag.setFloat(EFFICIENCY_TAG, 1.8F * luster + 0.7F * malleability);
+        int maxDurability = (int) (density * 200.0F + hardness * 75.0F + luster * 2.0F + malleability * 3.0F);
 
         toolTag.setInteger(DURABILITY_TAG, maxDurability);
-        toolTag.setFloat(DAMAGE_TAG, hardness * .1F + maliability * .7F + this.damageMod);
+        toolTag.setFloat(DAMAGE_TAG, hardness * .1F + malleability * .7F + this.damageMod);
         toolTag.setInteger(COLOR_TAG, color);
         returnStack.setTagCompound(toolTag);
 

@@ -20,7 +20,7 @@ public final class PropertyManager {
     private static final Map<Item, List<Object>>    ITEM_REGISTRY     = new HashMap<Item, List<Object>>();
     private static final Map<Integer, List<Object>> ORE_DICT_REGISTRY = new HashMap<Integer, List<Object>>();
 
-    public static final Property                    MALIABILITY       = new Property("Maliability", 1, ComboType.QUADAVERAGE);
+    public static final Property                    MALLEABILITY       = new Property("Malleability", 1, ComboType.QUADAVERAGE);
     public static final Property                    DENSITY           = new Property("Density", 6, ComboType.QUADAVERAGE);
     public static final Property                    LUSTER            = new Property("Luster", 2, ComboType.QUADAVERAGE);
     public static final Property                    HARDNESS          = new Property("Hardness", 1, ComboType.QUADAVERAGE);
@@ -84,7 +84,7 @@ public final class PropertyManager {
         list.add(DENSITY, (float) Math.sqrt(mat.getMaxUses() / (mat.getHarvestLevel() + 1)) / 5.0F);
         list.add(HARDNESS, mat.getHarvestLevel());
         list.add(LUSTER, mat.getEnchantability() / 5.0F);
-        list.add(MALIABILITY, mat.getDamageVsEntity());
+        list.add(MALLEABILITY, mat.getDamageVsEntity());
 
         return list;
     }
@@ -96,7 +96,7 @@ public final class PropertyManager {
         list.add(DENSITY, mat.getDurability(1) / (27 * 5.0F));
         list.add(HARDNESS, mat.getDamageReductionAmount(1) / 2 - 1);
         list.add(LUSTER, mat.getEnchantability() / 5.0F);
-        list.add(MALIABILITY, mat.getDamageReductionAmount(1) / 2 - 1);
+        list.add(MALLEABILITY, mat.getDamageReductionAmount(1) / 2 - 1);
 
         return list;
     }
