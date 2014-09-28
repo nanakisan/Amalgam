@@ -126,7 +126,7 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
         int color = (int) pList.getValue(PropertyManager.COLOR);
 
         toolTag.setInteger(ItemAmalgamTool.COLOR_TAG, color);
-        toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (density * .1 + hardness * .2 + luster * 2.5 + maliability * .3));
+        toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (density * .1 + hardness * .2 + luster * 2.5 + malleability * .3));
         float armorTypeFactor = 1.0F;
 
         switch (this.armorType) {
@@ -144,7 +144,7 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
                 break;
         }
 
-        int maxDurability = (int) (density * 200.0F + hardness * 75.0F + luster * 2.0F + maliability * 3.0F);
+        int maxDurability = (int) (density * 200.0F + hardness * 75.0F + luster * 2.0F + malleability * 3.0F);
         toolTag.setInteger(ItemAmalgamTool.DURABILITY_TAG, maxDurability);
 
         switch (this.armorType) {
@@ -162,7 +162,7 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
                 break;
         }
 
-        toolTag.setInteger(ABSORB_TAG, (int) (density * .2 + hardness * .2 + luster * .05 + maliability * .6));
+        toolTag.setInteger(ABSORB_TAG, (int) (density * .2 + hardness * .2 + luster * .05 + malleability * .6));
         returnStack.setTagCompound(toolTag);
 
         return returnStack;
