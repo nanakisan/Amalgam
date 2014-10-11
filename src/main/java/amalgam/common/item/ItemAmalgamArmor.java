@@ -16,8 +16,8 @@ import net.minecraftforge.common.ISpecialArmor;
 import amalgam.common.Amalgam;
 import amalgam.common.Config;
 import amalgam.common.casting.ICastItem;
-import amalgam.common.properties.PropertyList;
-import amalgam.common.properties.PropertyManager;
+import amalgam.common.properties.AmalgamPropertyList;
+import amalgam.common.properties.AmalgamPropertyManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -99,7 +99,7 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
         }
 
         if (!Config.coloredAmalgam) {
-            return (int) PropertyManager.COLOR.getDefaultValue();
+            return (int) AmalgamPropertyManager.COLOR.getDefaultValue();
         }
 
         if (stack.hasTagCompound() && stack.stackTagCompound.hasKey(ItemAmalgamTool.COLOR_TAG)) {
@@ -110,7 +110,7 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
     }
 
     @Override
-    public ItemStack generateStackWithProperties(PropertyList pList, ItemStack[] materials, int stackSize) {
+    public ItemStack generateStackWithProperties(AmalgamPropertyList pList, ItemStack[] materials, int stackSize) {
         ItemStack returnStack = new ItemStack(this, stackSize);
         NBTTagCompound toolTag = new NBTTagCompound();
 
@@ -119,11 +119,11 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
             return returnStack;
         }
 
-        float luster = pList.getValue(PropertyManager.LUSTER);
-        float density = pList.getValue(PropertyManager.DENSITY);
-        float hardness = pList.getValue(PropertyManager.HARDNESS);
-        float malleability = pList.getValue(PropertyManager.MALLEABILITY);
-        int color = (int) pList.getValue(PropertyManager.COLOR);
+        float luster = pList.getValue(AmalgamPropertyManager.LUSTER);
+        float density = pList.getValue(AmalgamPropertyManager.DENSITY);
+        float hardness = pList.getValue(AmalgamPropertyManager.HARDNESS);
+        float malleability = pList.getValue(AmalgamPropertyManager.MALLEABILITY);
+        int color = (int) pList.getValue(AmalgamPropertyManager.COLOR);
 
         toolTag.setInteger(ItemAmalgamTool.COLOR_TAG, color);
         toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (density * .1 + hardness * .2 + luster * 2.5 + malleability * .3));
@@ -198,7 +198,7 @@ public class ItemAmalgamArmor extends ItemArmor implements ICastItem, ISpecialAr
 
     public int getColor(ItemStack stack) {
         if (!Config.coloredAmalgam) {
-            return (int) PropertyManager.COLOR.getDefaultValue();
+            return (int) AmalgamPropertyManager.COLOR.getDefaultValue();
         }
 
         if (stack.hasTagCompound() && stack.stackTagCompound.hasKey(ItemAmalgamTool.COLOR_TAG)) {

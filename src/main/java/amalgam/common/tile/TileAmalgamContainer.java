@@ -14,7 +14,7 @@ import amalgam.common.fluid.AmalgamTank;
 import amalgam.common.item.ItemAmalgamBlob;
 import amalgam.common.network.PacketHandler;
 import amalgam.common.network.PacketSyncAmalgamTank;
-import amalgam.common.properties.PropertyList;
+import amalgam.common.properties.AmalgamPropertyList;
 
 public abstract class TileAmalgamContainer extends TileEntity implements IFluidHandler {
 
@@ -78,7 +78,7 @@ public abstract class TileAmalgamContainer extends TileEntity implements IFluidH
     public void emptyTank() {
         if (!this.worldObj.isRemote) {
             int amount = tank.getFluidAmount();
-            PropertyList pList = ((AmalgamStack) tank.getFluid()).getProperties();
+            AmalgamPropertyList pList = ((AmalgamStack) tank.getFluid()).getProperties();
 
             while (amount > 0) {
                 int dropAmount = Math.min(amount, Config.INGOT_AMOUNT);
@@ -94,7 +94,7 @@ public abstract class TileAmalgamContainer extends TileEntity implements IFluidH
         }
     }
 
-    public PropertyList getAmalgamPropertyList() {
+    public AmalgamPropertyList getAmalgamPropertyList() {
         return ((AmalgamStack) tank.getFluid()).getProperties();
     }
 

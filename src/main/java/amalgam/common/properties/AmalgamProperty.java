@@ -3,41 +3,41 @@ package amalgam.common.properties;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Property {
+public class AmalgamProperty {
 
     public enum ComboType {
         MAX, MIN, AVERAGE, QUADAVERAGE, COLOR
     }
 
-    private static Map<String, Property> properties = new HashMap<String, Property>();
+    private static Map<String, AmalgamProperty> properties = new HashMap<String, AmalgamProperty>();
 
     private final ComboType              comboType;
     private final float                  defaultValue;
     private final String                 name;
 
-    public Property(String name) {
+    public AmalgamProperty(String name) {
         this.name = name;
         this.comboType = ComboType.QUADAVERAGE;
         this.defaultValue = 0;
         properties.put(this.name, this);
     }
 
-    public Property(String name, float dValue) {
+    public AmalgamProperty(String name, float dValue) {
         this.name = name;
         this.defaultValue = dValue;
         this.comboType = ComboType.QUADAVERAGE;
         properties.put(this.name, this);
     }
 
-    public Property(String name, float dValue, ComboType cType) {
+    public AmalgamProperty(String name, float dValue, ComboType cType) {
         this.name = name;
         this.defaultValue = dValue;
         this.comboType = cType;
         properties.put(this.name, this);
     }
 
-    public static Property getProperty(String name) {
-        return (Property) properties.get(name);
+    public static AmalgamProperty getProperty(String name) {
+        return (AmalgamProperty) properties.get(name);
     }
 
     public float getDefaultValue() {
@@ -52,8 +52,8 @@ public class Property {
         return this.comboType;
     }
 
-    public static Property[] getAll() {
-        return (Property[]) properties.values().toArray(new Property[] {});
+    public static AmalgamProperty[] getAll() {
+        return (AmalgamProperty[]) properties.values().toArray(new AmalgamProperty[] {});
     }
 
 }

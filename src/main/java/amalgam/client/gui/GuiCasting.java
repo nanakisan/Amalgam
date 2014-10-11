@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL11;
 import amalgam.common.Amalgam;
 import amalgam.common.container.ContainerCasting;
 import amalgam.common.container.SlotCasting;
-import amalgam.common.properties.PropertyManager;
+import amalgam.common.properties.AmalgamPropertyManager;
 import amalgam.common.tile.TileCastingTable;
 
 public class GuiCasting extends GuiContainer {
@@ -34,7 +34,7 @@ public class GuiCasting extends GuiContainer {
         this.drawTexturedModalRect(xPos, yPos, 0, 0, this.xSize, this.ySize);
 
         ContainerCasting table = (ContainerCasting) this.inventorySlots;
-        int color = (int) table.castingTable.getAmalgamPropertyList().getValue(PropertyManager.COLOR);
+        int color = (int) table.castingTable.getAmalgamPropertyList().getValue(AmalgamPropertyManager.COLOR);
 
         Color c = new Color(color);
         SlotCasting testSlot;

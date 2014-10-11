@@ -13,7 +13,7 @@ import amalgam.common.casting.ICastingRecipe;
 import amalgam.common.network.PacketHandler;
 import amalgam.common.network.PacketSyncCastingItem;
 import amalgam.common.network.PacketSyncCastingState;
-import amalgam.common.properties.PropertyList;
+import amalgam.common.properties.AmalgamPropertyList;
 import amalgam.common.tile.TileCastingTable;
 
 public class ContainerCasting extends Container {
@@ -115,7 +115,7 @@ public class ContainerCasting extends Container {
             return;
         }
 
-        PropertyList pList = castingTable.getAmalgamPropertyList();
+        AmalgamPropertyList pList = castingTable.getAmalgamPropertyList();
         if (castingTable.getFluidAmount() == 0) {
             pList = null;
         }

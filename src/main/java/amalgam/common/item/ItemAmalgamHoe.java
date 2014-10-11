@@ -11,8 +11,8 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import amalgam.common.Config;
 import amalgam.common.casting.ICastItem;
-import amalgam.common.properties.PropertyList;
-import amalgam.common.properties.PropertyManager;
+import amalgam.common.properties.AmalgamPropertyList;
+import amalgam.common.properties.AmalgamPropertyManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -56,7 +56,7 @@ public class ItemAmalgamHoe extends ItemHoe implements ICastItem {
     }
 
     @Override
-    public ItemStack generateStackWithProperties(PropertyList pList, ItemStack[] materials, int stackSize) {
+    public ItemStack generateStackWithProperties(AmalgamPropertyList pList, ItemStack[] materials, int stackSize) {
         ItemStack returnStack = new ItemStack(this, stackSize);
         NBTTagCompound toolTag = new NBTTagCompound();
 
@@ -65,11 +65,11 @@ public class ItemAmalgamHoe extends ItemHoe implements ICastItem {
             return returnStack;
         }
 
-        float luster = pList.getValue(PropertyManager.LUSTER);
-        float density = pList.getValue(PropertyManager.DENSITY);
-        float malleability = pList.getValue(PropertyManager.MALLEABILITY);
-        float hardness = pList.getValue(PropertyManager.HARDNESS);
-        int color = (int) pList.getValue(PropertyManager.COLOR);
+        float luster = pList.getValue(AmalgamPropertyManager.LUSTER);
+        float density = pList.getValue(AmalgamPropertyManager.DENSITY);
+        float malleability = pList.getValue(AmalgamPropertyManager.MALLEABILITY);
+        float hardness = pList.getValue(AmalgamPropertyManager.HARDNESS);
+        int color = (int) pList.getValue(AmalgamPropertyManager.COLOR);
 
         toolTag.setInteger(ItemAmalgamTool.COLOR_TAG, color);
         toolTag.setInteger(ItemAmalgamTool.ENCHANTABILITY_TAG, (int) (density * .1 + hardness * .2 + luster * 2.5 + malleability * .3));
@@ -96,7 +96,7 @@ public class ItemAmalgamHoe extends ItemHoe implements ICastItem {
     public int getColorFromItemStack(ItemStack stack, int renderPass) {
         if (renderPass == 1) {
             if (!Config.coloredAmalgam) {
-                return (int) PropertyManager.COLOR.getDefaultValue();
+                return (int) AmalgamPropertyManager.COLOR.getDefaultValue();
             }
             if (stack.hasTagCompound() && stack.stackTagCompound.hasKey(ItemAmalgamTool.COLOR_TAG)) {
                 return stack.stackTagCompound.getInteger(ItemAmalgamTool.COLOR_TAG);

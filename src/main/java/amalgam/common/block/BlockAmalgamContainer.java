@@ -12,7 +12,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.IAmalgamContainerItem;
-import amalgam.common.properties.PropertyManager;
+import amalgam.common.properties.AmalgamPropertyManager;
 import amalgam.common.tile.TileAmalgamContainer;
 
 public abstract class BlockAmalgamContainer extends Block implements ITileEntityProvider {
@@ -42,7 +42,7 @@ public abstract class BlockAmalgamContainer extends Block implements ITileEntity
 
         TileEntity te = world.getTileEntity(x, y, z);
 
-        if (PropertyManager.itemIsAmalgable(stack)) {
+        if (AmalgamPropertyManager.itemIsAmalgable(stack)) {
             interactWithAmalgableItem(te, stack);
             return true;
         }

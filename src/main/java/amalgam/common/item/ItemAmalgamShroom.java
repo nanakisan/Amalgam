@@ -12,8 +12,8 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import amalgam.common.Config;
 import amalgam.common.casting.ICastItem;
-import amalgam.common.properties.PropertyList;
-import amalgam.common.properties.PropertyManager;
+import amalgam.common.properties.AmalgamPropertyList;
+import amalgam.common.properties.AmalgamPropertyManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -55,21 +55,21 @@ public class ItemAmalgamShroom extends ItemFood implements ICastItem {
     }
 
     @Override
-    public ItemStack generateStackWithProperties(PropertyList pList, ItemStack[] items, int stackSize) {
+    public ItemStack generateStackWithProperties(AmalgamPropertyList pList, ItemStack[] items, int stackSize) {
         ItemStack returnStack = new ItemStack(this, stackSize);
         NBTTagCompound toolTag = new NBTTagCompound();
 
         if (pList == null) {
-            toolTag.setInteger(COLOR_TAG, (int) PropertyManager.COLOR.getDefaultValue());
+            toolTag.setInteger(COLOR_TAG, (int) AmalgamPropertyManager.COLOR.getDefaultValue());
             returnStack.setTagCompound(toolTag);
             return returnStack;
         }
 
-        float luster = pList.getValue(PropertyManager.LUSTER);
-        float density = pList.getValue(PropertyManager.DENSITY);
-        float hardness = pList.getValue(PropertyManager.HARDNESS);
-        float malleability = pList.getValue(PropertyManager.MALLEABILITY);
-        int color = (int) pList.getValue(PropertyManager.COLOR);
+        float luster = pList.getValue(AmalgamPropertyManager.LUSTER);
+        float density = pList.getValue(AmalgamPropertyManager.DENSITY);
+        float hardness = pList.getValue(AmalgamPropertyManager.HARDNESS);
+        float malleability = pList.getValue(AmalgamPropertyManager.MALLEABILITY);
+        int color = (int) pList.getValue(AmalgamPropertyManager.COLOR);
 
         toolTag.setInteger(EFFECT_NUM_TAG, (int) (luster / 3.0 + 1));
         toolTag.setInteger(DURATION_MOD_TAG, (int) (density + hardness));
@@ -97,7 +97,7 @@ public class ItemAmalgamShroom extends ItemFood implements ICastItem {
     public int getColorFromItemStack(ItemStack stack, int renderPass) {
         if (renderPass == 1) {
             if (!Config.coloredAmalgam) {
-                return (int) PropertyManager.COLOR.getDefaultValue();
+                return (int) AmalgamPropertyManager.COLOR.getDefaultValue();
             }
 
             if (stack.hasTagCompound() && stack.stackTagCompound.hasKey("color")) {

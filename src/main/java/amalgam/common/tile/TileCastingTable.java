@@ -21,7 +21,7 @@ import amalgam.common.container.SlotCasting;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.AmalgamTank;
 import amalgam.common.item.ItemAmalgamBlob;
-import amalgam.common.properties.PropertyList;
+import amalgam.common.properties.AmalgamPropertyList;
 
 public class TileCastingTable extends TileAmalgamContainer implements ISidedInventory, ICastingHandler {
 
@@ -311,7 +311,7 @@ public class TileCastingTable extends TileAmalgamContainer implements ISidedInve
             return;
         }
 
-        PropertyList pList = getAmalgamPropertyList();
+        AmalgamPropertyList pList = getAmalgamPropertyList();
         if (getFluidAmount() == 0) {
             pList = null;
         }

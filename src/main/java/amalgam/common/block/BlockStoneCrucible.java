@@ -17,8 +17,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.IAmalgamContainerItem;
-import amalgam.common.properties.PropertyList;
-import amalgam.common.properties.PropertyManager;
+import amalgam.common.properties.AmalgamPropertyList;
+import amalgam.common.properties.AmalgamPropertyManager;
 import amalgam.common.tile.TileStoneCrucible;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -120,7 +120,7 @@ public class BlockStoneCrucible extends BlockAmalgamContainer implements ITileEn
 
                 if (entity instanceof EntityItem) {
                     ItemStack stack = ((EntityItem) entity).getEntityItem();
-                    if (PropertyManager.itemIsAmalgable(stack)) {
+                    if (AmalgamPropertyManager.itemIsAmalgable(stack)) {
                         interactWithAmalgableItem(cruc, stack);
                         return;
                     }
@@ -165,10 +165,10 @@ public class BlockStoneCrucible extends BlockAmalgamContainer implements ITileEn
             return;
         }
 
-        int amount = PropertyManager.getVolume(stack);
+        int amount = AmalgamPropertyManager.getVolume(stack);
 
         if (amount > 0 && amount <= crucible.getEmptySpace()) {
-            PropertyList amalgProperties = PropertyManager.getProperties(stack);
+            AmalgamPropertyList amalgProperties = AmalgamPropertyManager.getProperties(stack);
             AmalgamStack amalg = new AmalgamStack(amount, amalgProperties);
 
             if (amalgProperties == null) {

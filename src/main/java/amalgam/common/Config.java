@@ -34,8 +34,7 @@ import amalgam.common.item.ItemAmalgamShovel;
 import amalgam.common.item.ItemAmalgamShroom;
 import amalgam.common.item.ItemAmalgamSword;
 import amalgam.common.item.ItemStoneTongs;
-import amalgam.common.properties.PropertyList;
-import amalgam.common.properties.PropertyManager;
+import amalgam.common.properties.AmalgamPropertyManager;
 import amalgam.common.tile.TileCastingTable;
 import amalgam.common.tile.TileStoneCrucible;
 
@@ -51,12 +50,30 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class Config {
 
-    // TODO fix malleability spelling throughout the codebase
-    // TODO let properties be set in the config file
-    // TODO figure out a way for people to see properties without WAILA installed
-    // TODO allow casting table and crucible to be crafted with smoothstone (add config options)
-    // TODO consider redoing the properties again
+    // TODO figure out a way for people to see properties without WAILA installed (show them on tongs and amalgam blobs)
     
+    // TODO allow casting table and crucible to be crafted with smoothstone (add config options)
+
+    // TODO consider moving all the item definitions and registering to a library class and move all config stuff into
+    // the config class
+    // We will have 4 config files:
+    
+    // amalgam.cfg - the config file for general settings
+    // the next three configs should probably be in a subfolder, maybe all configs should be?
+    
+    // amalgamProperties.cfg - this will hold all defined property lists, one for each type of material used in the mod.
+    // Gold, Diamond, Iron etc properties are defined here, and we can dynamically add more ores
+    
+    // amalgamMaterials.cfg - this is where you define the materials which can be used. each material has a name,
+    // property list (taken from the other config file), volume, and is defined as being an ore dictionary entry or a
+    // normal item entry, and we can dynamically add more items. gold nuggets, blocks, ingots all share the same
+    // properties but have different volumes and ore dictionary entries which is why the items and property list configs
+    // are separate (they would all use the gold property list defined in the properties config)
+    
+    // amalgamItems.cfg -this is where we define how each material property determines each tool property. Each tool
+    // property is a linear combination of the properties of the amalgam used to make the tool, here we just define the
+    // weights each amalgam property has on the tool property. we can't dynamicaly add more items unfortunately
+
     public static Config        instance              = new Config();
 
     public static Configuration configFile;
@@ -64,12 +81,10 @@ public class Config {
     public static final Logger  LOG                   = LogManager.getLogger(Amalgam.MODID);
     public static final int     CASTING_GUI_ID        = 1;
 
-    public static boolean       moreMaterials         = true;
-    public static boolean       modMaterials          = true;
     public static boolean       floatingCastResult    = true;
     public static boolean       coloredAmalgam        = true;
     public static boolean       allowFunItems         = true;
-    public static boolean       disableVanillaRecipes = true;
+    public static boolean       disableVanillaRecipes = true;        
 
     public static final int     BASE_AMOUNT           = 1;
     public static final int     INGOT_AMOUNT          = BASE_AMOUNT * 9;
@@ -102,6 +117,9 @@ public class Config {
     public static int           castingTableRID       = -1;
     public static int           crucibleRID           = -1;
 
+    public static boolean       moreVanillaMaterials  = true;
+    public static boolean       commonModMaterials    = true;
+
     public static void init(FMLPreInitializationEvent event) {
         tab = new CreativeTabs("Amalgam") {
             @SideOnly(Side.CLIENT)
@@ -111,17 +129,10 @@ public class Config {
         };
 
         configFile = new Configuration(event.getSuggestedConfigurationFile());
-
         syncConfig();
     }
 
     public static void syncConfig() {
-
-        moreMaterials = configFile.getBoolean("Allow extra vanilla materials to be used", Configuration.CATEGORY_GENERAL, moreMaterials,
-                "Allow obsidian, blaze rods, emeralds and nether quartz to be used in amalgam in addition to iron, gold and diamond");
-
-        modMaterials = configFile.getBoolean("Allow common mod ores to be used", Configuration.CATEGORY_GENERAL, modMaterials,
-                "Allows copper, tin, silver, and lead to be used in amalgam");
 
         floatingCastResult = configFile.getBoolean("Floating Cast Result", Configuration.CATEGORY_GENERAL, floatingCastResult,
                 "Render the casting table output above the casting table.");
@@ -142,13 +153,21 @@ public class Config {
 
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent eventArgs) {
+
         if (eventArgs.modID.equals(Amalgam.MODID)) {
-            syncConfig();
+
+            if (eventArgs.configID != null && eventArgs.configID.equals("ores")) {
+                LOG.info("config id: " + eventArgs.configID);
+                AmalgamPropertyManager.syncConfigDefaults();
+                // AmalgamPropertyManager.loadConfiguration();
+            } else if (eventArgs.configID != null && eventArgs.configID.equals(Configuration.CATEGORY_GENERAL)) {
+                LOG.info("config id: " + eventArgs.configID);
+                syncConfig();
+            }
         }
     }
 
     public static void registerFluids() {
-
         fluidAmalgam = new Fluid("Amalgam");
         FluidRegistry.registerFluid(fluidAmalgam);
     }
@@ -191,89 +210,65 @@ public class Config {
         stoneCrucible = new BlockStoneCrucible().setBlockName("stoneCrucible");
         castingTable = new BlockCastingTable().setBlockName("castingTable");
 
-        GameRegistry.registerBlock(stoneCrucible, "StoneCrucible");
-        GameRegistry.registerBlock(castingTable, "CastingTable");
+        GameRegistry.registerBlock(stoneCrucible, "stoneCrucible");
+        GameRegistry.registerBlock(castingTable, "castingTable");
 
         GameRegistry.registerTileEntity(TileStoneCrucible.class, "stoneCrucible");
         GameRegistry.registerTileEntity(TileCastingTable.class, "castingTable");
     }
 
     public static void registerAmalgamProperties() {
-        PropertyList ironProp;
-        PropertyList goldProp;
-        PropertyList diamondProp;
 
-        ironProp = new PropertyList().add(PropertyManager.DENSITY, 2.1F).add(PropertyManager.HARDNESS, 2.5F).add(PropertyManager.LUSTER, 2.2F)
-                .add(PropertyManager.MALLEABILITY, 6.1F);
+        AmalgamPropertyManager.registerItemProperties(new ItemStack(amalgamBlob), null, 0);
 
-        goldProp = new PropertyList().add(PropertyManager.DENSITY, 0.5F).add(PropertyManager.HARDNESS, 0.8F).add(PropertyManager.LUSTER, 9.1F)
-                .add(PropertyManager.MALLEABILITY, 1.9F);
+        // if (Config.moreMaterials) {
+        // AmalgamPropertyList emeraldProp = new AmalgamPropertyList().add(AmalgamPropertyManager.DENSITY, 3.1F)
+        // .add(AmalgamPropertyManager.HARDNESS, 3.7F).add(AmalgamPropertyManager.LUSTER, 3.4F)
+        // .add(AmalgamPropertyManager.MALLEABILITY, 3.2F).add(AmalgamPropertyManager.COLOR, 0x41F384);
+        // AmalgamPropertyList obsidianProp = new AmalgamPropertyList().add(AmalgamPropertyManager.DENSITY, 6.5F)
+        // .add(AmalgamPropertyManager.HARDNESS, 9.5F).add(AmalgamPropertyManager.LUSTER, 1.1F)
+        // .add(AmalgamPropertyManager.MALLEABILITY, 0.2F).add(AmalgamPropertyManager.COLOR, 0x15091B);
+        // AmalgamPropertyList blazeRodProp = new AmalgamPropertyList().add(AmalgamPropertyManager.DENSITY, 0.8F)
+        // .add(AmalgamPropertyManager.HARDNESS, 0.5F).add(AmalgamPropertyManager.LUSTER, 2.0F)
+        // .add(AmalgamPropertyManager.MALLEABILITY, 8.5F).add(AmalgamPropertyManager.COLOR, 0xFFCB00);
+        //
+        // AmalgamPropertyManager.registerOreDictProperties("gemEmerald", emeraldProp, Config.INGOT_AMOUNT);
+        // AmalgamPropertyManager.registerOreDictProperties("blockEmerald", emeraldProp, Config.BLOCK_AMOUNT);
+        //
+        // AmalgamPropertyManager.registerItemProperties(new ItemStack(Items.blaze_powder), blazeRodProp, BASE_AMOUNT);
+        // AmalgamPropertyManager.registerItemProperties(new ItemStack(Items.blaze_rod), blazeRodProp, BASE_AMOUNT * 2);
+        // AmalgamPropertyManager.registerItemProperties(new ItemStack(Blocks.obsidian), obsidianProp, BASE_AMOUNT * 3);
+        // }
 
-        diamondProp = new PropertyList().add(PropertyManager.DENSITY, 6.2F).add(PropertyManager.HARDNESS, 5.7F).add(PropertyManager.LUSTER, 1.5F)
-                .add(PropertyManager.MALLEABILITY, 2.2F);
-
-        ironProp.add(PropertyManager.COLOR, 0xBBBBBB);
-        goldProp.add(PropertyManager.COLOR, 0xEAEE57);
-        diamondProp.add(PropertyManager.COLOR, 0x33EBCB);
-
-        PropertyManager.registerOreDictProperties("nuggetIron", ironProp, Config.BASE_AMOUNT);
-        PropertyManager.registerOreDictProperties("nuggetGold", goldProp, Config.BASE_AMOUNT);
-        PropertyManager.registerOreDictProperties("nuggetDiamond", diamondProp, Config.BASE_AMOUNT);
-        PropertyManager.registerOreDictProperties("ingotIron", ironProp, Config.INGOT_AMOUNT);
-        PropertyManager.registerOreDictProperties("ingotGold", goldProp, Config.INGOT_AMOUNT);
-        PropertyManager.registerOreDictProperties("gemDiamond", diamondProp, Config.INGOT_AMOUNT);
-        PropertyManager.registerOreDictProperties("blockIron", ironProp, Config.BLOCK_AMOUNT);
-        PropertyManager.registerOreDictProperties("blockGold", goldProp, Config.BLOCK_AMOUNT);
-        PropertyManager.registerOreDictProperties("blockDiamond", diamondProp, Config.BLOCK_AMOUNT);
-
-        PropertyManager.registerItemProperties(new ItemStack(amalgamBlob), null, 0);
-
-        if (Config.moreMaterials) {
-            PropertyList emeraldProp = new PropertyList().add(PropertyManager.DENSITY, 3.1F).add(PropertyManager.HARDNESS, 3.7F)
-                    .add(PropertyManager.LUSTER, 3.4F).add(PropertyManager.MALLEABILITY, 3.2F).add(PropertyManager.COLOR, 0x41F384);
-            PropertyList quartzProp = new PropertyList().add(PropertyManager.DENSITY, 3.2F).add(PropertyManager.HARDNESS, 2.9F)
-                    .add(PropertyManager.LUSTER, 5.1F).add(PropertyManager.MALLEABILITY, 3.3F).add(PropertyManager.COLOR, 0xFFFFFF);
-            PropertyList obsidianProp = new PropertyList().add(PropertyManager.DENSITY, 6.5F).add(PropertyManager.HARDNESS, 9.5F)
-                    .add(PropertyManager.LUSTER, 1.1F).add(PropertyManager.MALLEABILITY, 0.2F).add(PropertyManager.COLOR, 0x15091B);
-            PropertyList blazeRodProp = new PropertyList().add(PropertyManager.DENSITY, 0.8F).add(PropertyManager.HARDNESS, 0.5F)
-                    .add(PropertyManager.LUSTER, 2.0F).add(PropertyManager.MALLEABILITY, 8.5F).add(PropertyManager.COLOR, 0xFFCB00);
-
-            PropertyManager.registerOreDictProperties("gemQuartz", quartzProp, Config.BASE_AMOUNT * 2);
-            PropertyManager.registerOreDictProperties("gemEmerald", emeraldProp, Config.INGOT_AMOUNT);
-
-            PropertyManager.registerOreDictProperties("blockQuartz", quartzProp, Config.INGOT_AMOUNT * 2);
-            PropertyManager.registerOreDictProperties("blockEmerald", emeraldProp, Config.BLOCK_AMOUNT);
-
-            PropertyManager.registerItemProperties(new ItemStack(Items.blaze_powder), blazeRodProp, BASE_AMOUNT);
-            PropertyManager.registerItemProperties(new ItemStack(Items.blaze_rod), blazeRodProp, BASE_AMOUNT * 2);
-            PropertyManager.registerItemProperties(new ItemStack(Blocks.obsidian), obsidianProp, BASE_AMOUNT * 3);
-        }
-
-        if (Config.modMaterials) {
-            PropertyList copperProp = new PropertyList().add(PropertyManager.DENSITY, 2.1F).add(PropertyManager.HARDNESS, 1.7F)
-                    .add(PropertyManager.LUSTER, 4.4F).add(PropertyManager.MALLEABILITY, 4.2F).add(PropertyManager.COLOR, 0xB87333);
-            PropertyList tinProp = new PropertyList().add(PropertyManager.DENSITY, 3.2F).add(PropertyManager.HARDNESS, 2.9F)
-                    .add(PropertyManager.LUSTER, 1.1F).add(PropertyManager.MALLEABILITY, 2.3F).add(PropertyManager.COLOR, 0xBBCCBB);
-            PropertyList silverProp = new PropertyList().add(PropertyManager.DENSITY, 1.5F).add(PropertyManager.HARDNESS, 3.5F)
-                    .add(PropertyManager.LUSTER, 6.5F).add(PropertyManager.MALLEABILITY, 4.3F).add(PropertyManager.COLOR, 0xCCCCCC);
-            PropertyList leadProp = new PropertyList().add(PropertyManager.DENSITY, 7.8F).add(PropertyManager.HARDNESS, 6.5F)
-                    .add(PropertyManager.LUSTER, 1.2F).add(PropertyManager.MALLEABILITY, 2.2F).add(PropertyManager.COLOR, 0x778899);
-
-            PropertyManager.registerOreDictProperties("nuggetCopper", copperProp, Config.BASE_AMOUNT);
-            PropertyManager.registerOreDictProperties("nuggetTin", tinProp, Config.BASE_AMOUNT);
-            PropertyManager.registerOreDictProperties("nuggetSilver", silverProp, Config.BASE_AMOUNT);
-            PropertyManager.registerOreDictProperties("nuggetLead", leadProp, Config.BASE_AMOUNT);
-
-            PropertyManager.registerOreDictProperties("ingotCopper", copperProp, Config.INGOT_AMOUNT);
-            PropertyManager.registerOreDictProperties("ingotTin", tinProp, Config.INGOT_AMOUNT);
-            PropertyManager.registerOreDictProperties("ingotSilver", silverProp, Config.INGOT_AMOUNT);
-            PropertyManager.registerOreDictProperties("ingotLead", leadProp, Config.INGOT_AMOUNT);
-
-            PropertyManager.registerOreDictProperties("blockCopper", copperProp, Config.BLOCK_AMOUNT);
-            PropertyManager.registerOreDictProperties("blockTin", tinProp, Config.BLOCK_AMOUNT);
-            PropertyManager.registerOreDictProperties("blockSilver", silverProp, Config.BLOCK_AMOUNT);
-            PropertyManager.registerOreDictProperties("iblockLead", leadProp, Config.BLOCK_AMOUNT);
-        }
+        // if (Config.modMaterials) {
+        // AmalgamPropertyList copperProp = new AmalgamPropertyList().add(AmalgamPropertyManager.DENSITY, 2.1F)
+        // .add(AmalgamPropertyManager.HARDNESS, 1.7F).add(AmalgamPropertyManager.LUSTER, 4.4F)
+        // .add(AmalgamPropertyManager.MALLEABILITY, 4.2F).add(AmalgamPropertyManager.COLOR, 0xB87333);
+        // AmalgamPropertyList tinProp = new AmalgamPropertyList().add(AmalgamPropertyManager.DENSITY, 3.2F)
+        // .add(AmalgamPropertyManager.HARDNESS, 2.9F).add(AmalgamPropertyManager.LUSTER, 1.1F)
+        // .add(AmalgamPropertyManager.MALLEABILITY, 2.3F).add(AmalgamPropertyManager.COLOR, 0xBBCCBB);
+        // AmalgamPropertyList silverProp = new AmalgamPropertyList().add(AmalgamPropertyManager.DENSITY, 1.5F)
+        // .add(AmalgamPropertyManager.HARDNESS, 3.5F).add(AmalgamPropertyManager.LUSTER, 6.5F)
+        // .add(AmalgamPropertyManager.MALLEABILITY, 4.3F).add(AmalgamPropertyManager.COLOR, 0xCCCCCC);
+        // AmalgamPropertyList leadProp = new AmalgamPropertyList().add(AmalgamPropertyManager.DENSITY, 7.8F)
+        // .add(AmalgamPropertyManager.HARDNESS, 6.5F).add(AmalgamPropertyManager.LUSTER, 1.2F)
+        // .add(AmalgamPropertyManager.MALLEABILITY, 2.2F).add(AmalgamPropertyManager.COLOR, 0x778899);
+        //
+        // AmalgamPropertyManager.registerOreDictProperties("nuggetCopper", copperProp, Config.BASE_AMOUNT);
+        // AmalgamPropertyManager.registerOreDictProperties("nuggetTin", tinProp, Config.BASE_AMOUNT);
+        // AmalgamPropertyManager.registerOreDictProperties("nuggetSilver", silverProp, Config.BASE_AMOUNT);
+        // AmalgamPropertyManager.registerOreDictProperties("nuggetLead", leadProp, Config.BASE_AMOUNT);
+        //
+        // AmalgamPropertyManager.registerOreDictProperties("ingotCopper", copperProp, Config.INGOT_AMOUNT);
+        // AmalgamPropertyManager.registerOreDictProperties("ingotTin", tinProp, Config.INGOT_AMOUNT);
+        // AmalgamPropertyManager.registerOreDictProperties("ingotSilver", silverProp, Config.INGOT_AMOUNT);
+        // AmalgamPropertyManager.registerOreDictProperties("ingotLead", leadProp, Config.INGOT_AMOUNT);
+        //
+        // AmalgamPropertyManager.registerOreDictProperties("blockCopper", copperProp, Config.BLOCK_AMOUNT);
+        // AmalgamPropertyManager.registerOreDictProperties("blockTin", tinProp, Config.BLOCK_AMOUNT);
+        // AmalgamPropertyManager.registerOreDictProperties("blockSilver", silverProp, Config.BLOCK_AMOUNT);
+        // AmalgamPropertyManager.registerOreDictProperties("iblockLead", leadProp, Config.BLOCK_AMOUNT);
+        // }
     }
 
     public static void registerRecipes() {

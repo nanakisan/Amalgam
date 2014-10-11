@@ -7,29 +7,29 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
-public class PropertyList {
+public class AmalgamPropertyList {
 
-    private final Map<Property, Float> properties = new HashMap<Property, Float>();
+    private final Map<AmalgamProperty, Float> properties = new HashMap<AmalgamProperty, Float>();
 
-    public PropertyList() {
+    public AmalgamPropertyList() {
     }
 
-    public PropertyList(ItemStack stack) {
-        PropertyList temp = PropertyManager.getProperties(stack);
+    public AmalgamPropertyList(ItemStack stack) {
+        AmalgamPropertyList temp = AmalgamPropertyManager.getProperties(stack);
 
         if (temp != null) {
-            for (Property a : temp.getProperties()) {
+            for (AmalgamProperty a : temp.getProperties()) {
                 add(a, temp.getValue(a));
             }
         }
     }
 
-    public Property[] getProperties() {
-        Property[] q = new Property[1];
-        return (Property[]) this.properties.keySet().toArray(q);
+    public AmalgamProperty[] getProperties() {
+        AmalgamProperty[] q = new AmalgamProperty[1];
+        return (AmalgamProperty[]) this.properties.keySet().toArray(q);
     }
 
-    public float getValue(Property a) {
+    public float getValue(AmalgamProperty a) {
         if (this.properties.get(a) == null || this.properties.get(a).isNaN()) {
             return a.getDefaultValue();
         }
@@ -37,13 +37,13 @@ public class PropertyList {
         return ((Float) this.properties.get(a)).floatValue();
     }
 
-    public PropertyList add(Property a, float value) {
+    public AmalgamPropertyList add(AmalgamProperty a, float value) {
         this.properties.put(a, value);
 
         return this;
     }
 
-    public PropertyList remove(Property a) {
+    public AmalgamPropertyList remove(AmalgamProperty a) {
         this.properties.remove(a);
 
         return this;
@@ -57,7 +57,7 @@ public class PropertyList {
             NBTTagCompound attr = list.getCompoundTagAt(i);
 
             if (attr.hasKey("name")) {
-                add(Property.getProperty(attr.getString("name")), attr.getFloat("value"));
+                add(AmalgamProperty.getProperty(attr.getString("name")), attr.getFloat("value"));
             }
         }
     }
@@ -66,7 +66,7 @@ public class PropertyList {
         NBTTagList list = new NBTTagList();
         nbtComp.setTag("AmalgamProperties", list);
 
-        for (Property attr : getProperties()) {
+        for (AmalgamProperty attr : getProperties()) {
             if (attr != null) {
                 NBTTagCompound attrComp = new NBTTagCompound();
                 attrComp.setString("name", attr.getName());
@@ -79,7 +79,7 @@ public class PropertyList {
     public String toString() {
         StringBuffer returnString = new StringBuffer();
 
-        for (Property attr : getProperties()) {
+        for (AmalgamProperty attr : getProperties()) {
             if (attr != null) {
                 returnString.append(attr.getName()).append(": ").append(this.getValue(attr)).append('\n');
             }

@@ -11,8 +11,8 @@ import net.minecraftforge.fluids.IFluidHandler;
 import amalgam.common.Config;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.IAmalgamContainerItem;
-import amalgam.common.properties.PropertyList;
-import amalgam.common.properties.PropertyManager;
+import amalgam.common.properties.AmalgamPropertyList;
+import amalgam.common.properties.AmalgamPropertyManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -61,9 +61,9 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
         if (renderPass == 1) {
             if (stack.getTagCompound() != null) {
                 if (Config.coloredAmalgam) {
-                    return (int) this.getFluid(stack).getProperties().getValue(PropertyManager.COLOR);
+                    return (int) this.getFluid(stack).getProperties().getValue(AmalgamPropertyManager.COLOR);
                 } else {
-                    return (int) PropertyManager.COLOR.getDefaultValue();
+                    return (int) AmalgamPropertyManager.COLOR.getDefaultValue();
                 }
             }
         }
@@ -88,12 +88,12 @@ public class ItemStoneTongs extends Item implements IAmalgamContainerItem {
     @Override
     public AmalgamStack getFluid(ItemStack container) {
         if (container.stackTagCompound == null || !container.stackTagCompound.hasKey(AMALGAM_KEY)) {
-            return new AmalgamStack(0, new PropertyList());
+            return new AmalgamStack(0, new AmalgamPropertyList());
         }
 
         NBTTagCompound containerNBT = container.stackTagCompound.getCompoundTag(AMALGAM_KEY);
         int amount = containerNBT.getInteger(AMOUNT_KEY);
-        PropertyList pList = new PropertyList();
+        AmalgamPropertyList pList = new AmalgamPropertyList();
         pList.readFromNBT(containerNBT.getCompoundTag("Tag"));
         return new AmalgamStack(amount, pList);
     }

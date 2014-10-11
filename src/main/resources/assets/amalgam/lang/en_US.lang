@@ -1,3 +1,14 @@
+name.malleability=Malleability
+name.density=Density
+name.hardness=Hardness
+name.luster=Luster
+
+configgui.generalConfig=General Settings
+configgui.oreConfig=Ores
+configgui.itemConfig=Item Properties
+configgui.dictAndVolume=Dictionary key and volume
+configgui.oreName=Name
+
 tile.stoneCrucible.name=Stone Crucible
 tile.castingTable.name=Casting Table
 item.stoneTongs.name=Stone Tongs

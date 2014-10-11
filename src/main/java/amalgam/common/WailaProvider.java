@@ -13,8 +13,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.IAmalgamContainerItem;
-import amalgam.common.properties.Property;
-import amalgam.common.properties.PropertyManager;
+import amalgam.common.properties.AmalgamProperty;
+import amalgam.common.properties.AmalgamPropertyManager;
 import amalgam.common.tile.TileAmalgamContainer;
 
 public class WailaProvider implements IWailaDataProvider {
@@ -49,12 +49,12 @@ public class WailaProvider implements IWailaDataProvider {
     public void addPropertiesToTooltip(List<String> currentTip, AmalgamStack amalgStack, EntityPlayer player) {
         ItemStack currentItem = player.inventory.getCurrentItem();
 
-        if (currentItem != null && PropertyManager.itemIsAmalgable(currentItem)) {
-            AmalgamStack a = new AmalgamStack(PropertyManager.getVolume(currentItem), PropertyManager.getProperties(currentItem));
+        if (currentItem != null && AmalgamPropertyManager.itemIsAmalgable(currentItem)) {
+            AmalgamStack a = new AmalgamStack(AmalgamPropertyManager.getVolume(currentItem), AmalgamPropertyManager.getProperties(currentItem));
             a = AmalgamStack.combine(a, amalgStack);
 
-            for (Property p : Property.getAll()) {
-                if (p == PropertyManager.COLOR) {
+            for (AmalgamProperty p : AmalgamProperty.getAll()) {
+                if (p == AmalgamPropertyManager.COLOR) {
                     continue;
                 }
 
@@ -68,8 +68,8 @@ public class WailaProvider implements IWailaDataProvider {
             AmalgamStack a = ((IAmalgamContainerItem) currentItem.getItem()).getFluid(currentItem);
             a = AmalgamStack.combine(a, amalgStack);
 
-            for (Property p : Property.getAll()) {
-                if (p == PropertyManager.COLOR) {
+            for (AmalgamProperty p : AmalgamProperty.getAll()) {
+                if (p == AmalgamPropertyManager.COLOR) {
                     continue;
                 }
 
@@ -79,8 +79,8 @@ public class WailaProvider implements IWailaDataProvider {
                         + (currentValue > newValue ? SpecialChars.RED : SpecialChars.GREEN) + String.format("%.1f", newValue));
             }
         } else {
-            for (Property p : Property.getAll()) {
-                if (p == PropertyManager.COLOR) {
+            for (AmalgamProperty p : AmalgamProperty.getAll()) {
+                if (p == AmalgamPropertyManager.COLOR) {
                     continue;
                 }
 

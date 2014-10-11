@@ -17,8 +17,8 @@ import amalgam.common.Config;
 import amalgam.common.block.BlockStoneCrucible;
 import amalgam.common.fluid.AmalgamStack;
 import amalgam.common.fluid.AmalgamTank;
-import amalgam.common.properties.PropertyList;
-import amalgam.common.properties.PropertyManager;
+import amalgam.common.properties.AmalgamPropertyList;
+import amalgam.common.properties.AmalgamPropertyManager;
 
 import com.google.common.collect.Sets;
 
@@ -129,10 +129,10 @@ public class TileStoneCrucible extends TileAmalgamContainer implements IInventor
                 return;
             }
 
-            int amount = PropertyManager.getVolume(stack);
+            int amount = AmalgamPropertyManager.getVolume(stack);
 
             if (amount > 0 && amount <= getEmptySpace()) {
-                PropertyList amalgProperties = PropertyManager.getProperties(stack);
+                AmalgamPropertyList amalgProperties = AmalgamPropertyManager.getProperties(stack);
                 AmalgamStack amalg = new AmalgamStack(amount, amalgProperties);
 
                 if (amalgProperties == null) {
@@ -176,7 +176,7 @@ public class TileStoneCrucible extends TileAmalgamContainer implements IInventor
 
     @Override
     public boolean isItemValidForSlot(int slot, ItemStack stack) {
-        if (stack != null && PropertyManager.itemIsAmalgable(stack) && PropertyManager.getVolume(stack) <= this.getEmptySpace()) {
+        if (stack != null && AmalgamPropertyManager.itemIsAmalgable(stack) && AmalgamPropertyManager.getVolume(stack) <= this.getEmptySpace()) {
             return true;
         }
         return false;

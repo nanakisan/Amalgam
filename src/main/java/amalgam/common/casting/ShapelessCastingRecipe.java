@@ -8,7 +8,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import amalgam.common.container.InventoryCasting;
-import amalgam.common.properties.PropertyList;
+import amalgam.common.properties.AmalgamPropertyList;
 
 public class ShapelessCastingRecipe implements ICastingRecipe {
 
@@ -72,7 +72,7 @@ public class ShapelessCastingRecipe implements ICastingRecipe {
     }
 
     @Override
-    public ItemStack getCastingResult(InventoryCasting inv, PropertyList list) {
+    public ItemStack getCastingResult(InventoryCasting inv, AmalgamPropertyList list) {
         ItemStack temp[] = new ItemStack[recipeItems.size()];
         int currentIndex = 0;
 

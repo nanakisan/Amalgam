@@ -6,8 +6,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import amalgam.common.Config;
 import amalgam.common.fluid.IAmalgableItem;
-import amalgam.common.properties.PropertyList;
-import amalgam.common.properties.PropertyManager;
+import amalgam.common.properties.AmalgamPropertyList;
+import amalgam.common.properties.AmalgamPropertyManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -23,7 +23,7 @@ public class ItemAmalgamBlob extends Item implements IAmalgableItem {
         this.itemIcon = iconRegister.registerIcon("amalgam:amalgamBlob");
     }
 
-    public void setProperties(ItemStack stack, PropertyList properties) {
+    public void setProperties(ItemStack stack, AmalgamPropertyList properties) {
         NBTTagCompound tag = stack.getTagCompound();
         if (tag == null) {
             tag = new NBTTagCompound();
@@ -44,10 +44,10 @@ public class ItemAmalgamBlob extends Item implements IAmalgableItem {
     }
 
     @Override
-    public PropertyList getProperties(ItemStack stack) {
+    public AmalgamPropertyList getProperties(ItemStack stack) {
         NBTTagCompound tag = stack.getTagCompound();
 
-        PropertyList properties = new PropertyList();
+        AmalgamPropertyList properties = new AmalgamPropertyList();
         properties.readFromNBT(tag);
 
         return properties;
@@ -68,9 +68,9 @@ public class ItemAmalgamBlob extends Item implements IAmalgableItem {
     public int getColorFromItemStack(ItemStack stack, int pass) {
         if (stack.getTagCompound() != null) {
             if (Config.coloredAmalgam) {
-                return (int) this.getProperties(stack).getValue(PropertyManager.COLOR);
+                return (int) this.getProperties(stack).getValue(AmalgamPropertyManager.COLOR);
             } else {
-                return (int) PropertyManager.COLOR.getDefaultValue();
+                return (int) AmalgamPropertyManager.COLOR.getDefaultValue();
             }
         }
 

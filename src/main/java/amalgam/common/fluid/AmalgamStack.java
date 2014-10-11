@@ -5,20 +5,20 @@ import java.awt.Color;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 import amalgam.common.Config;
-import amalgam.common.properties.Property;
-import amalgam.common.properties.PropertyList;
+import amalgam.common.properties.AmalgamProperty;
+import amalgam.common.properties.AmalgamPropertyList;
 
 public class AmalgamStack extends FluidStack {
 
     private static final String PROPERTY_KEY = "Tag";
     private static final String AMOUNT_KEY   = "Amount";
 
-    public AmalgamStack(int amount, PropertyList pList) {
+    public AmalgamStack(int amount, AmalgamPropertyList pList) {
         super(Config.fluidAmalgam.getID(), amount, null);
         this.tag = new NBTTagCompound();
 
         if (pList == null) {
-            new PropertyList().writeToNBT(this.tag);
+            new AmalgamPropertyList().writeToNBT(this.tag);
         } else {
             pList.writeToNBT(this.tag);
         }
@@ -29,12 +29,12 @@ public class AmalgamStack extends FluidStack {
     }
 
     public static AmalgamStack combine(AmalgamStack stackA, AmalgamStack stackB) {
-        Property[] allProperties = Property.getAll();
-        PropertyList aList = stackA.getProperties();
-        PropertyList bList = stackB.getProperties();
-        PropertyList newList = new PropertyList();
+        AmalgamProperty[] allProperties = AmalgamProperty.getAll();
+        AmalgamPropertyList aList = stackA.getProperties();
+        AmalgamPropertyList bList = stackB.getProperties();
+        AmalgamPropertyList newList = new AmalgamPropertyList();
 
-        for (Property p : allProperties) {
+        for (AmalgamProperty p : allProperties) {
             float aValue = aList.getValue(p);
             float bValue = bList.getValue(p);
             float result = 0;
@@ -96,8 +96,8 @@ public class AmalgamStack extends FluidStack {
         return new AmalgamStack(stackA.amount + stackB.amount, newList);
     }
 
-    public PropertyList getProperties() {
-        PropertyList pList = new PropertyList();
+    public AmalgamPropertyList getProperties() {
+        AmalgamPropertyList pList = new AmalgamPropertyList();
         pList.readFromNBT(this.tag);
 
         return pList;
@@ -105,7 +105,7 @@ public class AmalgamStack extends FluidStack {
 
     public static AmalgamStack loadAmalgamStackFromNBT(NBTTagCompound nbtComp) {
         int amount = nbtComp.getInteger(AMOUNT_KEY);
-        PropertyList pList = new PropertyList();
+        AmalgamPropertyList pList = new AmalgamPropertyList();
         pList.readFromNBT(nbtComp.getCompoundTag(PROPERTY_KEY));
 
         return new AmalgamStack(amount, pList);

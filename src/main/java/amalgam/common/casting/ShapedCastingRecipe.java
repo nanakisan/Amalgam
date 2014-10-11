@@ -5,7 +5,7 @@ import net.minecraft.world.World;
 import amalgam.common.Config;
 import amalgam.common.container.InventoryCasting;
 import amalgam.common.container.SlotCasting;
-import amalgam.common.properties.PropertyList;
+import amalgam.common.properties.AmalgamPropertyList;
 
 public class ShapedCastingRecipe implements ICastingRecipe {
 
@@ -107,7 +107,7 @@ public class ShapedCastingRecipe implements ICastingRecipe {
     }
 
     @Override
-    public ItemStack getCastingResult(InventoryCasting inv, PropertyList list) {
+    public ItemStack getCastingResult(InventoryCasting inv, AmalgamPropertyList list) {
         ItemStack temp[] = new ItemStack[recipeItems.length];
         int currentIndex = 0;
 
